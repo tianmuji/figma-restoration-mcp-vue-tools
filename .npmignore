@@ -4,6 +4,10 @@ node_modules/
 .env.local
 .env.*.local
 
+# AI Assistant Configuration (INCLUDE in npm package)
+# .augment/ - Augment AI configuration for users
+# .cursor/ - Cursor IDE configuration for users
+
 # Build artifacts
 dist/
 build/

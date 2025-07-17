@@ -5,6 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# AI Assistant Configuration (INCLUDE these directories)
+# .augment/ - Augment AI configuration
+# .cursor/ - Cursor IDE configuration
+
 # Environment variables
 .env
 .env.local

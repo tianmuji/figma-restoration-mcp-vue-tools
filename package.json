@@ -65,19 +65,22 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools.git"
+    "url": "https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git"
   },
-  "homepage": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools#readme",
+  "homepage": "https://github.com/tianmuji/figma-restoration-mcp-vue-tools#readme",
   "bugs": {
-    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools/issues"
+    "url": "https://github.com/tianmuji/figma-restoration-mcp-vue-tools/issues"
   },
   "files": [
     "src/",
+    "bin/",
     "config/",
     "docs/",
     "scripts/",
     "examples/",
     "assets/",
+    ".augment/",
+    ".cursor/",
     "README.md",
     "LICENSE",
     "package.json",
