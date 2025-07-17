@@ -5,9 +5,9 @@
  * Handles registry issues and provides fallback options
  */
 
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 console.log('🔧 Installing Puppeteer safely...');
 
@@ -82,10 +82,10 @@ async function installPuppeteer() {
 
 // Check if Puppeteer is already installed
 try {
-  require.resolve('puppeteer');
+  await import('puppeteer');
   console.log('✅ Puppeteer is already installed');
   process.exit(0);
 } catch (error) {
   // Puppeteer not installed, proceed with installation
-  installPuppeteer();
+  await installPuppeteer();
 }
