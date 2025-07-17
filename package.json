@@ -13,7 +13,7 @@
     "dev": "vite",
     "build": "echo \"Build completed - no build step required\" && exit 0",
     "preview": "vite preview",
-    "test": "echo \"Tests passed - no test suite configured yet\" && exit 0",
+    "test": "node test-installation.js",
     "clean": "node test-clean-tools.mjs",
     "install-kit": "chmod +x scripts/install.sh && ./scripts/install.sh",
     "setup": "chmod +x scripts/setup.sh && ./scripts/setup.sh",
