@@ -1,6 +1,6 @@
 {
   "name": "figma-restoration-mcp-vue-tools",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Professional Figma Component Restoration Kit - Complete MCP tools with snapDOM-powered high-quality screenshots, intelligent shadow detection, and smart debugging for Vue component restoration",
   "type": "module",
   "main": "src/server.js",
