@@ -1,6 +1,6 @@
-# @figma-restoration/mcp-vue-tools
+# figma-restoration-mcp-vue-tools
 
-[![npm version](https://badge.fury.io/js/@figma-restoration%2Fmcp-vue-tools.svg)](https://badge.fury.io/js/@figma-restoration%2Fmcp-vue-tools)
+[![npm version](https://badge.fury.io/js/figma-restoration-mcp-vue-tools.svg)](https://badge.fury.io/js/figma-restoration-mcp-vue-tools)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
@@ -12,20 +12,20 @@ Professional Figma component restoration toolkit with snapDOM-powered high-quali
 
 ```bash
 # Install via npm
-npm install @figma-restoration/mcp-vue-tools
+npm install figma-restoration-mcp-vue-tools
 
 # Or install globally
-npm install -g @figma-restoration/mcp-vue-tools
+npm install -g figma-restoration-mcp-vue-tools
 ```
 
 ### Basic Usage
 
 ```bash
 # Initialize in your Vue project
-npx @figma-restoration/mcp-vue-tools init
+npx figma-restoration-mcp-vue-tools init
 
 # Start the MCP server
-npx @figma-restoration/mcp-vue-tools start
+npx figma-restoration-mcp-vue-tools start
 ```
 
 ## ✨ Key Features
