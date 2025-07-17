@@ -42,20 +42,42 @@ const commands = {
   start: () => {
     console.log('🚀 Starting Figma Restoration MCP Server...');
     const serverPath = join(packageRoot, 'src/server.js');
-    
+
     const child = spawn('node', [serverPath], {
       stdio: 'inherit',
       cwd: process.cwd()
     });
-    
+
     child.on('error', (error) => {
       console.error('❌ Failed to start server:', error.message);
       process.exit(1);
     });
-    
+
     child.on('exit', (code) => {
       if (code !== 0) {
         console.error(`❌ Server exited with code ${code}`);
+        process.exit(code);
+      }
+    });
+  },
+
+  'install-puppeteer': () => {
+    console.log('🔧 Installing Puppeteer safely...');
+    const installScript = join(packageRoot, 'scripts/install-puppeteer.js');
+
+    const child = spawn('node', [installScript], {
+      stdio: 'inherit',
+      cwd: process.cwd()
+    });
+
+    child.on('error', (error) => {
+      console.error('❌ Failed to install Puppeteer:', error.message);
+      process.exit(1);
+    });
+
+    child.on('exit', (code) => {
+      if (code !== 0) {
+        console.error(`❌ Puppeteer installation failed with code ${code}`);
         process.exit(code);
       }
     });
@@ -69,12 +91,14 @@ Usage:
   npx @figma-restoration/mcp-vue-tools <command>
 
 Commands:
-  init     Initialize configuration files in current directory
-  start    Start the MCP server
-  help     Show this help message
+  init              Initialize configuration files in current directory
+  start             Start the MCP server
+  install-puppeteer Install Puppeteer safely (optional)
+  help              Show this help message
 
 Examples:
   npx @figma-restoration/mcp-vue-tools init
+  npx figma-restoration-mcp-vue-tools install-puppeteer
   npx @figma-restoration/mcp-vue-tools start
 
 Documentation:

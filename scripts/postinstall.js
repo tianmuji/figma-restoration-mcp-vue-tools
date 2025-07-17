@@ -123,9 +123,10 @@ function configure() {
     console.log('✅ figma-restoration-mcp-vue-tools configured successfully!');
     console.log('');
     console.log('📚 Next steps:');
-    console.log('1. Initialize configuration: npx figma-restoration-mcp-vue-tools init');
-    console.log('2. Start MCP server: npx figma-restoration-mcp-vue-tools start');
-    console.log('3. Check documentation: https://github.com/tianmuji/figma-restoration-mcp-vue-tools');
+    console.log('1. Install Puppeteer (optional): npm install puppeteer');
+    console.log('2. Initialize configuration: npx figma-restoration-mcp-vue-tools init');
+    console.log('3. Start MCP server: npx figma-restoration-mcp-vue-tools start');
+    console.log('4. Check documentation: https://github.com/tianmuji/figma-restoration-mcp-vue-tools');
     
   } catch (error) {
     console.error('❌ Configuration failed:', error.message);

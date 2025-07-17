@@ -31,6 +31,9 @@ yarn add figma-restoration-mcp-vue-tools
 # Initialize in your Vue project
 npx figma-restoration-mcp-vue-tools init
 
+# Install Puppeteer safely (optional, for screenshot features)
+npx figma-restoration-mcp-vue-tools install-puppeteer
+
 # Start the MCP server
 npx figma-restoration-mcp-vue-tools start
 ```
