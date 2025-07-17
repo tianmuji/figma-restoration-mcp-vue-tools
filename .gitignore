@@ -1,0 +1,107 @@
+# Dependencies
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Generated files
+dist/
+build/
+
+# MCP generated content
+output/*/
+results/*/
+temp/
+*.tmp
+
+# Screenshots and images (except examples)
+*.png
+*.jpg
+*.jpeg
+!examples/**/*.png
+!examples/**/*.jpg
+!examples/**/*.jpeg
+!assets/icons/*.png
+!assets/icons/*.jpg
+!assets/icons/*.jpeg
+
+# Configuration files (keep templates)
+mcp-config.json
+!config/*.template.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test-*.js
+test-*.mjs
+*-test.js
+*-test.mjs
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Temporary Vue files
+*.vue.tmp
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/

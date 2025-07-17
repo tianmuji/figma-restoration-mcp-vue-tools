@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "figma-restoration-kit": {
+      "command": "node",
+      "args": ["src/server.js"],
+      "cwd": "{{PROJECT_ROOT}}/mcp-vue-tools",
+      "env": {
+        "PUPPETEER_EXECUTABLE_PATH": "{{CHROME_PATH}}",
+        "NODE_ENV": "development",
+        "PROJECT_ROOT": "{{PROJECT_ROOT}}"
+      }
+    },
+    "figma": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-figma"],
+      "env": {
+        "FIGMA_PERSONAL_ACCESS_TOKEN": "{{FIGMA_TOKEN}}"
+      }
+    }
+  }
+}

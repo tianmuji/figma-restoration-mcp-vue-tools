@@ -1,0 +1,83 @@
+# Development files
+node_modules/
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+dist/
+build/
+.vite/
+.cache/
+
+# Test files
+test/
+tests/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage/
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Results and temporary files
+results/
+temp/
+tmp/
+.tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# Development scripts
+scripts/test-*.js
+scripts/dev-*.js
+
+# Documentation drafts
+docs/drafts/
+docs/internal/
+
+# Example files (keep only essential examples)
+examples/test-*
+examples/debug-*
+
+# Yarn files
+.yarn/
+.pnp.*
+
+# Editor files
+*.sublime-project
+*.sublime-workspace
+
+# Local configuration
+config/local.*
+config/dev.*

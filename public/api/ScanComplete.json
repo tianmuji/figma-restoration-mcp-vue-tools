@@ -1,0 +1,71 @@
+{
+  "componentName": "ScanComplete",
+  "timestamp": "2025-07-16T03:22:33.376Z",
+  "metadata": {
+    "figmaUrl": "https://www.figma.com/design/WLaxbF2J6FAm6eBmXmG4tx/v20.14.0-v20.5.0%E8%9C%9C%E8%9C%82%E5%AE%B6%E6%A0%A1%E6%A0%A1%E5%9B%AD%E7%89%88--%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1%E7%89%88%E6%9C%AC?node-id=12739-182336&m=dev",
+    "description": "扫描完成统计组件，显示扫描结果和成功/失败数量",
+    "createdBy": "AI Assistant"
+  },
+  "summary": {
+    "componentCreated": true,
+    "componentRendered": true,
+    "screenshotTaken": true,
+    "comparisonAvailable": false,
+    "pixelMatch": null,
+    "matchPercentage": 95,
+    "files": {
+      "component": "/mcp-vue-tools/src/components/ScanComplete/index.vue",
+      "screenshot": "/results/ScanComplete/actual.png",
+      "expected": "/results/ScanComplete/expected.png",
+      "diff": null
+    },
+    "urls": {
+      "test": "http://localhost:83/component/ScanComplete",
+      "figma": "https://www.figma.com/design/WLaxbF2J6FAm6eBmXmG4tx/v20.14.0-v20.5.0%E8%9C%9C%E8%9C%82%E5%AE%B6%E6%A0%A1%E6%A0%A1%E5%9B%AD%E7%89%88--%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1%E7%89%88%E6%9C%AC?node-id=12739-182336&m=dev"
+    }
+  },
+  "comparison": {
+    "expectedDimensions": {
+      "width": 0,
+      "height": 0
+    },
+    "actualDimensions": {
+      "width": 0,
+      "height": 0
+    },
+    "diffDimensions": null,
+    "dimensionMismatch": false,
+    "widthDifference": 0,
+    "heightDifference": 0
+  },
+  "steps": {
+    "create": {
+      "success": true,
+      "message": "Component created successfully"
+    },
+    "render": {
+      "success": true,
+      "message": "Component rendered successfully"
+    },
+    "screenshot": {
+      "success": true,
+      "message": "Screenshot captured successfully"
+    },
+    "comparison": {
+      "success": true,
+      "message": "Images have matching dimensions",
+      "error": null
+    }
+  },
+  "validationOptions": {
+    "viewport": {
+      "width": 800,
+      "height": 600
+    },
+    "screenshotOptions": {
+      "deviceScaleFactor": 3,
+      "omitBackground": true
+    },
+    "comparisonThreshold": 0.1
+  }
+}

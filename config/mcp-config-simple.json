@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "figma-restoration-kit": {
+      "command": "node",
+      "args": ["/Users/yujie_wu/Documents/work/camscanner-cloud-vue3/mcp-vue-tools/src/server.js"],
+      "cwd": "/Users/yujie_wu/Documents/work/camscanner-cloud-vue3/mcp-vue-tools",
+      "env": {
+        "CHROME_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "NODE_ENV": "development",
+        "PROJECT_ROOT": "/Users/yujie_wu/Documents/work/camscanner-cloud-vue3"
+      }
+    }
+  }
+}
