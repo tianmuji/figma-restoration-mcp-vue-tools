@@ -4,9 +4,7 @@
       "command": "npx",
       "args": ["figma-restoration-mcp-vue-tools", "start"],
       "env": {
-        "PUPPETEER_EXECUTABLE_PATH": "{{CHROME_PATH}}",
-        "NODE_ENV": "production",
-        "PROJECT_ROOT": "{{PROJECT_ROOT}}"
+        "NODE_ENV": "production"
       }
     },
     "figma": {

@@ -16,7 +16,12 @@ npm install figma-restoration-mcp-vue-tools
 
 # Or install globally
 npm install -g figma-restoration-mcp-vue-tools
+
+# If you encounter Puppeteer/registry issues:
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install -g figma-restoration-mcp-vue-tools
 ```
+
+> **⚠️ Installation Issues?** If you encounter TLS certificate errors or Puppeteer download issues, see [INSTALLATION_TROUBLESHOOTING.md](./INSTALLATION_TROUBLESHOOTING.md) for detailed solutions.
 
 ### Basic Usage
 

@@ -35,8 +35,8 @@ const commands = {
     
     console.log('\n📚 Next steps:');
     console.log('1. Configure your MCP settings in mcp-config.json');
-    console.log('2. Start the MCP server: npx @figma-restoration/mcp-vue-tools start');
-    console.log('3. Check documentation: https://github.com/yujie-wu/figma-restoration-mcp-vue-tools');
+    console.log('2. Start the MCP server: npx figma-restoration-mcp-vue-tools start');
+    console.log('3. Check documentation: https://github.com/tianmuji/figma-restoration-mcp-vue-tools');
   },
   
   start: () => {

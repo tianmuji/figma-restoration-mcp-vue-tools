@@ -23,6 +23,11 @@
     "version:minor": "npm version minor",
     "version:major": "npm version major"
   },
+  "config": {
+    "puppeteer": {
+      "skipDownload": true
+    }
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
     "@vitejs/plugin-vue": "^5.0.0",

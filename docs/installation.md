@@ -1,88 +1,88 @@
 # Installation Guide
 
-This guide covers different installation methods for the Figma Restoration Kit.
+This guide covers installation methods for the Figma Restoration MCP Vue Tools.
 
 ## Prerequisites
 
 - Node.js 18.0.0 or higher
-- Yarn or npm package manager
-- Google Chrome browser (for Puppeteer)
-- Git (for submodule installation)
+- npm or yarn package manager
+- Google Chrome browser (for screenshot functionality)
 
 ## Installation Methods
 
-### Method 1: Git Submodule (Recommended)
+### Method 1: Global npm Installation (Recommended)
 
-This method integrates the kit into your existing project as a submodule.
+Install the package globally for system-wide access:
+
+```bash
+# Install globally via npm
+npm install -g figma-restoration-mcp-vue-tools
+
+# Or install globally via yarn
+yarn global add figma-restoration-mcp-vue-tools
+
+# Verify installation
+npx figma-restoration-mcp-vue-tools --version
+```
+
+### Method 2: Project-specific Installation
+
+Install in your project directory:
 
 ```bash
 # Navigate to your project root
 cd your-project
 
-# Add as submodule
-git submodule add https://github.com/your-org/figma-restoration-kit.git mcp-vue-tools
-
-# Initialize submodule
-git submodule update --init --recursive
-
-# Install dependencies
-cd mcp-vue-tools
-yarn install
-
-# Run setup script
-chmod +x scripts/install.sh
-./scripts/install.sh
-```
-
-### Method 2: Standalone Installation
-
-For standalone use or development of the kit itself.
-
-```bash
-# Clone the repository
-git clone https://github.com/your-org/figma-restoration-kit.git
-cd figma-restoration-kit
-
-# Install dependencies
-yarn install
-
-# Run setup
-yarn setup
-```
-
-### Method 3: NPM Package (Future)
-
-```bash
-# Install as npm package (when published)
-npm install figma-restoration-kit
+# Install as project dependency
+npm install figma-restoration-mcp-vue-tools
 
 # Or with yarn
-yarn add figma-restoration-kit
+yarn add figma-restoration-mcp-vue-tools
+
+# Initialize configuration
+npx figma-restoration-mcp-vue-tools init
+```
+
+### Method 3: Direct npx Usage
+
+Use without installation (downloads on demand):
+
+```bash
+# Initialize project configuration
+npx figma-restoration-mcp-vue-tools init
+
+# Start MCP server
+npx figma-restoration-mcp-vue-tools start
 ```
 
 ## Configuration Setup
 
-### 1. MCP Server Configuration
+### 1. Initialize Configuration
 
-Copy the configuration template:
+After installation, initialize the configuration files:
 
 ```bash
-cp config/mcp-config.template.json config/mcp-config.json
+# Initialize configuration in your project
+npx figma-restoration-mcp-vue-tools init
 ```
 
-Edit the configuration file:
+This creates:
+- `mcp-config.json` - MCP server configuration
+- `cursor-rules.md` - Cursor IDE rules (optional)
+- `vscode-settings.json` - VS Code settings (optional)
+
+### 2. MCP Server Configuration
+
+The generated `mcp-config.json` will look like this:
 
 ```json
 {
   "mcpServers": {
-    "figma-restoration-kit": {
-      "command": "node",
-      "args": ["src/server.js"],
-      "cwd": "/absolute/path/to/your/project/mcp-vue-tools",
+    "figma-restoration-mcp-vue-tools": {
+      "command": "npx",
+      "args": ["figma-restoration-mcp-vue-tools", "start"],
       "env": {
-        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        "NODE_ENV": "development",
-        "PROJECT_ROOT": "/absolute/path/to/your/project"
+        "NODE_ENV": "production"
       }
     },
     "figma": {
