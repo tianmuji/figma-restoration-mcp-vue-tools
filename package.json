@@ -1,6 +1,6 @@
 {
   "name": "@figma-restoration/mcp-vue-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Professional Figma Component Restoration Kit - Complete MCP tools with snapDOM-powered high-quality screenshots, intelligent shadow detection, and smart debugging for Vue component restoration",
   "type": "module",
   "main": "src/server.js",
@@ -48,36 +48,6 @@
     "@modelcontextprotocol/server-figma": "^0.1.0"
   },
   "keywords": [
-    "figma-restoration",
-    "mcp",
-    "vue",
-    "figma",
-    "screenshot",
-    "testing",
-    "component-restoration",
-    "design-to-code",
-    "standalone-kit",
-    "diff-analysis",
-    "smart-debugging",
-    "intelligent-fixes",
-    "restoration-analysis",
-    "figma-diff-analyzer",
-    "snapdom",
-    "dom-to-image",
-    "high-quality-screenshots",
-    "web-components"
-  ],
-  "author": "Yujie Wu <yujie.wu@example.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools.git"
-  },
-  "homepage": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools#readme",
-  "bugs": {
-    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools/issues"
-  },
-  "keywords": [
     "figma",
     "restoration",
     "vue",
@@ -91,16 +61,15 @@
     "shadow-detection",
     "image-comparison"
   ],
-  "files": [
-    "src/",
-    "bin/",
-    "config/",
-    "docs/",
-    "README.md",
-    "LICENSE"
-  ],
-  "engines": {
-    "node": ">=18.0.0"
+  "author": "Yujie Wu <yujie.wu@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools.git"
+  },
+  "homepage": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools#readme",
+  "bugs": {
+    "url": "https://github.com/yujie-wu/figma-restoration-mcp-vue-tools/issues"
   },
   "files": [
     "src/",
@@ -113,5 +82,8 @@
     "LICENSE",
     "package.json",
     "vite.config.js"
-  ]
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
