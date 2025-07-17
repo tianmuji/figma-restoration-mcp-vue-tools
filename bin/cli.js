@@ -10,6 +10,20 @@ const __dirname = dirname(__filename);
 const packageRoot = join(__dirname, '..');
 
 const commands = {
+  'install-puppeteer': async () => {
+    console.log('🔧 Installing Puppeteer...');
+    const scriptPath = join(packageRoot, 'scripts', 'install-puppeteer.js');
+
+    const child = spawn('node', [scriptPath], {
+      stdio: 'inherit',
+      cwd: process.cwd()
+    });
+
+    child.on('close', (code) => {
+      process.exit(code);
+    });
+  },
+
   init: async () => {
     console.log('🚀 Initializing Figma Restoration MCP Vue Tools...');
     

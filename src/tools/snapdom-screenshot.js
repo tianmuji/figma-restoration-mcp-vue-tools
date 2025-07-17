@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
@@ -7,6 +6,7 @@ import { spawn } from 'child_process';
 import {
   ensureDirectory
 } from '../utils/path-config.js';
+import { puppeteerManager } from '../utils/puppeteer-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -220,11 +220,7 @@ export class SnapDOMScreenshotTool {
   }
 
   async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, outputPath, selector }) {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    const browser = await puppeteerManager.launchBrowser();
 
     try {
       const page = await browser.newPage();
@@ -390,7 +386,7 @@ export class SnapDOMScreenshotTool {
       };
 
     } finally {
-      await browser.close();
+      await puppeteerManager.closeBrowser();
     }
   }
 }
