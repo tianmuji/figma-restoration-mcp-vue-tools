@@ -58,7 +58,6 @@ npx figma-restoration-mcp-vue-tools start
 ### 🛠️ MCP Tools
 - `snapdom_screenshot`: High-quality component screenshots
 - `figma_compare`: Advanced image comparison and analysis
-- `download_figma_images`: Asset extraction from Figma designs
 
 ## 📖 Documentation
 

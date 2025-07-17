@@ -101,9 +101,9 @@ git push origin "$NEW_VERSION"
 echo "📦 发布到 npm..."
 if npm publish --access public; then
     echo "✅ 成功发布到 npm!"
-    echo "📦 包名: @figma-restoration/mcp-vue-tools"
+    echo "📦 包名: figma-restoration-mcp-vue-tools"
     echo "🔢 版本: $NEW_VERSION"
-    echo "🔗 npm: https://www.npmjs.com/package/@figma-restoration/mcp-vue-tools"
+    echo "🔗 npm: https://www.npmjs.com/package/figma-restoration-mcp-vue-tools"
 else
     echo "❌ npm 发布失败"
     exit 1
@@ -112,7 +112,7 @@ fi
 echo ""
 echo "🎉 发布完成!"
 echo "=================================================="
-echo "📦 npm 包: @figma-restoration/mcp-vue-tools@$NEW_VERSION"
+echo "📦 npm 包: figma-restoration-mcp-vue-tools@$NEW_VERSION"
 echo "🔗 GitHub: https://github.com/yujie-wu/figma-restoration-mcp-vue-tools"
-echo "📚 安装命令: npm install @figma-restoration/mcp-vue-tools"
+echo "📚 安装命令: npm install figma-restoration-mcp-vue-tools"
 echo "=================================================="

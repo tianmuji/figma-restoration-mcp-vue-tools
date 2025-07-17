@@ -237,7 +237,7 @@ src/components/ComponentName/
 
 ### 步骤2: 资源处理
 ```
-1. 下载必要的图片资源到results目录
+1. 手动准备必要的图片资源到results目录
 2. 创建组件同级别的images文件夹
 3. 移动SVG图标和位图到images文件夹
 4. 复制素材到public/images/以便Web访问
