@@ -48,7 +48,6 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/server-figma": "^0.1.0",
     "puppeteer": "^21.0.0"
   },
   "peerDependenciesMeta": {
