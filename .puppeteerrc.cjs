@@ -46,6 +46,7 @@ function findChromeExecutable() {
 module.exports = {
   // Skip Chrome download during installation
   skipDownload: true,
+  skipChromiumDownload: true,
   
   // Use system Chrome if available
   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 

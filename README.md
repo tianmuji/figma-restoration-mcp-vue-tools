@@ -11,17 +11,19 @@ Professional Figma component restoration toolkit with snapDOM-powered high-quali
 ### Installation
 
 ```bash
-# Install via npm
-npm install figma-restoration-mcp-vue-tools
-
-# Or install globally
+# Install via npm (recommended)
 npm install -g figma-restoration-mcp-vue-tools
 
-# If you encounter Puppeteer/registry issues:
-PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install -g figma-restoration-mcp-vue-tools
+# Or install locally in your project
+npm install figma-restoration-mcp-vue-tools
+
+# Using yarn
+yarn global add figma-restoration-mcp-vue-tools
+# or
+yarn add figma-restoration-mcp-vue-tools
 ```
 
-> **⚠️ Installation Issues?** If you encounter TLS certificate errors or Puppeteer download issues, see [INSTALLATION_TROUBLESHOOTING.md](./INSTALLATION_TROUBLESHOOTING.md) for detailed solutions.
+> **✅ No More Installation Issues!** Version 1.0.4+ automatically handles Puppeteer configuration and prevents download issues. The package will automatically configure itself during installation.
 
 ### Basic Usage
 
