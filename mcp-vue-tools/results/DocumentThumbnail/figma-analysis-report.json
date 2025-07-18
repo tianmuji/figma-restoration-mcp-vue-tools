@@ -1,0 +1,160 @@
+{
+  "componentName": "DocumentThumbnail",
+  "timestamp": "2025-07-18T03:07:33.688Z",
+  "comparison": {
+    "matchPercentage": 76.1010851517032,
+    "diffPixels": 170991,
+    "totalPixels": 715476,
+    "dimensions": {
+      "width": 1094,
+      "height": 654
+    },
+    "paths": {
+      "expected": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/DocumentThumbnail/expected.png",
+      "actual": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/DocumentThumbnail/actual.png",
+      "diff": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/DocumentThumbnail/diff.png"
+    },
+    "regionAnalysis": {
+      "summary": {
+        "matchPercentage": 80.1,
+        "totalDiffPixels": 142349,
+        "totalPixels": 715476,
+        "dimensions": {
+          "width": 1094,
+          "height": 654
+        },
+        "qualityLevel": {
+          "level": "poor",
+          "emoji": "⚠️",
+          "text": "一般"
+        },
+        "totalDifferenceRegions": 1
+      },
+      "regions": [
+        {
+          "id": "region_1",
+          "boundingBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1094,
+            "height": 654
+          },
+          "center": {
+            "x": 547,
+            "y": 327
+          },
+          "area": 715476,
+          "relativePosition": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "colorAnalysis": {
+            "averageColorDiff": 98.69225501527485,
+            "maxColorDiff": 441.6729559300637,
+            "minColorDiff": 55.42562584220407
+          },
+          "regionType": "large_area",
+          "severity": "major",
+          "semanticInfo": null
+        }
+      ],
+      "semanticAnalysis": {
+        "message": "No Figma data available for semantic analysis"
+      },
+      "recommendations": [
+        {
+          "priority": "high",
+          "type": "layout_fixes",
+          "description": "1 个大面积差异，可能是布局问题",
+          "regions": [
+            "region_1"
+          ]
+        }
+      ],
+      "timestamp": "2025-07-18T03:07:33.672Z"
+    },
+    "qualityLevel": {
+      "level": "failed",
+      "emoji": "💥",
+      "text": "失败",
+      "needsSelfReflective": true
+    }
+  },
+  "regionAnalysis": {
+    "summary": {
+      "matchPercentage": 80.1,
+      "totalDiffPixels": 142349,
+      "totalPixels": 715476,
+      "dimensions": {
+        "width": 1094,
+        "height": 654
+      },
+      "qualityLevel": {
+        "level": "poor",
+        "emoji": "⚠️",
+        "text": "一般"
+      },
+      "totalDifferenceRegions": 1
+    },
+    "regions": [
+      {
+        "id": "region_1",
+        "boundingBox": {
+          "x": 0,
+          "y": 0,
+          "width": 1094,
+          "height": 654
+        },
+        "center": {
+          "x": 547,
+          "y": 327
+        },
+        "area": 715476,
+        "relativePosition": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "colorAnalysis": {
+          "averageColorDiff": 98.69225501527485,
+          "maxColorDiff": 441.6729559300637,
+          "minColorDiff": 55.42562584220407
+        },
+        "regionType": "large_area",
+        "severity": "major",
+        "semanticInfo": null
+      }
+    ],
+    "semanticAnalysis": {
+      "message": "No Figma data available for semantic analysis"
+    },
+    "recommendations": [
+      {
+        "priority": "high",
+        "type": "layout_fixes",
+        "description": "1 个大面积差异，可能是布局问题",
+        "regions": [
+          "region_1"
+        ]
+      }
+    ],
+    "timestamp": "2025-07-18T03:07:33.672Z"
+  },
+  "summary": {
+    "status": {
+      "level": "failed",
+      "emoji": "💥",
+      "text": "失败",
+      "needsSelfReflective": true
+    },
+    "recommendation": "🔄 **触发Self-Reflective分析** - 还原度未达到98%标准，需要启动自动重新分析流程：\n1. 重新深度分析Figma JSON数据\n2. 验证素材完整性和位置精确性\n3. 执行针对性修复和迭代优化\n4. 目标：达到98%+还原度 重点关注：1 个大面积差异，可能是布局问题",
+    "nextSteps": [
+      "优先处理：1 个大面积差异，可能是布局问题",
+      "🔄 **立即启动Self-Reflective分析流程**",
+      "📊 重新获取和深度分析Figma JSON数据",
+      "🎨 验证所有素材完整性和正确性",
+      "📐 重新计算元素位置和布局精确性",
+      "🔧 执行针对性修复和优化",
+      "🎯 目标：达到98%+还原度"
+    ]
+  }
+}

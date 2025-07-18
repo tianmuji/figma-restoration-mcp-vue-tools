@@ -1,33 +1,48 @@
 <template>
-  <div class="document-thumbnail">
+  <div class="document-thumbnail" :class="{ selected: isSelected }" @click="handleClick">
     <!-- Preview Section -->
     <div class="preview-section">
       <!-- Background -->
       <div class="preview-background"></div>
-      
+
       <!-- Document Preview Image -->
       <div class="document-preview">
-        <img 
-          :src="documentPreviewUrl" 
-          alt="文档预览" 
+        <img
+          v-if="thumbnailUrl"
+          :src="thumbnailUrl"
+          alt="文档预览"
+          class="preview-image"
+        />
+        <img
+          v-else
+          :src="documentPreviewUrl"
+          alt="文档预览"
           class="preview-image"
         />
       </div>
-      
-      <!-- Sync Status (hidden by default) -->
-      <div class="sync-status hidden">
+
+      <!-- Sync Status (hidden by default, matches Figma opacity: 0) -->
+      <div class="sync-status" :class="{ visible: syncStatus === 'syncing' }">
         <div class="sync-circle">
           <div class="sync-dot"></div>
         </div>
       </div>
-      
+
       <!-- Document Type Badge -->
-      <div class="document-badge">
-        <div class="badge-background"></div>
+      <div class="document-badge" :class="`type-${documentType}`">
         <div class="badge-content">
-          <img 
-            :src="wordBadgeUrl" 
-            alt="Word文档" 
+          <!-- PDF Badge (using Figma SVG) -->
+          <img
+            v-if="documentType === 'pdf'"
+            :src="pdfBadgeUrl"
+            alt="PDF文档"
+            class="badge-icon"
+          />
+          <!-- Word Badge (fallback) -->
+          <img
+            v-else
+            :src="wordBadgeUrl"
+            alt="Word文档"
             class="badge-icon"
           />
         </div>
@@ -37,41 +52,41 @@
     <!-- Document Info Section -->
     <div class="document-info">
       <!-- Document Name -->
-      <div class="document-name">文档文档文档</div>
-      
+      <div class="document-name" :title="documentName">{{ documentName }}</div>
+
       <!-- Other Info -->
       <div class="other-info">
         <!-- Time and Page Info -->
         <div class="time-page-info">
           <!-- Date -->
-          <span class="date-text">2023-09-01  14:36</span>
-          
+          <span class="date-text">{{ formattedDate }}</span>
+
           <!-- Separator -->
           <div class="separator-line"></div>
-          
+
           <!-- Page Count -->
           <div class="page-count">
             <div class="page-icon">
-              <img 
-                :src="pageIcon1Url" 
-                alt="页面" 
+              <img
+                :src="pageIcon1Url"
+                alt="页面"
                 class="page-icon-1"
               />
-              <img 
-                :src="pageIcon2Url" 
-                alt="页面" 
+              <img
+                :src="pageIcon2Url"
+                alt="页面"
                 class="page-icon-2"
               />
             </div>
-            <span class="page-number">3</span>
+            <span class="page-number">{{ pageCount }}</span>
           </div>
-          
+
           <!-- Separator -->
           <div class="separator-line"></div>
-          
+
           <!-- Import Source -->
           <div class="import-source">
-            <span class="source-text">微信导入</span>
+            <span class="source-text">{{ sourceTag }}</span>
           </div>
         </div>
       </div>
@@ -79,17 +94,67 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'DocumentThumbnail',
-  data() {
-    return {
-      documentPreviewUrl: new URL('./images/document-preview.png', import.meta.url).href,
-      wordBadgeUrl: new URL('./images/word-badge.svg', import.meta.url).href,
-      pageIcon1Url: new URL('./images/page-icon-1.svg', import.meta.url).href,
-      pageIcon2Url: new URL('./images/page-icon-2.svg', import.meta.url).href
-    }
-  }
+<script setup lang="ts">
+import { computed } from 'vue'
+
+export type DocumentType = 'pdf' | 'doc' | 'ppt' | 'xls' | 'txt' | 'image'
+export type SyncStatus = 'none' | 'syncing' | 'synced' | 'error'
+
+export interface DocumentThumbnailProps {
+  documentName?: string
+  thumbnailUrl?: string
+  documentType?: DocumentType
+  pageCount?: number
+  createdDate?: string | Date
+  sourceTag?: string
+  syncStatus?: SyncStatus
+  isSelected?: boolean
+}
+
+interface Emits {
+  (e: 'click'): void
+  (e: 'select', selected: boolean): void
+}
+
+const props = withDefaults(defineProps<DocumentThumbnailProps>(), {
+  documentName: '第二个文档',
+  documentType: 'pdf',
+  pageCount: 3,
+  createdDate: '2023-09-01T14:36:00',
+  sourceTag: '微信导入',
+  syncStatus: 'none',
+  isSelected: false
+})
+
+const emit = defineEmits<Emits>()
+
+// Static asset URLs
+const documentPreviewUrl = new URL('./images/document-preview.png', import.meta.url).href
+const wordBadgeUrl = new URL('./images/word-badge.svg', import.meta.url).href
+const pdfBadgeUrl = new URL('./images/pdf-badge.svg', import.meta.url).href
+const pageIcon1Url = new URL('./images/page-icon-1.svg', import.meta.url).href
+const pageIcon2Url = new URL('./images/page-icon-2.svg', import.meta.url).href
+
+const formattedDate = computed(() => {
+  if (!props.createdDate) return ''
+
+  const date = typeof props.createdDate === 'string'
+    ? new Date(props.createdDate)
+    : props.createdDate
+
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).replace(/\//g, '-')
+})
+
+const handleClick = () => {
+  emit('click')
+  emit('select', !props.isSelected)
 }
 </script>
 
@@ -104,6 +169,18 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.document-thumbnail:hover {
+  border-color: #19BCAA;
+  box-shadow: 0 2px 8px rgba(25, 188, 170, 0.1);
+}
+
+.document-thumbnail.selected {
+  border-color: #19BCAA;
+  box-shadow: 0 0 0 2px rgba(25, 188, 170, 0.2);
 }
 
 /* Preview Section */
@@ -150,43 +227,65 @@ export default {
   right: 16px;
   width: 12px;
   height: 12px;
+  opacity: 0; /* Hidden by default, matches Figma */
 }
 
-.sync-status.hidden {
-  opacity: 0;
+.sync-status.visible {
+  opacity: 1;
 }
 
 .sync-circle {
   width: 11px;
   height: 11px;
   border: 2px solid;
-  border-image: conic-gradient(from 0deg, #19BCAA 0%, rgba(25, 188, 170, 0) 100%) 1;
+  border-color: #19BCAA transparent #19BCAA transparent;
   border-radius: 50%;
   position: relative;
+  animation: spin 1s linear infinite;
 }
 
 .sync-dot {
   position: absolute;
-  top: 9.5px;
-  left: 5px;
+  top: 4.5px;
+  right: -1px;
   width: 2px;
   height: 2px;
   background: #1AB6A5;
   border-radius: 50%;
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Document Badge */
 .document-badge {
   position: absolute;
   top: 12px;
-  right: 36px;
+  right: 12px; /* Matches Figma: x: 327, component width: 363, so right: 363-327-24 = 12px */
   width: 24px;
   height: 24px;
-  background: #3C81FF;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.document-badge.type-pdf {
+  background: #FE501E;
+}
+
+.document-badge.type-doc {
+  background: #3C81FF;
+}
+
+.document-badge.type-ppt {
+  background: #FF6B35;
+}
+
+.document-badge.type-xls {
+  background: #00B04F;
 }
 
 .badge-content {
