@@ -42,6 +42,7 @@
     "pngjs": "^7.0.0",
     "puppeteer": "^21.0.0",
     "sharp": "^0.34.3",
+    "svgo": "^4.0.0",
     "vue-router": "^4.5.1"
   },
   "bundledDependencies": [
@@ -64,7 +65,9 @@
     "ui-testing",
     "visual-regression",
     "shadow-detection",
-    "image-comparison"
+    "image-comparison",
+    "svg-optimization",
+    "svgo"
   ],
   "author": "Yujie Wu <yujie.wu@example.com>",
   "license": "MIT",

@@ -58,6 +58,7 @@ npx figma-restoration-mcp-vue-tools start
 ### 🛠️ MCP Tools
 - `snapdom_screenshot`: High-quality component screenshots
 - `figma_compare`: Advanced image comparison and analysis
+- `optimize_svg`: SVG optimization using SVGO with customizable configuration
 
 ## 📖 Documentation
 
@@ -83,11 +84,37 @@ npx figma-restoration-mcp-vue-tools start
 
 ```javascript
 {
-  "tool": "figma_compare", 
+  "tool": "figma_compare",
   "arguments": {
     "componentName": "MyComponent",
     "generateReport": true,
     "threshold": 0.1
+  }
+}
+```
+
+### SVG Optimization Tool
+
+```javascript
+{
+  "tool": "optimize_svg",
+  "arguments": {
+    "inputPath": "path/to/input.svg",
+    "outputPath": "path/to/optimized.svg",
+    "svgoConfig": {
+      "plugins": [
+        {
+          "name": "preset-default",
+          "params": {
+            "overrides": {
+              "convertShapeToPath": false
+            }
+          }
+        }
+      ],
+      "multipass": true,
+      "floatPrecision": 2
+    }
   }
 }
 ```

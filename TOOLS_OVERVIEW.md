@@ -2,7 +2,7 @@
 
 ## 🎯 Current Tool Configuration
 
-This project provides **2 core MCP tools** for Figma component restoration:
+This project provides **3 core MCP tools** for Figma component restoration:
 
 ### 1. `figma_compare` 🔍
 **Complete Figma component comparison and analysis solution**
@@ -48,6 +48,41 @@ This project provides **2 core MCP tools** for Figma component restoration:
       "embedFonts": true,
       "includeBoxShadow": true,
       "padding": 0
+    }
+  }
+}
+```
+
+### 3. `optimize_svg` 🎨
+**SVG optimization tool using SVGO with customizable configuration**
+
+**Features:**
+- 🗜️ File size reduction (typically 30-70% smaller)
+- 🎯 Quality preservation with visual accuracy
+- ⚙️ Customizable SVGO plugin configuration
+- 📁 Flexible output options (overwrite or new file)
+- 🛡️ Comprehensive error handling and validation
+
+**Usage:**
+```javascript
+{
+  "tool": "optimize_svg",
+  "arguments": {
+    "inputPath": "assets/icons/my-icon.svg",
+    "outputPath": "assets/icons/my-icon-optimized.svg",
+    "svgoConfig": {
+      "plugins": [
+        {
+          "name": "preset-default",
+          "params": {
+            "overrides": {
+              "convertShapeToPath": false
+            }
+          }
+        }
+      ],
+      "multipass": true,
+      "floatPrecision": 2
     }
   }
 }
@@ -126,4 +161,5 @@ This project provides **2 core MCP tools** for Figma component restoration:
 - `@zumer/snapdom`: High-quality DOM screenshots
 - `pixelmatch`: Image comparison
 - `sharp`: Image processing
+- `svgo`: SVG optimization
 - `@modelcontextprotocol/sdk`: MCP framework
