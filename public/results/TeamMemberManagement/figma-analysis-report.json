@@ -1,32 +1,32 @@
 {
-  "componentName": "QRCodeInvitationDialog",
-  "timestamp": "2025-07-18T03:34:32.748Z",
+  "componentName": "TeamMemberManagement",
+  "timestamp": "2025-07-18T06:38:10.102Z",
   "comparison": {
-    "matchPercentage": 92.1427381821709,
-    "diffPixels": 85864,
-    "totalPixels": 1092798,
+    "matchPercentage": 95.51765271765271,
+    "diffPixels": 116485,
+    "totalPixels": 2598750,
     "dimensions": {
-      "width": 1029,
-      "height": 1062
+      "width": 1125,
+      "height": 2310
     },
     "paths": {
-      "expected": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/QRCodeInvitationDialog/expected.png",
-      "actual": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/QRCodeInvitationDialog/actual.png",
-      "diff": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/QRCodeInvitationDialog/diff.png"
+      "expected": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/TeamMemberManagement/expected.png",
+      "actual": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/TeamMemberManagement/actual.png",
+      "diff": "/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/mcp-vue-tools/results/TeamMemberManagement/diff.png"
     },
     "regionAnalysis": {
       "summary": {
-        "matchPercentage": 94.55,
-        "totalDiffPixels": 59522,
-        "totalPixels": 1092798,
+        "matchPercentage": 96.7,
+        "totalDiffPixels": 85656,
+        "totalPixels": 2598750,
         "dimensions": {
-          "width": 1029,
-          "height": 1062
+          "width": 1125,
+          "height": 2310
         },
         "qualityLevel": {
-          "level": "fair",
-          "emoji": "👍",
-          "text": "良好"
+          "level": "good",
+          "emoji": "✅",
+          "text": "优秀"
         },
         "totalDifferenceRegions": 1
       },
@@ -36,21 +36,21 @@
           "boundingBox": {
             "x": 0,
             "y": 0,
-            "width": 1029,
-            "height": 1062
+            "width": 1125,
+            "height": 2310
           },
           "center": {
-            "x": 514,
-            "y": 531
+            "x": 562,
+            "y": 1155
           },
-          "area": 1092798,
+          "area": 2598750,
           "relativePosition": {
-            "x": 0.49951409135082603,
+            "x": 0.49955555555555553,
             "y": 0.5
           },
           "colorAnalysis": {
-            "averageColorDiff": 75.08440250811084,
-            "maxColorDiff": 441.6729559300637,
+            "averageColorDiff": 0,
+            "maxColorDiff": 0,
             "minColorDiff": 0
           },
           "regionType": "large_area",
@@ -71,28 +71,28 @@
           ]
         }
       ],
-      "timestamp": "2025-07-18T03:34:32.747Z"
+      "timestamp": "2025-07-18T06:38:10.101Z"
     },
     "qualityLevel": {
-      "level": "good",
-      "emoji": "✅",
-      "text": "良好",
+      "level": "excellent",
+      "emoji": "✨",
+      "text": "优秀",
       "needsSelfReflective": true
     }
   },
   "regionAnalysis": {
     "summary": {
-      "matchPercentage": 94.55,
-      "totalDiffPixels": 59522,
-      "totalPixels": 1092798,
+      "matchPercentage": 96.7,
+      "totalDiffPixels": 85656,
+      "totalPixels": 2598750,
       "dimensions": {
-        "width": 1029,
-        "height": 1062
+        "width": 1125,
+        "height": 2310
       },
       "qualityLevel": {
-        "level": "fair",
-        "emoji": "👍",
-        "text": "良好"
+        "level": "good",
+        "emoji": "✅",
+        "text": "优秀"
       },
       "totalDifferenceRegions": 1
     },
@@ -102,21 +102,21 @@
         "boundingBox": {
           "x": 0,
           "y": 0,
-          "width": 1029,
-          "height": 1062
+          "width": 1125,
+          "height": 2310
         },
         "center": {
-          "x": 514,
-          "y": 531
+          "x": 562,
+          "y": 1155
         },
-        "area": 1092798,
+        "area": 2598750,
         "relativePosition": {
-          "x": 0.49951409135082603,
+          "x": 0.49955555555555553,
           "y": 0.5
         },
         "colorAnalysis": {
-          "averageColorDiff": 75.08440250811084,
-          "maxColorDiff": 441.6729559300637,
+          "averageColorDiff": 0,
+          "maxColorDiff": 0,
           "minColorDiff": 0
         },
         "regionType": "large_area",
@@ -137,13 +137,13 @@
         ]
       }
     ],
-    "timestamp": "2025-07-18T03:34:32.747Z"
+    "timestamp": "2025-07-18T06:38:10.101Z"
   },
   "summary": {
     "status": {
-      "level": "good",
-      "emoji": "✅",
-      "text": "良好",
+      "level": "excellent",
+      "emoji": "✨",
+      "text": "优秀",
       "needsSelfReflective": true
     },
     "recommendation": "🔄 **触发Self-Reflective分析** - 还原度未达到98%标准，需要启动自动重新分析流程：\n1. 重新深度分析Figma JSON数据\n2. 验证素材完整性和位置精确性\n3. 执行针对性修复和迭代优化\n4. 目标：达到98%+还原度 重点关注：1 个大面积差异，可能是布局问题",

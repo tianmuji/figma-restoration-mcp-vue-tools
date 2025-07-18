@@ -1,0 +1,126 @@
+{
+  "componentName": "QRCodeInvitationDialog",
+  "timestamp": "2025-07-18T03:34:32.748Z",
+  "metadata": {
+    "figmaUrl": "https://www.figma.com/design/Mbz0mgLIVbz46bxPwBFnSl/CS%E4%BC%81%E4%B8%9A%E7%89%88?node-id=5088-62383&m=dev",
+    "nodeId": "5088-62383",
+    "fileKey": "Mbz0mgLIVbz46bxPwBFnSl",
+    "description": "二维码/链接邀请对话框，包含QR码显示、URL复制、保存和分享功能",
+    "createdBy": "AI Assistant",
+    "dimensions": {
+      "width": 343,
+      "height": 354
+    }
+  },
+  "summary": {
+    "componentCreated": true,
+    "componentRendered": true,
+    "screenshotTaken": true,
+    "comparisonAvailable": true,
+    "pixelMatch": 1011889,
+    "matchPercentage": 92.14,
+    "diffPixels": 85864,
+    "totalPixels": 1092798,
+    "qualityLevel": {
+      "level": "good",
+      "emoji": "✅",
+      "text": "良好"
+    },
+    "files": {
+      "component": "/src/components/QRCodeInvitationDialog/index.vue",
+      "example": "/src/components/QRCodeInvitationDialog/example.vue",
+      "screenshot": "/results/QRCodeInvitationDialog/actual.png",
+      "expected": "/results/QRCodeInvitationDialog/expected.png",
+      "diff": "/results/QRCodeInvitationDialog/diff.png",
+      "assets": [
+        "/src/components/QRCodeInvitationDialog/images/qr-code.png"
+      ]
+    }
+  },
+  "comparison": {
+    "matchPercentage": 92.1427381821709,
+    "diffPixels": 85864,
+    "totalPixels": 1092798,
+    "dimensions": {
+      "width": 1029,
+      "height": 1062
+    },
+    "regionAnalysis": {
+      "totalDifferenceRegions": 1,
+      "summary": {
+        "matchPercentage": 94.55,
+        "qualityLevel": {
+          "level": "fair",
+          "emoji": "👍",
+          "text": "良好"
+        }
+      },
+      "recommendations": [
+        {
+          "priority": "high",
+          "type": "layout_fixes",
+          "description": "1 个大面积差异，可能是布局问题"
+        }
+      ]
+    }
+  },
+  "features": {
+    "interactive": [
+      "URL复制功能",
+      "QR码保存",
+      "分享功能",
+      "Web Share API支持"
+    ],
+    "styling": [
+      "精确的Figma颜色匹配",
+      "PingFang SC字体",
+      "准确的行高和字间距",
+      "8px圆角边框"
+    ],
+    "assets": [
+      "QR码图片 (140×140px)",
+      "从Figma直接下载的资源"
+    ]
+  },
+  "technical": {
+    "framework": "Vue 3",
+    "typescript": true,
+    "props": {
+      "qrCodeUrl": "string (optional)",
+      "inviteUrl": "string (default: https://tburl.in/OEwyPCvY)",
+      "title": "string (default: 二维码/链接邀请)",
+      "description": "string"
+    },
+    "events": [
+      "copy-url",
+      "save-qr-code", 
+      "share-qr-code"
+    ],
+    "dependencies": [
+      "Vue 3 Composition API",
+      "TypeScript",
+      "Web APIs (Clipboard, Share)"
+    ]
+  },
+  "testing": {
+    "screenshotMethod": "snapDOM",
+    "screenshotOptions": {
+      "scale": 3,
+      "backgroundColor": "transparent",
+      "embedFonts": true,
+      "compress": true
+    },
+    "comparisonThreshold": 0.05,
+    "testUrl": "http://localhost:84/component/QRCodeInvitationDialog"
+  },
+  "status": {
+    "completed": true,
+    "accuracy": "92.14%",
+    "needsImprovement": true,
+    "nextSteps": [
+      "优化布局精确性",
+      "调整元素定位",
+      "提升到98%+准确度"
+    ]
+  }
+}

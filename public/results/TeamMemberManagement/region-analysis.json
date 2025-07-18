@@ -1,16 +1,16 @@
 {
   "summary": {
-    "matchPercentage": 94.55,
-    "totalDiffPixels": 59522,
-    "totalPixels": 1092798,
+    "matchPercentage": 96.7,
+    "totalDiffPixels": 85656,
+    "totalPixels": 2598750,
     "dimensions": {
-      "width": 1029,
-      "height": 1062
+      "width": 1125,
+      "height": 2310
     },
     "qualityLevel": {
-      "level": "fair",
-      "emoji": "👍",
-      "text": "良好"
+      "level": "good",
+      "emoji": "✅",
+      "text": "优秀"
     },
     "totalDifferenceRegions": 1
   },
@@ -20,21 +20,21 @@
       "boundingBox": {
         "x": 0,
         "y": 0,
-        "width": 1029,
-        "height": 1062
+        "width": 1125,
+        "height": 2310
       },
       "center": {
-        "x": 514,
-        "y": 531
+        "x": 562,
+        "y": 1155
       },
-      "area": 1092798,
+      "area": 2598750,
       "relativePosition": {
-        "x": 0.49951409135082603,
+        "x": 0.49955555555555553,
         "y": 0.5
       },
       "colorAnalysis": {
-        "averageColorDiff": 75.08440250811084,
-        "maxColorDiff": 441.6729559300637,
+        "averageColorDiff": 0,
+        "maxColorDiff": 0,
         "minColorDiff": 0
       },
       "regionType": "large_area",
@@ -55,5 +55,5 @@
       ]
     }
   ],
-  "timestamp": "2025-07-18T03:34:32.747Z"
+  "timestamp": "2025-07-18T06:38:10.101Z"
 }

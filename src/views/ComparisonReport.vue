@@ -184,14 +184,22 @@ export default {
   methods: {
     async loadReportData() {
       try {
-        // 尝试从results目录加载报告数据
-        const response = await fetch(`/results/${this.componentName}/figma-analysis-report.json`)
+        // 首先尝试从public/results目录加载报告数据
+        let response = await fetch(`/results/${this.componentName}/figma-analysis-report.json`)
         if (response.ok) {
           this.reportData = await response.json()
-        } else {
-          // 如果文件不存在，使用本地报告数据
-          this.reportData = await this.loadLocalReport()
+          return
         }
+
+        // 如果public/results不存在，尝试从mcp-vue-tools/results目录加载
+        response = await fetch(`/mcp-vue-tools/results/${this.componentName}/figma-analysis-report.json`)
+        if (response.ok) {
+          this.reportData = await response.json()
+          return
+        }
+
+        // 如果两个路径都不存在，使用本地报告数据
+        this.reportData = await this.loadLocalReport()
       } catch (error) {
         console.error('Failed to load report data:', error)
         // 如果加载失败，使用本地报告数据
@@ -243,9 +251,9 @@ export default {
           matchPercentage: 95.74,
           files: {
             component: `/mcp-vue-tools/src/components/${this.componentName}/index.vue`,
-            screenshot: `/mcp-vue-tools/results/${this.componentName}/actual.png`,
-            expected: `/mcp-vue-tools/results/${this.componentName}/expected.png`,
-            diff: `/mcp-vue-tools/results/${this.componentName}/diff.png`
+            screenshot: this.actualImage || `/results/${this.componentName}/actual.png`,
+            expected: this.expectedImage || `/results/${this.componentName}/expected.png`,
+            diff: this.diffImage || `/results/${this.componentName}/diff.png`
           },
           urls: {
             test: `http://localhost:83/component/${this.componentName}`,
@@ -344,8 +352,17 @@ export default {
     },
     async loadImages() {
       try {
-        // 使用public目录中的符号链接直接访问图像
-        const basePath = `/results/${this.componentName}`
+        // 首先尝试从public/results目录加载图像
+        let basePath = `/results/${this.componentName}`
+
+        // 检查第一个路径是否有图像
+        let expectedExists = await this.checkImageExists(`${basePath}/expected.png`)
+
+        if (!expectedExists) {
+          // 如果public/results不存在，尝试mcp-vue-tools/results路径
+          basePath = `/mcp-vue-tools/results/${this.componentName}`
+          expectedExists = await this.checkImageExists(`${basePath}/expected.png`)
+        }
 
         // 设置图像URL
         this.expectedImage = `${basePath}/expected.png`
@@ -358,6 +375,15 @@ export default {
         await this.validateImageExists('diff', this.diffImage)
       } catch (error) {
         console.error('Failed to load images:', error)
+      }
+    },
+
+    async checkImageExists(url) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' })
+        return response.ok
+      } catch (error) {
+        return false
       }
     },
 
