@@ -27,7 +27,7 @@
 ## 📁 目录结构
 
 ```
-mcp-vue-tools/
+figma-restoration-mcp-vue-tools/
 ├── figma-restoration-toolkit.mjs         # 🎯 核心工具包 (一站式解决方案)
 ├── compare-pixelmatch-enhanced.mjs       # 🔍 增强版像素对比工具
 ├── compile-and-render.mjs                # 🖼️ Vue组件编译渲染工具
@@ -45,7 +45,7 @@ mcp-vue-tools/
 ### 安装依赖
 
 ```bash
-cd mcp-vue-tools
+cd figma-restoration-mcp-vue-tools
 yarn install  # 或 npm install
 ```
 
@@ -71,7 +71,7 @@ Add to your MCP client configuration:
   "mcpServers": {
     "vue-figma-tools": {
       "command": "node",
-      "args": ["path/to/mcp-vue-tools/src/server.js"],
+      "args": ["path/to/figma-restoration-mcp-vue-tools/src/server.js"],
       "env": {
         "CHROME_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
       }

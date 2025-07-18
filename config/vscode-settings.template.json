@@ -4,7 +4,7 @@
       "figma-restoration-kit": {
         "command": "node",
         "args": ["src/server.js"],
-        "cwd": "{{PROJECT_ROOT}}/mcp-vue-tools",
+        "cwd": "{{PROJECT_ROOT}}/figma-restoration-mcp-vue-tools",
         "env": {
           "PUPPETEER_EXECUTABLE_PATH": "{{CHROME_PATH}}",
           "NODE_ENV": "development",

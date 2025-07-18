@@ -16,14 +16,42 @@ await getFigmaData({
 });
 ```
 
-### 2. Generate Vue Component
+### 2. Download and Optimize Assets
+Download images and SVG assets, then optimize them:
+```javascript
+// Download Figma images/SVGs
+await downloadFigmaImages({
+  fileKey: "figma-file-key",
+  nodes: [
+    {
+      nodeId: "1234:5678",
+      fileName: "icon.svg"
+    }
+  ],
+  localPath: "/path/to/assets"
+});
+
+// Optimize SVG files after download
+await optimizeSvg({
+  inputPath: "/path/to/assets/icon.svg",
+  outputPath: "/path/to/assets/icon-optimized.svg",
+  svgoConfig: {
+    plugins: ["preset-default"],
+    multipass: true,
+    floatPrecision: 2
+  }
+});
+```
+
+### 3. Generate Vue Component
 Convert Figma JSON to Vue component:
 - Analyze the Figma JSON structure
 - Identify layout patterns and components
 - Generate semantic Vue component code
 - Use proper CSS for positioning and styling
+- Reference optimized SVG assets
 
-### 3. Test and Validate
+### 4. Test and Validate
 Use the restoration validation workflow:
 ```javascript
 await validateRestoration({
@@ -55,7 +83,7 @@ await validateRestoration({
 ## Testing Requirements
 
 ### Component Testing
-- Generate components in `mcp-vue-tools/output/`
+- Generate components in `figma-restoration-mcp-vue-tools/output/`
 - Take screenshots for comparison
 - Achieve 99%+ visual accuracy
 - Test responsive behavior
@@ -70,30 +98,29 @@ await validateRestoration({
 ## File Organization
 
 ### Component Output
-- Generated components: `mcp-vue-tools/output/[ComponentName]/`
-- Screenshots: `mcp-vue-tools/results/[ComponentName]/`
-- Assets: `mcp-vue-tools/assets/`
+- Generated components: `figma-restoration-mcp-vue-tools/output/[ComponentName]/`
+- Screenshots: `figma-restoration-mcp-vue-tools/results/[ComponentName]/`
+- Assets: `figma-restoration-mcp-vue-tools/assets/`
 
 ### Documentation
-- Process documentation: `mcp-vue-tools/docs/`
-- Examples: `mcp-vue-tools/examples/`
-- Configuration: `mcp-vue-tools/config/`
+- Process documentation: `figma-restoration-mcp-vue-tools/docs/`
+- Examples: `figma-restoration-mcp-vue-tools/examples/`
+- Configuration: `figma-restoration-mcp-vue-tools/config/`
 
 ## MCP Tools Available
 
-1. **vue_dev_server** - Manage Vue development server
-2. **save_vue_component** - Save AI-generated components
-3. **render_component** - Render components in browser
-4. **take_screenshot** - Capture component screenshots
-5. **compare_images** - Compare actual vs expected images
-6. **manage_benchmark** - Manage testing workflow
-7. **validate_restoration** - Complete validation workflow
+1. **get_figma_data** - Extract Figma design data
+2. **download_figma_images** - Download Figma images and SVGs
+3. **optimize_svg** - Optimize SVG files using SVGO
+4. **snapdom_screenshot** - Take high-quality component screenshots
+5. **figma_compare** - Compare components with Figma designs
 
 ## Best Practices
 
 ### Design Analysis
 - Analyze Figma JSON coordinate data (x, y, width, height)
 - Identify image assets and SVG icons
+- Download and optimize all SVG assets before use
 - Structure components hierarchically
 - Consider responsive breakpoints
 

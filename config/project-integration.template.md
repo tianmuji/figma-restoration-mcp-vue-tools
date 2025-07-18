@@ -8,8 +8,8 @@ This template helps you integrate the Figma Restoration Kit into your existing p
 
 ```bash
 # In your project root
-git submodule add https://github.com/your-org/figma-restoration-kit.git mcp-vue-tools
-cd mcp-vue-tools
+git submodule add https://github.com/your-org/figma-restoration-kit.git figma-restoration-mcp-vue-tools
+cd figma-restoration-mcp-vue-tools
 yarn install
 ./scripts/install.sh
 ```
@@ -23,9 +23,9 @@ Add these scripts to your main project's package.json:
 ```json
 {
   "scripts": {
-    "figma:start": "cd mcp-vue-tools && yarn mcp",
-    "figma:test": "cd mcp-vue-tools && yarn test",
-    "figma:clean": "cd mcp-vue-tools && yarn clean"
+    "figma:start": "cd figma-restoration-mcp-vue-tools && yarn mcp",
+    "figma:test": "cd figma-restoration-mcp-vue-tools && yarn test",
+    "figma:clean": "cd figma-restoration-mcp-vue-tools && yarn clean"
   }
 }
 ```
@@ -206,7 +206,7 @@ jobs:
 
 ```bash
 # Update the kit
-cd mcp-vue-tools
+cd figma-restoration-mcp-vue-tools
 git pull origin main
 yarn install
 ```
@@ -218,7 +218,7 @@ yarn install
 yarn figma:clean
 
 # Reset to clean state
-cd mcp-vue-tools
+cd figma-restoration-mcp-vue-tools
 git clean -fd
 yarn install
 ```

@@ -20,9 +20,9 @@ export default defineConfig({
         // 首先尝试public/results目录
         let filePath = path.join(__dirname, 'public/results', req.url)
 
-        // 如果public/results不存在，尝试mcp-vue-tools/results
+        // 如果public/results不存在，尝试figma-restoration-mcp-vue-tools/results
         if (!fs.existsSync(filePath)) {
-          filePath = path.join(__dirname, 'mcp-vue-tools/results', req.url)
+          filePath = path.join(__dirname, 'figma-restoration-mcp-vue-tools/results', req.url)
         }
 
         // 检查文件是否存在
@@ -51,9 +51,9 @@ export default defineConfig({
         res.end('File not found')
       })
 
-      // 添加中间件来提供mcp-vue-tools目录的访问
-      server.middlewares.use('/mcp-vue-tools', (req, res, next) => {
-        const filePath = path.join(__dirname, 'mcp-vue-tools', req.url)
+      // 添加中间件来提供figma-restoration-mcp-vue-tools目录的访问
+      server.middlewares.use('/figma-restoration-mcp-vue-tools', (req, res, next) => {
+        const filePath = path.join(__dirname, 'figma-restoration-mcp-vue-tools', req.url)
 
         // 检查文件是否存在
         if (fs.existsSync(filePath)) {

@@ -102,7 +102,7 @@
 
 #### 文件结构
 ```
-mcp-vue-tools/
+figma-restoration-mcp-vue-tools/
 ├── src/components/BeeSchoolCard/
 │   ├── index.vue          # Vue组件文件
 │   └── metadata.json      # 组件元数据

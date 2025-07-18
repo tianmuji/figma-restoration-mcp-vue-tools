@@ -11,7 +11,7 @@ type: "always_apply"
 - ❌ **错误做法**: 放在其他目录如src/figma-restoration-kit/
 - ✅ **正确结构**:
 ```
-mcp-vue-tools/src/components/ComponentName/
+figma-restoration-mcp-vue-tools/src/components/ComponentName/
 ├── index.vue
 ├── metadata.json
 └── images/              ⭐ 同目录下的images文件夹
@@ -94,10 +94,37 @@ const iconUrl = '/images/icon_scan.svg'
 }
 ```
 
-### 3. 下载命名策略
-- 根据元素name字段确定用途
-- 添加合适的类型前缀
-- 确保文件名具有描述性
+### 3. 下载和优化流程
+```
+1. 下载素材到images目录
+   - 根据元素name字段确定用途
+   - 添加合适的类型前缀
+   - 确保文件名具有描述性
+
+2. ⭐ SVG优化处理 (必须执行)
+   - 使用optimize_svg工具优化所有SVG文件
+   - 减少文件大小，提升加载性能
+   - 清理无用代码和元数据
+
+3. 验证素材完整性
+   - 确认所有素材下载成功
+   - 检查优化后的SVG文件质量
+   - 验证文件路径和命名规范
+```
+
+### 4. SVG优化示例
+```javascript
+// 下载SVG后立即优化
+await optimizeSvg({
+  inputPath: "./images/icon_scan.svg",
+  outputPath: "./images/icon_scan.svg", // 覆盖原文件
+  svgoConfig: {
+    plugins: ["preset-default"],
+    multipass: true,
+    floatPrecision: 2
+  }
+});
+```
 
 ## 📝 文案完整性检查
 
@@ -138,6 +165,7 @@ const iconUrl = '/images/icon_scan.svg'
 - [ ] 素材下载到正确的images目录
 - [ ] 文件名包含类型标识
 - [ ] 所有素材下载成功无遗漏
+- [ ] ⭐ 所有SVG文件已使用optimize_svg工具优化
 
 ### 组件开发时  
 - [ ] 使用new URL形式导入图片
@@ -152,7 +180,7 @@ const iconUrl = '/images/icon_scan.svg'
 ## ⚠️ 常见错误避免
 
 ### 1. 素材管理错误
-- ❌ 放在错误目录 (如src/figma-restoration-kit/)
+- ❌ 放在错误目录 (如src/figma-restoration-mcp-vue-tools/)
 - ❌ 文件名无类型标识 (如scan.svg而非icon_scan.svg)
 - ❌ 使用错误的导入方式
 

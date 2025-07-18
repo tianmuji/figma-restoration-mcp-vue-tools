@@ -25,7 +25,7 @@ export function getMCPToolsPath(customPath = null) {
   const mcpToolsPath = path.resolve(__dirname, '../../');
   
   // 备用路径（如果推导失败）
-  const fallbackPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3/mcp-vue-tools';
+  const fallbackPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3/figma-restoration-mcp-vue-tools';
   
   return mcpToolsPath || fallbackPath;
 }
