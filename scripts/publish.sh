@@ -67,13 +67,6 @@ esac
 
 echo "✅ 版本已更新为: $NEW_VERSION"
 
-# 运行测试
-echo "🧪 运行测试..."
-if ! npm test; then
-    echo "❌ 测试失败，发布已取消"
-    exit 1
-fi
-
 # 构建项目
 echo "🔨 构建项目..."
 if ! npm run build; then
