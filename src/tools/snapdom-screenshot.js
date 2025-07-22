@@ -26,6 +26,10 @@ export class SnapDOMScreenshotTool {
           default: '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
           description: 'Path to the Vue project'
         },
+        outputPath: {
+          type: 'string',
+          description: 'Custom absolute path where screenshot should be saved. If not provided, defaults to component directory'
+        },
         port: {
           type: 'number',
           default: 83,
@@ -41,21 +45,17 @@ export class SnapDOMScreenshotTool {
         },
         snapDOMOptions: {
           type: 'object',
+          description: 'snapDOM capture options for high-quality screenshots with box-shadow support',
           properties: {
             scale: { type: 'number', default: 3 },
             compress: { type: 'boolean', default: true },
             fast: { type: 'boolean', default: false },
             embedFonts: { type: 'boolean', default: true },
             backgroundColor: { type: 'string', default: 'transparent' },
+            padding: { type: 'number', default: 0, description: 'Padding around element to capture shadows and effects' },
             width: { type: 'number', description: 'Fixed width for output' },
-            height: { type: 'number', description: 'Fixed height for output' },
-            padding: { type: 'number', default: 0, description: 'Padding around element to capture shadows and effects' }
-          },
-          description: 'snapDOM capture options for high-quality screenshots with box-shadow support'
-        },
-        outputPath: {
-          type: 'string',
-          description: 'Custom output path for screenshot (optional)'
+            height: { type: 'number', description: 'Fixed height for output' }
+          }
         },
         selector: {
           type: 'string',
@@ -74,6 +74,7 @@ export class SnapDOMScreenshotTool {
     const {
       componentName,
       projectPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
+      outputPath, // 新增：自定义输出路径
       port = 83,
       viewport = { width: 1440, height: 800 },
       snapDOMOptions = {
@@ -84,7 +85,6 @@ export class SnapDOMScreenshotTool {
         backgroundColor: 'transparent',
         padding: 0
       },
-      outputPath,
       selector,
       figmaEffects // Optional Figma effects data for smart padding calculation
     } = args;
@@ -94,7 +94,9 @@ export class SnapDOMScreenshotTool {
       console.log(chalk.cyan(`Component: ${componentName}`));
       console.log(chalk.gray('='.repeat(50)));
 
-      const resultsDir = path.join(projectPath, 'mcp-vue-tools', 'results', componentName);
+      // 优先使用自定义路径，否则使用组件目录
+      const resultsDir = outputPath || path.join(projectPath, 'src', 'components', componentName);
+      console.log(chalk.blue(`📁 Output directory: ${resultsDir}`));
       await ensureDirectory(resultsDir);
 
       // Ensure Vue dev server is running
@@ -117,7 +119,6 @@ export class SnapDOMScreenshotTool {
         viewport,
         snapDOMOptions: enhancedSnapDOMOptions,
         resultsDir,
-        outputPath,
         selector
       });
 
@@ -131,7 +132,9 @@ export class SnapDOMScreenshotTool {
           method: 'snapDOM',
           quality: 'high',
           outputPath: screenshotResult.path,
-          features: screenshotResult.features
+          features: screenshotResult.features,
+          storagePath: resultsDir, // 返回实际使用的存储路径
+          customPath: !!outputPath // 标识是否使用了自定义路径
         }
       };
 
@@ -219,7 +222,7 @@ export class SnapDOMScreenshotTool {
     return maxPadding > 0 ? Math.ceil(maxPadding) + 5 : 0; // Add 5px buffer and round up
   }
 
-  async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, outputPath, selector }) {
+  async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, selector }) {
     const browser = await puppeteerManager.launchBrowser();
 
     try {
@@ -265,7 +268,7 @@ export class SnapDOMScreenshotTool {
 
       // Use snapDOM for screenshot
       console.log(chalk.blue('📸 Using snapDOM for high-quality screenshot...'));
-      const screenshotPath = outputPath || path.join(resultsDir, 'actual.png');
+      const screenshotPath = path.join(resultsDir, 'actual.png'); // 直接使用resultsDir
       
       const element = await page.$(targetSelector);
       if (!element) {

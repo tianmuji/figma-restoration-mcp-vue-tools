@@ -44,12 +44,21 @@ export function getComponentPath(componentName, customPath = null) {
 /**
  * 获取结果目录路径
  * @param {string} componentName - 组件名称
- * @param {string} customPath - 自定义MCP工具路径（可选）
- * @returns {string} 结果目录的绝对路径
+ * @param {string} customPath - 自定义项目路径（可选）
+ * @returns {string} 结果目录的绝对路径（现在指向组件目录）
  */
 export function getResultsPath(componentName, customPath = null) {
+  // 修改：现在返回组件目录，而不是单独的results目录
+  if (customPath) {
+    // 如果指定了自定义项目路径，则使用该项目的组件目录
+    return path.join(customPath, 'src', 'components', componentName);
+  }
+  
+  // 默认使用当前项目的组件目录
+  // 假设当前工具在项目的子目录中，需要找到主项目的组件目录
   const mcpToolsPath = getMCPToolsPath(customPath);
-  return path.join(mcpToolsPath, 'results', componentName);
+  const projectRoot = path.resolve(mcpToolsPath, '..');
+  return path.join(projectRoot, 'src', 'components', componentName);
 }
 
 /**
@@ -87,34 +96,34 @@ export function getComponentImagesPath(componentName, customPath = null) {
 /**
  * 获取组件的预期图片路径（Figma原图）
  * @param {string} componentName - 组件名称
- * @param {string} customPath - 自定义MCP工具路径（可选）
+ * @param {string} customPath - 自定义项目路径（可选）
  * @returns {string} 预期图片的绝对路径
  */
 export function getComponentExpectedImagePath(componentName, customPath = null) {
-  const imagesPath = getComponentImagesPath(componentName, customPath);
-  return path.join(imagesPath, 'expected.png');
+  const componentPath = getResultsPath(componentName, customPath);
+  return path.join(componentPath, 'expected.png');
 }
 
 /**
  * 获取组件的实际截图路径
  * @param {string} componentName - 组件名称
- * @param {string} customPath - 自定义MCP工具路径（可选）
+ * @param {string} customPath - 自定义项目路径（可选）
  * @returns {string} 实际截图的绝对路径
  */
 export function getComponentActualImagePath(componentName, customPath = null) {
-  const resultsPath = getResultsPath(componentName, customPath);
-  return path.join(resultsPath, 'actual.png');
+  const componentPath = getResultsPath(componentName, customPath);
+  return path.join(componentPath, 'actual.png');
 }
 
 /**
  * 获取组件的差异图片路径
  * @param {string} componentName - 组件名称
- * @param {string} customPath - 自定义MCP工具路径（可选）
+ * @param {string} customPath - 自定义项目路径（可选）
  * @returns {string} 差异图片的绝对路径
  */
 export function getComponentDiffImagePath(componentName, customPath = null) {
-  const resultsPath = getResultsPath(componentName, customPath);
-  return path.join(resultsPath, 'diff.png');
+  const componentPath = getResultsPath(componentName, customPath);
+  return path.join(componentPath, 'diff.png');
 }
 
 /**

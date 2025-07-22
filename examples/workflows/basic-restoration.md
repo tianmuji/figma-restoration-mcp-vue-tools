@@ -1,279 +1,141 @@
-# Basic Figma Restoration Workflow Example
+# Figma组件还原基础工作流程
 
-This example demonstrates the complete workflow for restoring a Figma design to a Vue component.
+## 🎯 概述
+本文档介绍如何使用MCP工具进行Figma组件的像素级还原对比分析。
 
-## Prerequisites
+## 📋 工作流程
 
-1. Figma Restoration Kit installed and configured
-2. MCP server running (`yarn mcp`)
-3. IDE configured with MCP tools
-4. Figma design URL or exported image
+### 1. 准备工作
+确保您有：
+- Figma设计稿的PNG导出（推荐3x分辨率）
+- 已实现的Vue组件
+- 运行的Vue开发服务器
 
-## Step-by-Step Example
+### 2. 使用默认路径（组件目录）
 
-### 1. Extract Figma Design Data
-
+#### 步骤一：截图
 ```javascript
-// In your IDE with MCP enabled
-const figmaData = await getFigmaData({
-  fileKey: "ABC123DEF456",  // From Figma URL
-  nodeId: "1:234"           // Optional: specific component
-});
-```
-
-### 2. Analyze the Design
-
-The AI will analyze the Figma JSON to identify:
-- Layout structure (flexbox, grid, absolute positioning)
-- Text content and styling
-- Images and icons to download
-- Component hierarchy
-
-### 3. Generate Vue Component
-
-Based on the analysis, generate a Vue component:
-
-```vue
-<template>
-  <div class="card-component">
-    <div class="card-header">
-      <h2 class="card-title">{{ title }}</h2>
-      <el-button type="primary" size="small">
-        Action
-      </el-button>
-    </div>
-    <div class="card-content">
-      <p class="card-description">{{ description }}</p>
-      <div class="card-stats">
-        <div class="stat-item">
-          <span class="stat-value">{{ stats.views }}</span>
-          <span class="stat-label">Views</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">{{ stats.likes }}</span>
-          <span class="stat-label">Likes</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref } from 'vue'
-import { ElButton } from 'element-plus'
-
-const title = ref('Sample Card')
-const description = ref('This is a sample card component restored from Figma design.')
-const stats = ref({
-  views: '1.2k',
-  likes: '89'
-})
-</script>
-
-<style scoped>
-.card-component {
-  width: 320px;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.card-title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.card-description {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #666666;
-}
-
-.card-stats {
-  display: flex;
-  gap: 24px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #999999;
-  margin-top: 4px;
-}
-</style>
-```
-
-### 4. Save and Test Component
-
-```javascript
-// Save the component for testing
-await save_vue_component({
-  componentName: "CardComponent",
-  vueCode: generatedVueCode,
-  metadata: {
-    figmaUrl: "https://www.figma.com/file/ABC123DEF456/Design-File",
-    description: "Sample card component",
-    createdBy: "AI Assistant"
+{
+  "tool": "snapdom_screenshot",
+  "arguments": {
+    "componentName": "MyButton",
+    "snapDOMOptions": {
+      "scale": 3,
+      "compress": true,
+      "embedFonts": true
+    }
   }
-});
+}
 ```
 
-### 5. Render and Screenshot
-
+#### 步骤二：对比分析
 ```javascript
-// Start development server
-await vue_dev_server({ action: "start" });
-
-// Render component
-await render_component({
-  componentName: "CardComponent",
-  timeout: 15000
-});
-
-// Take screenshot
-await take_screenshot({
-  componentName: "CardComponent",
-  screenshotOptions: {
-    deviceScaleFactor: 3,
-    omitBackground: true
+{
+  "tool": "figma_compare",
+  "arguments": {
+    "componentName": "MyButton",
+    "threshold": 0.1,
+    "generateReport": true
   }
-});
+}
 ```
 
-### 6. Compare with Original Design
+**结果存储位置**：`src/components/MyButton/`
 
+### 3. 🆕 使用自定义路径（更灵活）
+
+#### 步骤一：截图到自定义位置
 ```javascript
-// Compare with Figma design
-await compare_images({
-  componentName: "CardComponent",
-  expectedPath: "assets/card-design.png",
-  threshold: 0.1  // 90% accuracy target
-});
-```
-
-### 7. Complete Validation
-
-```javascript
-// Run complete validation workflow
-await validate_restoration({
-  componentName: "CardComponent",
-  vueCode: generatedVueCode,
-  expectedImageUrl: "https://figma-image-url.png",
-  validationOptions: {
-    comparisonThreshold: 0.1,
-    viewport: { width: 1200, height: 800 },
-    screenshotOptions: { deviceScaleFactor: 3 }
+{
+  "tool": "snapdom_screenshot",
+  "arguments": {
+    "componentName": "MyButton",
+    "outputPath": "/Users/username/project/figma-analysis/MyButton-v1.0",
+    "snapDOMOptions": {
+      "scale": 3,
+      "compress": true,
+      "embedFonts": true
+    }
   }
-});
-```
-
-## Expected Results
-
-After running the validation, you should see:
-
-1. **Component files** in `output/CardComponent/`
-2. **Screenshot** in `results/CardComponent/actual.png`
-3. **Comparison results** with accuracy percentage
-4. **Diff image** showing any differences
-5. **Analysis report** with improvement suggestions
-
-## Common Adjustments
-
-### Box Model Issues
-
-```css
-/* If dimensions don't match */
-.card-component {
-  box-sizing: border-box; /* or content-box */
 }
 ```
 
-### Font Rendering
-
-```css
-/* For exact font matching */
-.card-title {
-  font-family: 'SF Pro Display', -apple-system, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+#### 步骤二：对比分析（同样的自定义路径）
+```javascript
+{
+  "tool": "figma_compare",
+  "arguments": {
+    "componentName": "MyButton",
+    "outputPath": "/Users/username/project/figma-analysis/MyButton-v1.0",
+    "threshold": 0.1,
+    "generateReport": true
+  }
 }
 ```
 
-### Layout Precision
+**结果存储位置**：`/Users/username/project/figma-analysis/MyButton-v1.0/`
 
-```css
-/* For exact spacing */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 32px; /* Exact height from Figma */
+### 4. 自定义路径的使用场景
+
+#### 场景一：版本管理
+```javascript
+// 不同版本的对比分析
+{
+  "outputPath": "/project/analysis/MyButton-v1.0"
+}
+{
+  "outputPath": "/project/analysis/MyButton-v2.0"
 }
 ```
 
-## Quality Targets
+#### 场景二：多环境测试
+```javascript
+// 开发环境
+{
+  "outputPath": "/project/qa/dev/MyButton"
+}
+// 测试环境
+{
+  "outputPath": "/project/qa/test/MyButton"
+}
+```
 
-- **Visual Accuracy**: 99%+ match with Figma design
-- **Responsive Behavior**: Works across different screen sizes
-- **Performance**: Fast rendering and small bundle size
-- **Accessibility**: Proper semantic HTML and ARIA attributes
+#### 场景三：团队协作
+```javascript
+// 设计师目录
+{
+  "outputPath": "/shared/design-review/MyButton"
+}
+// 开发者目录
+{
+  "outputPath": "/shared/dev-review/MyButton"
+}
+```
 
-## Next Steps
+### 5. 输出文件结构
 
-1. **Integrate into Project**: Copy component to your main project
-2. **Add Props**: Make component reusable with props
-3. **Add Interactions**: Implement click handlers and animations
-4. **Test Thoroughly**: Test in different browsers and devices
-5. **Document Usage**: Add component documentation
+无论使用默认路径还是自定义路径，都会产生以下文件：
 
-## Troubleshooting
+```
+指定路径/
+├── actual.png                    # 组件截图
+├── expected.png                  # Figma原图（需手动放置）
+├── diff.png                      # 差异对比图
+├── figma-analysis-report.json    # JSON格式报告
+├── figma-analysis-report.md      # Markdown格式报告
+└── region-analysis.json          # 区域差异分析
+```
 
-### Low Accuracy Scores
+### 6. 最佳实践
 
-1. Check box-sizing property
-2. Verify font loading
-3. Ensure consistent image scaling
-4. Review border and padding calculations
+1. **路径规范**：使用绝对路径避免相对路径问题
+2. **文件组织**：为不同版本、环境创建独立目录
+3. **命名约定**：在路径中包含组件名称和版本信息
+4. **团队协作**：使用共享路径便于团队成员访问结果
 
-### Component Not Rendering
+### 7. 注意事项
 
-1. Check Vue syntax errors
-2. Verify Element Plus imports
-3. Test component in isolation
-4. Check console for errors
-
-### Performance Issues
-
-1. Optimize images and assets
-2. Use lazy loading for heavy components
-3. Minimize CSS and JavaScript
-4. Test bundle size impact
+- 确保自定义路径的目录存在写权限
+- expected.png需要手动放置到指定路径
+- 两个工具的outputPath参数必须保持一致
+- 路径中避免使用特殊字符和空格

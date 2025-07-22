@@ -1,29 +1,30 @@
 export class ReportGenerator {
-  constructor(projectPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3/mcp-vue-tools') {
-    this.projectPath = projectPath
+  constructor(projectPath) {
+    this.projectPath = projectPath;
   }
 
   async generateReport(componentName) {
-    const resultsDir = path.join(this.projectPath, 'results', componentName)
-    const reportPath = path.join(resultsDir, 'report.json')
+    // 修改：使用组件目录作为存储位置
+    const resultsDir = path.join(this.projectPath, 'src', 'components', componentName);
+    const reportPath = path.join(resultsDir, 'report.json');
     
     try {
       // 检查是否已有报告文件
       if (fs.existsSync(reportPath)) {
-        const reportData = JSON.parse(fs.readFileSync(reportPath, 'utf8'))
-        return reportData
+        const reportData = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+        return reportData;
       }
 
       // 生成新的报告
-      const report = await this.createReport(componentName, resultsDir)
+      const report = await this.createReport(componentName, resultsDir);
       
       // 保存报告
-      fs.writeFileSync(reportPath, JSON.stringify(report, null, 2))
+      fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
       
-      return report
+      return report;
     } catch (error) {
-      console.error('Failed to generate report:', error)
-      return this.createDefaultReport(componentName)
+      console.error('Failed to generate report:', error);
+      return this.createDefaultReport(componentName);
     }
   }
 
@@ -32,33 +33,33 @@ export class ReportGenerator {
       expected: path.join(resultsDir, 'expected.png'),
       actual: path.join(resultsDir, 'actual.png'),
       diff: path.join(resultsDir, 'diff.png'),
-      component: path.join(this.projectPath, 'src', 'components', componentName, 'index.vue'),
-      metadata: path.join(this.projectPath, 'src', 'components', componentName, 'metadata.json')
-    }
+      component: path.join(resultsDir, 'index.vue'), // 组件文件就在同一目录
+      metadata: path.join(resultsDir, 'metadata.json')
+    };
 
     // 检查文件存在性
-    const fileStatus = {}
+    const fileStatus = {};
     for (const [key, filePath] of Object.entries(files)) {
-      fileStatus[key] = fs.existsSync(filePath)
+      fileStatus[key] = fs.existsSync(filePath);
     }
 
     // 读取元数据
-    let metadata = {}
+    let metadata = {};
     if (fileStatus.metadata) {
       try {
-        metadata = JSON.parse(fs.readFileSync(files.metadata, 'utf8'))
+        metadata = JSON.parse(fs.readFileSync(files.metadata, 'utf8'));
       } catch (error) {
-        console.error('Failed to read metadata:', error)
+        console.error('Failed to read metadata:', error);
       }
     }
 
     // 获取图像尺寸
-    const imageDimensions = await this.getImageDimensions(files)
+    const imageDimensions = await this.getImageDimensions(files);
 
     // 计算匹配度（如果有diff文件的话）
-    let comparisonResult = null
+    let comparisonResult = null;
     if (fileStatus.diff) {
-      comparisonResult = await this.analyzeComparison(files.diff)
+      comparisonResult = await this.analyzeComparison(files.diff);
     }
 
     const report = {

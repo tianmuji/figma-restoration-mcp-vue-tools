@@ -24,6 +24,10 @@ export class FigmaCompareTool {
           default: '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
           description: 'Path to the Vue project'
         },
+        outputPath: {
+          type: 'string',
+          description: 'Custom absolute path where comparison results should be saved. If not provided, defaults to component directory'
+        },
         threshold: {
           type: 'number',
           default: 0.1,
@@ -43,6 +47,7 @@ export class FigmaCompareTool {
     const {
       componentName,
       projectPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
+      outputPath, // 新增：自定义输出路径
       threshold = 0.1,
       generateReport = true
     } = args;
@@ -52,7 +57,9 @@ export class FigmaCompareTool {
       console.log(chalk.cyan(`Component: ${componentName}`));
       console.log(chalk.gray('='.repeat(60)));
 
-      const resultsDir = path.join(projectPath, 'mcp-vue-tools', 'results', componentName);
+      // 优先使用自定义路径，否则使用组件目录
+      const resultsDir = outputPath || path.join(projectPath, 'src', 'components', componentName);
+      console.log(chalk.blue(`📁 Output directory: ${resultsDir}`));
       await ensureDirectory(resultsDir);
 
       // Check if actual.png exists
@@ -61,7 +68,7 @@ export class FigmaCompareTool {
         await fs.access(actualPath);
         console.log(chalk.green('✅ Found existing screenshot: actual.png'));
       } catch (error) {
-        throw new Error(`Screenshot not found: ${actualPath}\n\nPlease take a screenshot first using the snapDOM screenshot tool:\n  snapdom_screenshot_vue-figma-tools --componentName ${componentName}`);
+        throw new Error(`Screenshot not found: ${actualPath}\n\nPlease take a screenshot first using the snapDOM screenshot tool:\n  snapdom_screenshot_vue-figma-tools --componentName ${componentName} --outputPath "${resultsDir}"`);
       }
 
       // Step 1: Compare images
@@ -124,7 +131,9 @@ export class FigmaCompareTool {
           qualityLevel: qualityLevel,
           diffPixels: comparisonResult.diffPixels,
           totalPixels: comparisonResult.totalPixels,
-          needsSelfReflective: qualityLevel.needsSelfReflective
+          needsSelfReflective: qualityLevel.needsSelfReflective,
+          storagePath: resultsDir, // 返回实际使用的存储路径
+          customPath: !!outputPath // 标识是否使用了自定义路径
         }
       };
 

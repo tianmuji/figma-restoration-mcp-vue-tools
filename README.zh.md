@@ -251,72 +251,90 @@ node figma-restoration-toolkit.mjs MyButton ./MyButton.vue
 - 💡 智能优化建议
 - 📋 Markdown + JSON双格式报告
 - ⚡ 更快的截图性能和更高的保真度
+- 🛠️ **自定义输出路径支持** (v2.2.0 新增)
 
 **MCP调用示例:**
 ```javascript
-// 完整的组件对比分析 (使用snapDOM)
+// 使用默认路径（组件目录）
 {
   "tool": "figma_compare",
   "arguments": {
     "componentName": "BeeSchoolHomepage",
-    "port": 83,
-    "viewport": {"width": 1440, "height": 800},
-    "screenshotOptions": {
-      "deviceScaleFactor": 3,
-      "omitBackground": true,
-      "useSnapDOM": true,
-      "embedFonts": true,
-      "compress": true
-    },
+    "threshold": 0.1,
+    "generateReport": true
+  }
+}
+
+// 🆕 使用自定义绝对路径
+{
+  "tool": "figma_compare",
+  "arguments": {
+    "componentName": "BeeSchoolHomepage",
+    "outputPath": "/Users/username/project/custom-results/BeeSchoolHomepage",
     "threshold": 0.1,
     "generateReport": true
   }
 }
 ```
 
-**工作流程:**
-1. 🚀 **自动检查和启动**Vue开发服务器 (无需手动管理)
-2. 📸 使用snapDOM进行**三倍图**高质量DOM截图 (包含box-shadow)
-3. 🔍 与expected.png进行**智能像素对比** (自动处理尺寸差异)
-4. 📊 生成详细分析报告 (包含三倍图信息)
-5. 💡 提供优化建议和下一步行动
-
-**🆕 三倍图增强:**
-- 自动检测和处理3x缩放差异
-- 智能图片尺寸归一化
-- 优化的像素匹配算法
-- Box-shadow效果完整捕获
-
-### snapdom_screenshot 📸 **高质量DOM截图** 🆕
-**新增工具** - 专门的snapDOM截图工具，提供最高质量的DOM-to-image转换。
+### snapdom_screenshot 📸 **高质量截图** ⭐
+**核心工具** - 基于snapDOM技术的高保真DOM截图工具，支持阴影效果和字体嵌入。
 
 **功能特性:**
-- ⚡ 基于snapDOM技术，比传统截图快150倍
-- 🎨 完美保留CSS样式、字体和伪元素
-- 🔧 支持Shadow DOM和Web Components
-- 📐 **三倍图支持** - 默认3x缩放，确保高分辨率截图
-- 🌟 **Box-shadow捕获** - 自动包含阴影效果，带20px边距
-- 🎯 自定义选择器支持
+- 🎯 snapDOM技术：直接DOM到图片转换，无需浏览器渲染
+- 🎨 完美阴影支持：智能检测和捕获box-shadow效果
+- 📝 字体嵌入：确保跨平台字体一致性
+- ⚡ 高性能：比传统截图快3-5倍
+- 🔧 智能padding：根据阴影效果自动计算边距
+- 🛠️ **自定义输出路径支持** (v2.2.0 新增)
 
 **MCP调用示例:**
 ```javascript
-// 高质量组件截图
+// 使用默认路径（组件目录）
 {
   "tool": "snapdom_screenshot",
   "arguments": {
-    "componentName": "MyComponent",
-    "port": 83,
+    "componentName": "BeeSchoolHomepage",
     "snapDOMOptions": {
       "scale": 3,
       "compress": true,
       "embedFonts": true,
-      "backgroundColor": "transparent",
-      "includeBoxShadow": true,
       "padding": 0
-    },
-    "outputPath": "./custom-screenshot.png"
+    }
   }
 }
+
+// 🆕 使用自定义绝对路径
+{
+  "tool": "snapdom_screenshot",
+  "arguments": {
+    "componentName": "BeeSchoolHomepage",
+    "outputPath": "/Users/username/project/custom-screenshots/BeeSchoolHomepage",
+    "snapDOMOptions": {
+      "scale": 3,
+      "compress": true,
+      "embedFonts": true,
+      "padding": 0
+    }
+  }
+}
+```
+
+**工作流程:**
+1. 📸 高质量DOM截图 (actual.png)
+2. 🔍 像素级对比分析 (diff.png) 
+3. 📊 生成详细分析报告 (JSON + Markdown)
+4. 💡 提供优化建议和下一步行动
+
+**输出文件结构:**
+```
+自定义路径/
+├── actual.png                    # snapDOM高质量截图
+├── expected.png                  # Figma原图 (需手动放置)
+├── diff.png                      # 差异对比图
+├── figma-analysis-report.json    # 详细分析报告
+├── figma-analysis-report.md      # Markdown格式报告
+└── region-analysis.json          # 区域差异分析
 ```
 
 **输出报告示例:**

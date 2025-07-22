@@ -1,0 +1,86 @@
+# Cursor 编辑器规则配置
+
+## 🚫 禁止修改的文件
+以下文件由自动化系统维护，请勿手动修改：
+
+### 组件自动注册文件
+- `src/components/index.ts` - 此文件使用 Vite glob import 自动扫描和注册所有组件
+- **规则**: 当需要添加新组件时，只需在 `src/components/` 下创建新的组件目录，无需修改此文件
+
+### 自动生成的配置文件
+- `*.generated.ts` - 任何以 `.generated.ts` 结尾的文件
+- `package-lock.json` - NPM依赖锁定文件
+- `yarn.lock` - Yarn依赖锁定文件
+
+## ✅ 添加新组件的正确方式
+
+### 1. 创建组件目录结构
+```
+src/components/NewComponent/
+├── index.vue           # Vue组件文件
+├── metadata.json       # 组件元数据
+└── images/            # 组件素材目录
+```
+
+### 2. 组件会自动被注册
+- `src/components/index.ts` 会自动发现并导出新组件
+- 无需手动添加 import 语句
+- 无需手动添加到导出列表
+
+### 3. 类型导出需要手动添加
+由于TypeScript限制，需要在 `src/components/index.ts` 中手动添加类型导出：
+```typescript
+export type { NewComponentProps } from './NewComponent/index.vue'
+```
+
+## 🎯 Figma组件还原流程
+
+### 严格按照8步流程执行
+1. 获取Figma数据到组件目录
+2. 分析JSON，智能识别素材节点
+3. 下载素材到 `images/` 目录  
+4. 递归还原子组件
+5. 生成Vue组件代码
+6. 组件截图
+7. 还原度对比
+8. 自我反思优化（目标98%+）
+
+### 智能素材节点识别
+- 根据节点名字识别：`ic`、`ic_`、`素材`、`material`、`asset`、`icon`、`img`、`image`
+- 自动跳过素材节点的子节点分析
+- 优先级：名字识别 > 类型+填充识别
+
+### 路径配置
+- 默认使用组件目录存储所有结果
+- 支持自定义 `outputPath` 参数
+- 截图和对比工具必须使用相同路径
+
+## 📁 文件组织规范
+
+### 组件目录结构
+```
+src/components/ComponentName/
+├── index.vue                   # Vue组件
+├── metadata.json              # 组件元数据  
+├── images/                    # 素材图片
+├── actual.png                 # 组件截图
+├── expected.png               # Figma原图
+├── diff.png                   # 差异对比图
+├── figma-analysis-report.json # 分析报告
+└── region-analysis.json       # 区域分析
+```
+
+### 素材命名规范
+- 图标: `icon_功能名.svg`
+- 图片: `image_描述.png`  
+- 背景: `bg_描述.png`
+- 使用 snake_case 命名格式
+
+## 🔧 开发注意事项
+
+1. **不要修改自动生成的文件**
+2. **新组件创建后会自动注册**
+3. **类型导出需要手动添加**
+4. **素材放在组件同目录下的images文件夹**
+5. **使用 new URL() 方式导入图片资源**
+6. **保持路径一致性（截图和对比工具）** 

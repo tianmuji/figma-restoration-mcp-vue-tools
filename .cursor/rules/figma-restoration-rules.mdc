@@ -1,0 +1,490 @@
+---
+alwaysApply: true
+---
+
+# Figma组件还原流程规则
+
+## 概述
+当用户要求还原Figma组件并提供Figma链接时，严格按照以下8步流程执行。
+
+## 流程步骤
+
+### 步骤1: 获取Figma数据
+- 使用 `get_figma_data_figma-context` 工具获取Figma JSON数据
+- 参数设置：
+  - `fileKey`: 从Figma链接中提取
+  - `nodeId`: 从Figma链接中提取（如果有）
+  - `savePath`: 使用绝对路径 `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}`
+- MCP会自动保存JSON到指定目录
+
+### 步骤2: 分析JSON内容
+分析返回的JSON数据，确认以下关键信息：
+1. **页面结构**: 
+   - 组件层级关系
+   - 布局方式（flex、grid、absolute等）
+   - 尺寸和位置信息
+2. **🆕 智能素材节点识别**:
+   - **根据节点名字识别**: 检测名字中含有 `ic`、`ic_`、`素材`、`material`、`asset`、`icon`、`img`、`image` 等关键词
+   - **自动跳过子节点**: 当识别为素材节点时，直接导出该节点，不再分析其子节点
+   - **图片节点**: imageRef填充的节点
+   - **图标节点**: SVG矢量图标
+   - **背景图片**: 背景填充图片
+   - **优先级**: 名字识别 > 类型+填充识别
+3. **子组件识别**:
+   - 嵌套的组件实例
+   - 可复用的UI元素
+4. **样式信息**:
+   - 颜色、字体、边框
+   - 阴影、圆角等效果
+   - 响应式布局需求
+
+输出：生成符合Web标准、层级分明的优化JSON结构
+
+### 步骤3: 下载素材资源
+使用 `download_figma_images_figma-context` 工具下载所需素材：
+- **🆕 统一目录结构** - 所有文件存储在组件目录中：
+```
+/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/
+├── index.vue                     # Vue 组件
+├── metadata.json                 # 组件元数据
+├── images/                       # 素材图片目录
+│   ├── icon_scan.svg            # 图标文件
+│   ├── image_bg.png             # 背景图片
+│   └── logo_main.svg            # Logo文件
+├── actual.png                    # 🆕 组件截图（新位置）
+├── expected.png                  # 🆕 Figma原图（新位置）
+├── diff.png                      # 🆕 差异对比图（新位置）
+├── figma-analysis-report.json   # 🆕 分析报告（新位置）
+└── region-analysis.json         # 🆕 区域分析（新位置）
+```
+- 参数设置：
+  - `fileKey`: Figma文件key
+  - `localPath`: 绝对路径到images目录
+  - `nodes`: 包含nodeId、fileName、imageRef（如适用）
+  - `pngScale`: 默认2（高清图片）
+  - `svgOptions`: 根据需要配置
+
+### 步骤4: 递归还原子组件
+对于识别出的子组件：
+- 每个子组件重新执行步骤1-8的完整流程
+- 创建独立的组件目录结构
+- 确保组件间的依赖关系正确
+- 优先还原基础组件，再还原复合组件
+
+### 步骤5: 生成Vue组件代码
+基于优化的JSON、下载的素材和制作的子组件生成代码：
+- **技术栈要求**:
+  - Vue 3 Composition API
+  - TypeScript支持
+  - Tailwind CSS或原生CSS
+- **代码结构**:
+  - 响应式设计
+  - 语义化HTML结构
+  - 可访问性支持
+  - 性能优化（懒加载、图片优化等）
+- **文件生成**:
+  - `index.vue`: 主组件文件
+  - `metadata.json`: 组件元数据（尺寸、描述等）
+
+### 步骤6: 组件截图
+使用 `snapdom_screenshot_figma-restoration-mcp-vue-tools` 工具：
+- **基本参数**:
+  - `componentName`: 组件名称
+  - `projectPath`: 项目根路径
+  - `port`: Vue开发服务器端口（默认83）
+- **🆕 路径配置（灵活选择）**:
+  - **默认路径**: 不设置`outputPath`，自动存储到组件目录
+  - **自定义路径**: 设置`outputPath`为绝对路径，便于版本管理和团队协作
+  ```javascript
+  // 示例：版本管理
+  "outputPath": "/project/analysis/MyButton-v1.0"
+  // 示例：团队协作
+  "outputPath": "/shared/design-review/MyButton"
+  ```
+- **截图配置**:
+  - `snapDOMOptions`: 高质量截图配置
+    - `scale`: 3（高分辨率）
+    - `padding`: 根据阴影效果调整
+    - `backgroundColor`: "transparent"
+    - `embedFonts`: true
+- 确保开发服务器正在运行
+
+### 步骤7: 还原度对比
+使用 `figma_compare_figma-restoration-mcp-vue-tools` 工具：
+- **基本参数**:
+  - `componentName`: 组件名称
+  - `threshold`: 0.02（98%还原度要求）
+  - `generateReport`: true
+- **🆕 路径配置（必须与截图工具一致）**:
+  - **如果步骤6使用了自定义路径，此处必须使用相同的`outputPath`**
+  - **默认情况下不设置`outputPath`，自动使用组件目录**
+  ```javascript
+  // 保持与截图工具路径一致
+  "outputPath": "/project/analysis/MyButton-v1.0"  // 如果截图时用了自定义路径
+  ```
+- **🆕 结果存储位置**:
+  - 所有对比结果存储在指定路径中（默认为组件目录）
+  - 不再使用单独的 `mcp-vue-tool/results` 目录
+- 分析对比结果，识别差异点
+
+### 步骤8: 自我反思优化
+如果还原度 < 98%：
+- **问题分析**:
+  - 布局差异（位置、尺寸、对齐）
+  - 样式差异（颜色、字体、效果）
+  - 素材问题（缺失、错误、质量）
+  - **🆕 素材节点问题**: 检查是否正确识别了所有素材节点
+- **优化策略**:
+  - 重新分析JSON结构（回到步骤2）
+  - **🆕 验证素材节点识别**: 确认所有 `ic`、`ic_`、`素材` 等关键词节点已正确处理
+  - 调整CSS样式和布局
+  - 重新下载或优化素材
+  - 修复子组件问题
+- **迭代流程**:
+  - 最多迭代3次
+  - 每次迭代都要重新截图对比
+  - 记录改进点和剩余问题
+
+## 🆕 路径配置最佳实践
+
+### 1. 默认路径（推荐大多数情况）
+```javascript
+// 步骤6: 截图
+{
+  "tool": "snapdom_screenshot_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton"
+    // 不设置outputPath，使用默认组件目录
+  }
+}
+
+// 步骤7: 对比
+{
+  "tool": "figma_compare_figma-restoration-mcp-vue-tools", 
+  "arguments": {
+    "componentName": "MyButton"
+    // 不设置outputPath，使用默认组件目录
+  }
+}
+```
+**存储位置**: `src/components/MyButton/`
+
+### 2. 自定义路径（特殊需求）
+```javascript
+// 步骤6: 截图
+{
+  "tool": "snapdom_screenshot_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton",
+    "outputPath": "/Users/username/project/analysis/MyButton-v1.0"
+  }
+}
+
+// 步骤7: 对比（必须使用相同路径）
+{
+  "tool": "figma_compare_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton", 
+    "outputPath": "/Users/username/project/analysis/MyButton-v1.0"
+  }
+}
+```
+**存储位置**: `/Users/username/project/analysis/MyButton-v1.0/`
+
+### 3. 自定义路径使用场景
+- **版本管理**: `/project/analysis/MyButton-v1.0`、`/project/analysis/MyButton-v2.0`
+- **多环境测试**: `/project/qa/dev/MyButton`、`/project/qa/test/MyButton`
+- **团队协作**: `/shared/design-review/MyButton`、`/shared/dev-review/MyButton`
+
+## 质量标准
+
+### 代码质量
+- 遵循Vue 3最佳实践
+- TypeScript类型安全
+- 响应式设计支持
+- 无障碍访问性
+- 性能优化
+
+### 视觉还原度
+- 像素级精确度 ≥ 98%
+- 颜色匹配准确
+- 字体和排版一致
+- 交互状态完整
+- 动画效果（如有）
+
+### 项目结构
+- 清晰的目录组织
+- 合理的文件命名
+- 完整的资源管理
+- 良好的组件复用
+
+## 错误处理
+
+### 常见问题及解决方案
+1. **Figma数据获取失败**: 检查链接格式和权限
+2. **素材下载失败**: 验证nodeId和imageRef
+3. **🆕 素材节点识别错误**: 检查节点名字是否包含关键词，手动调整识别逻辑
+4. **组件渲染错误**: 检查依赖和语法
+5. **截图失败**: 确认开发服务器状态
+6. **对比失败**: 检查文件路径和权限
+7. **🆕 路径不一致**: 确保截图和对比工具使用相同的outputPath
+
+### 调试建议
+- 逐步验证每个工具的输出
+- 保存中间结果用于问题排查
+- 记录详细的错误信息和上下文
+- **🆕 检查素材节点日志**: 查看控制台输出的素材识别信息
+- **🆕 验证路径一致性**: 确认两个工具使用相同的存储路径
+- 必要时请求用户协助
+
+## 注意事项
+- 严格按照步骤顺序执行
+- 每个步骤完成后验证结果
+- **🆕 保持路径一致性**: 截图和对比工具必须使用相同的outputPath
+- **🆕 关注素材识别日志**: 及时发现素材节点识别问题
+- 保持代码和文件的一致性
+- 及时更新进度和状态
+- 遇到问题时主动寻求帮助
+# Figma组件还原流程规则
+
+## 概述
+当用户要求还原Figma组件并提供Figma链接时，严格按照以下8步流程执行。
+
+## 流程步骤
+
+### 步骤1: 获取Figma数据
+- 使用 `get_figma_data_figma-context` 工具获取Figma JSON数据
+- 参数设置：
+  - `fileKey`: 从Figma链接中提取
+  - `nodeId`: 从Figma链接中提取（如果有）
+  - `savePath`: 使用绝对路径 `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}`
+- MCP会自动保存JSON到指定目录
+
+### 步骤2: 分析JSON内容
+分析返回的JSON数据，确认以下关键信息：
+1. **页面结构**: 
+   - 组件层级关系
+   - 布局方式（flex、grid、absolute等）
+   - 尺寸和位置信息
+2. **🆕 智能素材节点识别**:
+   - **根据节点名字识别**: 检测名字中含有 `ic`、`ic_`、`素材`、`material`、`asset`、`icon`、`img`、`image` 等关键词
+   - **自动跳过子节点**: 当识别为素材节点时，直接导出该节点，不再分析其子节点
+   - **图片节点**: imageRef填充的节点
+   - **图标节点**: SVG矢量图标
+   - **背景图片**: 背景填充图片
+   - **优先级**: 名字识别 > 类型+填充识别
+3. **子组件识别**:
+   - 嵌套的组件实例
+   - 可复用的UI元素
+4. **样式信息**:
+   - 颜色、字体、边框
+   - 阴影、圆角等效果
+   - 响应式布局需求
+
+输出：生成符合Web标准、层级分明的优化JSON结构
+
+### 步骤3: 下载素材资源
+使用 `download_figma_images_figma-context` 工具下载所需素材：
+- **🆕 统一目录结构** - 所有文件存储在组件目录中：
+```
+/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/
+├── index.vue                     # Vue 组件
+├── metadata.json                 # 组件元数据
+├── images/                       # 素材图片目录
+│   ├── icon_scan.svg            # 图标文件
+│   ├── image_bg.png             # 背景图片
+│   └── logo_main.svg            # Logo文件
+├── actual.png                    # 🆕 组件截图（新位置）
+├── expected.png                  # 🆕 Figma原图（新位置）
+├── diff.png                      # 🆕 差异对比图（新位置）
+├── figma-analysis-report.json   # 🆕 分析报告（新位置）
+└── region-analysis.json         # 🆕 区域分析（新位置）
+```
+- 参数设置：
+  - `fileKey`: Figma文件key
+  - `localPath`: 绝对路径到images目录
+  - `nodes`: 包含nodeId、fileName、imageRef（如适用）
+  - `pngScale`: 默认2（高清图片）
+  - `svgOptions`: 根据需要配置
+
+### 步骤4: 递归还原子组件
+对于识别出的子组件：
+- 每个子组件重新执行步骤1-8的完整流程
+- 创建独立的组件目录结构
+- 确保组件间的依赖关系正确
+- 优先还原基础组件，再还原复合组件
+
+### 步骤5: 生成Vue组件代码
+基于优化的JSON、下载的素材和制作的子组件生成代码：
+- **技术栈要求**:
+  - Vue 3 Composition API
+  - TypeScript支持
+  - Tailwind CSS或原生CSS
+- **代码结构**:
+  - 响应式设计
+  - 语义化HTML结构
+  - 可访问性支持
+  - 性能优化（懒加载、图片优化等）
+- **文件生成**:
+  - `index.vue`: 主组件文件
+  - `metadata.json`: 组件元数据（尺寸、描述等）
+
+### 步骤6: 组件截图
+使用 `snapdom_screenshot_figma-restoration-mcp-vue-tools` 工具：
+- **基本参数**:
+  - `componentName`: 组件名称
+  - `projectPath`: 项目根路径
+  - `port`: Vue开发服务器端口（默认83）
+- **🆕 路径配置（灵活选择）**:
+  - **默认路径**: 不设置`outputPath`，自动存储到组件目录
+  - **自定义路径**: 设置`outputPath`为绝对路径，便于版本管理和团队协作
+  ```javascript
+  // 示例：版本管理
+  "outputPath": "/project/analysis/MyButton-v1.0"
+  // 示例：团队协作
+  "outputPath": "/shared/design-review/MyButton"
+  ```
+- **截图配置**:
+  - `snapDOMOptions`: 高质量截图配置
+    - `scale`: 3（高分辨率）
+    - `padding`: 根据阴影效果调整
+    - `backgroundColor`: "transparent"
+    - `embedFonts`: true
+- 确保开发服务器正在运行
+
+### 步骤7: 还原度对比
+使用 `figma_compare_figma-restoration-mcp-vue-tools` 工具：
+- **基本参数**:
+  - `componentName`: 组件名称
+  - `threshold`: 0.02（98%还原度要求）
+  - `generateReport`: true
+- **🆕 路径配置（必须与截图工具一致）**:
+  - **如果步骤6使用了自定义路径，此处必须使用相同的`outputPath`**
+  - **默认情况下不设置`outputPath`，自动使用组件目录**
+  ```javascript
+  // 保持与截图工具路径一致
+  "outputPath": "/project/analysis/MyButton-v1.0"  // 如果截图时用了自定义路径
+  ```
+- **🆕 结果存储位置**:
+  - 所有对比结果存储在指定路径中（默认为组件目录）
+  - 不再使用单独的 `mcp-vue-tool/results` 目录
+- 分析对比结果，识别差异点
+
+### 步骤8: 自我反思优化
+如果还原度 < 98%：
+- **问题分析**:
+  - 布局差异（位置、尺寸、对齐）
+  - 样式差异（颜色、字体、效果）
+  - 素材问题（缺失、错误、质量）
+  - **🆕 素材节点问题**: 检查是否正确识别了所有素材节点
+- **优化策略**:
+  - 重新分析JSON结构（回到步骤2）
+  - **🆕 验证素材节点识别**: 确认所有 `ic`、`ic_`、`素材` 等关键词节点已正确处理
+  - 调整CSS样式和布局
+  - 重新下载或优化素材
+  - 修复子组件问题
+- **迭代流程**:
+  - 最多迭代3次
+  - 每次迭代都要重新截图对比
+  - 记录改进点和剩余问题
+
+## 🆕 路径配置最佳实践
+
+### 1. 默认路径（推荐大多数情况）
+```javascript
+// 步骤6: 截图
+{
+  "tool": "snapdom_screenshot_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton"
+    // 不设置outputPath，使用默认组件目录
+  }
+}
+
+// 步骤7: 对比
+{
+  "tool": "figma_compare_figma-restoration-mcp-vue-tools", 
+  "arguments": {
+    "componentName": "MyButton"
+    // 不设置outputPath，使用默认组件目录
+  }
+}
+```
+**存储位置**: `src/components/MyButton/`
+
+### 2. 自定义路径（特殊需求）
+```javascript
+// 步骤6: 截图
+{
+  "tool": "snapdom_screenshot_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton",
+    "outputPath": "/Users/username/project/analysis/MyButton-v1.0"
+  }
+}
+
+// 步骤7: 对比（必须使用相同路径）
+{
+  "tool": "figma_compare_figma-restoration-mcp-vue-tools",
+  "arguments": {
+    "componentName": "MyButton", 
+    "outputPath": "/Users/username/project/analysis/MyButton-v1.0"
+  }
+}
+```
+**存储位置**: `/Users/username/project/analysis/MyButton-v1.0/`
+
+### 3. 自定义路径使用场景
+- **版本管理**: `/project/analysis/MyButton-v1.0`、`/project/analysis/MyButton-v2.0`
+- **多环境测试**: `/project/qa/dev/MyButton`、`/project/qa/test/MyButton`
+- **团队协作**: `/shared/design-review/MyButton`、`/shared/dev-review/MyButton`
+
+## 质量标准
+
+### 代码质量
+- 遵循Vue 3最佳实践
+- TypeScript类型安全
+- 响应式设计支持
+- 无障碍访问性
+- 性能优化
+
+### 视觉还原度
+- 像素级精确度 ≥ 98%
+- 颜色匹配准确
+- 字体和排版一致
+- 交互状态完整
+- 动画效果（如有）
+
+### 项目结构
+- 清晰的目录组织
+- 合理的文件命名
+- 完整的资源管理
+- 良好的组件复用
+
+## 错误处理
+
+### 常见问题及解决方案
+1. **Figma数据获取失败**: 检查链接格式和权限
+2. **素材下载失败**: 验证nodeId和imageRef
+3. **🆕 素材节点识别错误**: 检查节点名字是否包含关键词，手动调整识别逻辑
+4. **组件渲染错误**: 检查依赖和语法
+5. **截图失败**: 确认开发服务器状态
+6. **对比失败**: 检查文件路径和权限
+7. **🆕 路径不一致**: 确保截图和对比工具使用相同的outputPath
+
+### 调试建议
+- 逐步验证每个工具的输出
+- 保存中间结果用于问题排查
+- 记录详细的错误信息和上下文
+- **🆕 检查素材节点日志**: 查看控制台输出的素材识别信息
+- **🆕 验证路径一致性**: 确认两个工具使用相同的存储路径
+- 必要时请求用户协助
+
+## 注意事项
+- 严格按照步骤顺序执行
+- 每个步骤完成后验证结果
+- **🆕 保持路径一致性**: 截图和对比工具必须使用相同的outputPath
+- **🆕 关注素材识别日志**: 及时发现素材节点识别问题
+- 保持代码和文件的一致性
+- 及时更新进度和状态
+- 遇到问题时主动寻求帮助
