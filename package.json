@@ -38,6 +38,7 @@
     "@zumer/snapdom": "^1.9.5",
     "chalk": "^5.3.0",
     "element-plus": "^2.10.4",
+    "figma-restoration-mcp-vue-tools": "^3.0.4",
     "pixelmatch": "^5.3.0",
     "pngjs": "^7.0.0",
     "puppeteer": "^21.0.0",
