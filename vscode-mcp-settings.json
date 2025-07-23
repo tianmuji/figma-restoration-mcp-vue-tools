@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "figma-restoration-mcp-vue-tools": {
-      "command": "npx",
-      "args": ["figma-restoration-mcp-vue-tools", "start"],
+      "command": "node",
+      "args": ["/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/server.js"],
       "env": {
         "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        "NODE_ENV": "production"
+        "NODE_ENV": "development"
       }
     }
   }

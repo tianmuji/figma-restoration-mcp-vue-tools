@@ -55,7 +55,7 @@
       "scale": 3,
       "compress": true,
       "embedFonts": true
-    }
+  }
   }
 }
 ```

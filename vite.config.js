@@ -11,99 +11,81 @@ export default defineConfig({
     }
   },
   server: {
-    port: 83,
+    port: 1932,
     host: true,
-    middlewareMode: false,
-    configureServer(server) {
-      // 添加中间件来提供results目录的访问
-      server.middlewares.use('/results', (req, res, next) => {
-        // 解析URL，提取组件名称
-        const urlParts = req.url.split('/').filter(part => part);
-        let filePath = null;
-
-        // 如果URL包含组件名称，尝试从组件目录获取文件
-        if (urlParts.length >= 2) {
-          const componentName = urlParts[0];
-          const fileName = urlParts.slice(1).join('/');
-          
-          // 尝试从组件目录获取文件
-          filePath = path.join(__dirname, '..', 'src', 'components', componentName, fileName);
-          
-          if (!fs.existsSync(filePath)) {
-            // 如果组件目录中没有，尝试从当前项目的组件目录
-            filePath = path.join(__dirname, 'src', 'components', componentName, fileName);
-          }
-        }
-
-        // 如果组件目录中没有找到，尝试旧的路径
-        if (!filePath || !fs.existsSync(filePath)) {
-          // 首先尝试public/results目录
-          filePath = path.join(__dirname, 'public/results', req.url);
-
-          // 如果public/results不存在，尝试figma-restoration-mcp-vue-tools/results（保持向后兼容）
-          if (!fs.existsSync(filePath)) {
-            filePath = path.join(__dirname, 'figma-restoration-mcp-vue-tools/results', req.url);
-          }
-        }
-
-        // 检查文件是否存在
-        if (fs.existsSync(filePath)) {
-          const stat = fs.statSync(filePath);
-
-          if (stat.isFile()) {
-            // 设置正确的Content-Type
-            if (filePath.endsWith('.json')) {
-              res.setHeader('Content-Type', 'application/json');
-            } else if (filePath.endsWith('.png')) {
-              res.setHeader('Content-Type', 'image/png');
-            } else if (filePath.endsWith('.md')) {
-              res.setHeader('Content-Type', 'text/markdown');
-            }
-
-            // 读取并返回文件
-            const fileContent = fs.readFileSync(filePath);
-            res.end(fileContent);
-            return;
-          }
-        }
-
-        // 如果文件不存在，返回404
-        res.statusCode = 404;
-        res.end('File not found');
-      });
-
-      // 添加中间件来提供figma-restoration-mcp-vue-tools目录的访问
-      server.middlewares.use('/figma-restoration-mcp-vue-tools', (req, res, next) => {
-        const filePath = path.join(__dirname, 'figma-restoration-mcp-vue-tools', req.url)
-
+    middlewareMode: false
+  },
+  build: {
+    outDir: 'dist'
+  },
+  // 配置开发服务器中间件
+  configureServer(server) {
+    // 自定义中间件来处理src/components下的静态文件访问
+    server.middlewares.use((req, res, next) => {
+      const url = req.url
+      
+      // 处理src/components路径的静态文件访问
+      if (url.startsWith('/src/components/')) {
+        const filePath = path.join(__dirname, url)
+        
         // 检查文件是否存在
         if (fs.existsSync(filePath)) {
           const stat = fs.statSync(filePath)
-
+          
           if (stat.isFile()) {
-            // 设置正确的Content-Type
-            if (filePath.endsWith('.json')) {
-              res.setHeader('Content-Type', 'application/json')
-            } else if (filePath.endsWith('.png')) {
-              res.setHeader('Content-Type', 'image/png')
-            } else if (filePath.endsWith('.md')) {
-              res.setHeader('Content-Type', 'text/markdown')
+            // 设置合适的Content-Type
+            const ext = path.extname(filePath).toLowerCase()
+            const mimeTypes = {
+              '.json': 'application/json',
+              '.png': 'image/png',
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.svg': 'image/svg+xml',
+              '.md': 'text/markdown'
             }
-
-            // 读取并返回文件
+            
+            const contentType = mimeTypes[ext] || 'application/octet-stream'
+            res.setHeader('Content-Type', contentType)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            
+            // 读取并发送文件
             const fileContent = fs.readFileSync(filePath)
             res.end(fileContent)
             return
           }
         }
-
-        // 如果文件不存在，返回404
-        res.statusCode = 404
-        res.end('File not found')
-      })
-    }
-  },
-  build: {
-    outDir: 'dist'
+      }
+      
+      // 处理components路径的简化访问（不带src前缀）
+      if (url.startsWith('/components/')) {
+        const filePath = path.join(__dirname, 'src', url)
+        
+        if (fs.existsSync(filePath)) {
+          const stat = fs.statSync(filePath)
+          
+          if (stat.isFile()) {
+            const ext = path.extname(filePath).toLowerCase()
+            const mimeTypes = {
+              '.json': 'application/json',
+              '.png': 'image/png',
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.svg': 'image/svg+xml',
+              '.md': 'text/markdown'
+            }
+            
+            const contentType = mimeTypes[ext] || 'application/octet-stream'
+            res.setHeader('Content-Type', contentType)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            
+            const fileContent = fs.readFileSync(filePath)
+            res.end(fileContent)
+            return
+          }
+        }
+      }
+      
+      next()
+    })
   }
 })

@@ -14,6 +14,8 @@ const __dirname = path.dirname(__filename);
 export class SnapDOMScreenshotTool {
   constructor() {
     this.description = 'Take high-quality screenshots using snapDOM technology for precise DOM-to-image capture';
+    this.DEFAULT_TIMEOUT = 3000; // 3秒超时
+    
     this.inputSchema = {
       type: 'object',
       properties: {
@@ -25,10 +27,6 @@ export class SnapDOMScreenshotTool {
           type: 'string',
           default: '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
           description: 'Path to the Vue project'
-        },
-        outputPath: {
-          type: 'string',
-          description: 'Custom absolute path where screenshot should be saved. If not provided, defaults to component directory'
         },
         port: {
           type: 'number',
@@ -45,17 +43,21 @@ export class SnapDOMScreenshotTool {
         },
         snapDOMOptions: {
           type: 'object',
-          description: 'snapDOM capture options for high-quality screenshots with box-shadow support',
           properties: {
             scale: { type: 'number', default: 3 },
             compress: { type: 'boolean', default: true },
             fast: { type: 'boolean', default: false },
             embedFonts: { type: 'boolean', default: true },
             backgroundColor: { type: 'string', default: 'transparent' },
-            padding: { type: 'number', default: 0, description: 'Padding around element to capture shadows and effects' },
             width: { type: 'number', description: 'Fixed width for output' },
-            height: { type: 'number', description: 'Fixed height for output' }
-          }
+            height: { type: 'number', description: 'Fixed height for output' },
+            padding: { type: 'number', default: 0, description: 'Padding around element to capture shadows and effects' }
+          },
+          description: 'snapDOM capture options for high-quality screenshots with box-shadow support'
+        },
+        outputPath: {
+          type: 'string',
+          description: 'Custom output path for screenshot (optional)'
         },
         selector: {
           type: 'string',
@@ -70,11 +72,30 @@ export class SnapDOMScreenshotTool {
     };
   }
 
+  // 超时包装函数
+  async withTimeout(promise, timeoutMs = this.DEFAULT_TIMEOUT, errorMessage = 'Operation timed out') {
+    const startTime = Date.now();
+    return Promise.race([
+      promise.then(result => {
+        const duration = Date.now() - startTime;
+        if (duration > timeoutMs * 0.8) {  // 如果操作时间超过80%，发出警告
+          console.log(chalk.yellow(`⚠️  Slow operation: ${errorMessage} took ${duration}ms (limit: ${timeoutMs}ms)`));
+        }
+        return result;
+      }),
+      new Promise((_, reject) => 
+        setTimeout(() => {
+          console.log(chalk.red(`❌ TIMEOUT: ${errorMessage} after ${timeoutMs}ms`));
+          reject(new Error(`${errorMessage} (${timeoutMs}ms)`));
+        }, timeoutMs)
+      )
+    ]);
+  }
+
   async execute(args) {
     const {
       componentName,
       projectPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
-      outputPath, // 新增：自定义输出路径
       port = 83,
       viewport = { width: 1440, height: 800 },
       snapDOMOptions = {
@@ -85,6 +106,7 @@ export class SnapDOMScreenshotTool {
         backgroundColor: 'transparent',
         padding: 0
       },
+      outputPath,
       selector,
       figmaEffects // Optional Figma effects data for smart padding calculation
     } = args;
@@ -94,9 +116,22 @@ export class SnapDOMScreenshotTool {
       console.log(chalk.cyan(`Component: ${componentName}`));
       console.log(chalk.gray('='.repeat(50)));
 
-      // 优先使用自定义路径，否则使用组件目录
-      const resultsDir = outputPath || path.join(projectPath, 'src', 'components', componentName);
-      console.log(chalk.blue(`📁 Output directory: ${resultsDir}`));
+      // Determine results directory based on outputPath or use default
+      let resultsDir;
+      if (outputPath) {
+        // Check if outputPath is a directory or file path
+        const stats = await fs.stat(outputPath).catch(() => null);
+        if (stats && stats.isDirectory()) {
+          resultsDir = outputPath;
+        } else if (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg')) {
+          resultsDir = path.dirname(outputPath);
+        } else {
+          // Assume it's a directory path if no file extension
+          resultsDir = outputPath;
+        }
+      } else {
+        resultsDir = path.join(projectPath, 'src', 'components', componentName, 'results');
+      }
       await ensureDirectory(resultsDir);
 
       // Ensure Vue dev server is running
@@ -113,14 +148,19 @@ export class SnapDOMScreenshotTool {
         }
       }
 
-      const screenshotResult = await this.takeSnapDOMScreenshot({
-        componentName,
-        port,
-        viewport,
-        snapDOMOptions: enhancedSnapDOMOptions,
-        resultsDir,
-        selector
-      });
+      const screenshotResult = await this.withTimeout(
+        this.takeSnapDOMScreenshot({
+          componentName,
+          port,
+          viewport,
+          snapDOMOptions: enhancedSnapDOMOptions,
+          resultsDir,
+          outputPath: outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg')) ? outputPath : null,
+          selector
+        }),
+        this.DEFAULT_TIMEOUT * 5, // 给整个截图流程15秒时间
+        'Overall screenshot process timed out'
+      );
 
       console.log(chalk.green('✅ snapDOM screenshot completed successfully!'));
       
@@ -132,9 +172,7 @@ export class SnapDOMScreenshotTool {
           method: 'snapDOM',
           quality: 'high',
           outputPath: screenshotResult.path,
-          features: screenshotResult.features,
-          storagePath: resultsDir, // 返回实际使用的存储路径
-          customPath: !!outputPath // 标识是否使用了自定义路径
+          features: screenshotResult.features
         }
       };
 
@@ -150,21 +188,29 @@ export class SnapDOMScreenshotTool {
 
   async ensureDevServerRunning(port, projectPath) {
     try {
-      // Check if server is already running
-      const response = await fetch(`http://localhost:${port}`);
+      // Check if server is already running with timeout
+      console.log(chalk.gray(`🔍 Checking server on port ${port}...`));
+      const response = await this.withTimeout(
+        fetch(`http://localhost:${port}`),
+        this.DEFAULT_TIMEOUT,
+        `Server check on port ${port} timed out`
+      );
       if (response.ok) {
         console.log(chalk.green(`✅ Vue dev server already running on port ${port}`));
         return true;
       }
     } catch (error) {
+      if (error.message.includes('timed out')) {
+        console.log(chalk.red(`❌ Server check timed out after ${this.DEFAULT_TIMEOUT}ms`));
+        throw error;
+      }
       // Server not running, try to start it
       console.log(chalk.yellow(`⚠️ Vue dev server not running on port ${port}, attempting to start...`));
 
       try {
         // Start the server
-        const mcpToolsPath = path.join(projectPath, 'mcp-vue-tools');
         const child = spawn('yarn', ['dev'], {
-          cwd: mcpToolsPath,
+          cwd: projectPath,
           detached: true,
           stdio: 'ignore'
         });
@@ -222,27 +268,45 @@ export class SnapDOMScreenshotTool {
     return maxPadding > 0 ? Math.ceil(maxPadding) + 5 : 0; // Add 5px buffer and round up
   }
 
-  async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, selector }) {
-    const browser = await puppeteerManager.launchBrowser();
+  async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, outputPath, selector }) {
+    console.log(chalk.gray(`⏱️  Starting screenshot with ${this.DEFAULT_TIMEOUT}ms timeout for each operation`));
+    
+    const browser = await this.withTimeout(
+      puppeteerManager.launchBrowser(),
+      this.DEFAULT_TIMEOUT,
+      'Browser launch timed out'
+    );
 
     try {
-      const page = await browser.newPage();
+      const page = await this.withTimeout(
+        browser.newPage(),
+        this.DEFAULT_TIMEOUT,
+        'New page creation timed out'
+      );
       
       // Set viewport
-      await page.setViewport({
-        width: viewport.width,
-        height: viewport.height,
-        deviceScaleFactor: 1 // snapDOM handles scaling
-      });
+      await this.withTimeout(
+        page.setViewport({
+          width: viewport.width,
+          height: viewport.height,
+          deviceScaleFactor: 1 // snapDOM handles scaling
+        }),
+        this.DEFAULT_TIMEOUT,
+        'Viewport setup timed out'
+      );
 
       // Navigate to component
       const url = `http://localhost:${port}/component/${componentName}`;
       console.log(chalk.gray(`📍 Navigating to: ${url}`));
       
-      await page.goto(url, { 
-        waitUntil: 'networkidle2',
-        timeout: 15000 
-      });
+      await this.withTimeout(
+        page.goto(url, { 
+          waitUntil: 'networkidle2',
+          timeout: this.DEFAULT_TIMEOUT
+        }),
+        this.DEFAULT_TIMEOUT,
+        `Page navigation to ${url} timed out`
+      );
 
       // Determine selector
       let targetSelector = selector;
@@ -255,35 +319,66 @@ export class SnapDOMScreenshotTool {
       console.log(chalk.gray(`🔍 Looking for selector: ${targetSelector}`));
       
       try {
-        await page.waitForSelector(targetSelector, { timeout: 5000 });
+        await this.withTimeout(
+          page.waitForSelector(targetSelector, { timeout: this.DEFAULT_TIMEOUT }),
+          this.DEFAULT_TIMEOUT,
+          `Element selector ${targetSelector} wait timed out`
+        );
       } catch (error) {
         // Fallback to container selector
         console.log(chalk.yellow(`⚠️  Primary selector failed, trying container selector...`));
         targetSelector = '#benchmark-container-for-screenshot';
-        await page.waitForSelector(targetSelector, { timeout: 10000 });
+        await this.withTimeout(
+          page.waitForSelector(targetSelector, { timeout: this.DEFAULT_TIMEOUT }),
+          this.DEFAULT_TIMEOUT,
+          `Fallback selector ${targetSelector} wait timed out`
+        );
       }
 
       // Additional wait for animations/images
-      await page.waitForTimeout(500);
+      await this.withTimeout(
+        page.waitForTimeout(500),
+        this.DEFAULT_TIMEOUT,
+        'Animation wait timed out'
+      );
 
       // Use snapDOM for screenshot
       console.log(chalk.blue('📸 Using snapDOM for high-quality screenshot...'));
-      const screenshotPath = path.join(resultsDir, 'actual.png'); // 直接使用resultsDir
+      let screenshotPath;
+      if (outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg'))) {
+        screenshotPath = outputPath;
+      } else {
+        screenshotPath = path.join(resultsDir, 'actual.png');
+      }
       
-      const element = await page.$(targetSelector);
+      const element = await this.withTimeout(
+        page.$(targetSelector),
+        this.DEFAULT_TIMEOUT,
+        `Element query ${targetSelector} timed out`
+      );
       if (!element) {
         throw new Error(`Component selector ${targetSelector} not found`);
       }
 
       // Use snapDOM to capture the element with box-shadow support
-      const snapResult = await page.evaluate(async (sel, options) => {
+      console.log(chalk.gray(`⏱️  Starting snapDOM capture with ${this.DEFAULT_TIMEOUT}ms timeout...`));
+      const snapResult = await this.withTimeout(
+        page.evaluate(async (sel, options) => {
         const element = document.querySelector(sel);
         if (!element) {
           throw new Error(`Element not found: ${sel}`);
         }
 
-        // Import snapdom from local node_modules
-        const { snapdom } = await import('/node_modules/@zumer/snapdom/dist/snapdom.mjs');
+        // Import snapdom from CDN as fallback
+        let snapdom;
+        try {
+          const module = await import('/@fs/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/node_modules/@zumer/snapdom/dist/snapdom.mjs');
+          snapdom = module.snapdom;
+        } catch (error) {
+          // Fallback to CDN if local import fails
+          const module = await import('https://unpkg.com/@zumer/snapdom@1.9.5/dist/snapdom.mjs');
+          snapdom = module.snapdom;
+        }
 
         // Smart shadow detection and padding calculation
         let targetElement = element;
@@ -368,11 +463,19 @@ export class SnapDOMScreenshotTool {
           reader.onload = () => resolve(reader.result);
           reader.readAsDataURL(blob);
         });
-      }, targetSelector, snapDOMOptions);
+      }, targetSelector, snapDOMOptions),
+      this.DEFAULT_TIMEOUT,
+      'SnapDOM capture operation timed out'
+    );
 
       // Save the base64 image to file
+      console.log(chalk.gray(`💾 Saving screenshot to: ${screenshotPath}`));
       const base64Data = snapResult.replace(/^data:image\/png;base64,/, '');
-      await fs.writeFile(screenshotPath, Buffer.from(base64Data, 'base64'));
+      await this.withTimeout(
+        fs.writeFile(screenshotPath, Buffer.from(base64Data, 'base64')),
+        this.DEFAULT_TIMEOUT,
+        'File save operation timed out'
+      );
 
       console.log(chalk.green(`✅ snapDOM screenshot saved: ${screenshotPath}`));
       
@@ -389,7 +492,16 @@ export class SnapDOMScreenshotTool {
       };
 
     } finally {
-      await puppeteerManager.closeBrowser();
+      try {
+        await this.withTimeout(
+          puppeteerManager.closeBrowser(),
+          this.DEFAULT_TIMEOUT,
+          'Browser close operation timed out'
+        );
+      } catch (error) {
+        console.log(chalk.yellow(`⚠️  Browser close timeout: ${error.message}`));
+        // Don't throw here, just log the warning
+      }
     }
   }
 }
