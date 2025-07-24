@@ -1,0 +1,101 @@
+{
+  "name": "ExchangePage",
+  "description": "扫描全能王高级会员兑换页面 - 深色主题手机界面，展示兑换进度和品牌信息",
+  "type": "page",
+  "category": "exchange",
+  "figmaSource": {
+    "fileKey": "D59IG2u1r4gfGQ56qdIlyB",
+    "nodeId": "5276:10609",
+    "nodeName": "兑换中",
+    "designUrl": "https://www.figma.com/design/D59IG2u1r4gfGQ56qdIlyB/6.92.0?node-id=5276-10609&m=dev"
+  },
+  "dimensions": {
+    "width": 375,
+    "height": 812,
+    "aspectRatio": "9:19.5"
+  },
+  "features": [
+    "深色主题",
+    "状态栏",
+    "导航栏",
+    "品牌Logo展示",
+    "渐变文字效果",
+    "3D装饰元素",
+    "加载状态展示",
+    "iPhone X适配"
+  ],
+  "props": {
+    "loading": {
+      "type": "boolean",
+      "default": true,
+      "description": "控制兑换加载状态"
+    }
+  },
+  "events": {
+    "back": {
+      "payload": "void",
+      "description": "返回按钮点击事件"
+    },
+    "retry": {
+      "payload": "void", 
+      "description": "重试操作事件"
+    }
+  },
+  "assets": {
+    "icons": [
+      "ic_back_arrow.svg",
+      "logo_combination.svg"
+    ]
+  },
+  "styles": {
+    "colors": {
+      "background": "#1E2334",
+      "text_primary": "#FFFFFF",
+      "text_accent": "#D5B87F",
+      "gradient_gold": "linear-gradient(180deg, #F6E2A7 0%, #CCAD74 100%)",
+      "surface_glass": "rgba(255, 255, 255, 0.2)",
+      "illustration_bg": "radial-gradient(circle, #39425B 0%, #252B3D 100%)"
+    },
+    "typography": {
+      "mainTitle": {
+        "fontFamily": "HarmonyOS Sans SC",
+        "fontWeight": 700,
+        "fontSize": "28px",
+        "lineHeight": "1.29"
+      },
+      "statusText": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 500,
+        "fontSize": "20px",
+        "lineHeight": "1.4"
+      },
+      "timeText": {
+        "fontFamily": "SF Pro Display",
+        "fontWeight": 600,
+        "fontSize": "17px",
+        "letterSpacing": "-0.3px"
+      }
+    },
+    "effects": {
+      "deviceShadow": "0px 3px 4px 0px rgba(30, 35, 52, 1)",
+      "blur": "blur(8px)"
+    }
+  },
+  "usage": {
+    "example": "<ExchangePage :loading=\"isExchanging\" @back=\"handleBack\" @retry=\"handleRetry\" />",
+    "scenarios": [
+      "会员兑换流程页面",
+      "支付处理状态页面", 
+      "品牌展示页面",
+      "移动端全屏展示"
+    ]
+  },
+  "version": "1.0.0",
+  "lastModified": "2024-07-24T12:48:32Z",
+  "restorationInfo": {
+    "figmaAnalyzed": true,
+    "assetsDownloaded": true,
+    "componentsGenerated": true,
+    "status": "ready-for-testing"
+  }
+} 

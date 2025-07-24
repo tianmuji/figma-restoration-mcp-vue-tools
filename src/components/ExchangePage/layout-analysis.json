@@ -1,0 +1,197 @@
+{
+  "componentName": "ExchangePage",
+  "description": "扫描全能王高级会员兑换页面 - 深色主题手机界面",
+  "dimensions": {
+    "width": 375,
+    "height": 812
+  },
+  "layout": {
+    "display": "flex",
+    "flexDirection": "column",
+    "position": "relative",
+    "backgroundColor": "#1E2334",
+    "overflow": "hidden"
+  },
+  "elements": [
+    {
+      "id": "status-bar",
+      "type": "component",
+      "name": "Status Bar",
+      "position": { "x": 0, "y": 0, "width": 375, "height": 44 },
+      "componentRef": "StatusBar",
+      "props": {
+        "theme": "dark",
+        "phone": "iPhone X"
+      }
+    },
+    {
+      "id": "navigation-bar",
+      "type": "navigation",
+      "position": { "x": 0, "y": 44, "width": 375, "height": 44 },
+      "layout": {
+        "display": "flex",
+        "flexDirection": "row",
+        "alignItems": "center",
+        "justifyContent": "space-between",
+        "padding": "10px 16px"
+      },
+      "children": [
+        {
+          "id": "back-button",
+          "type": "button",
+          "position": { "x": 16, "y": 54, "width": 24, "height": 24 },
+          "icon": "ic_back",
+          "color": "#FFFFFF"
+        },
+        {
+          "id": "action-buttons",
+          "type": "button-group",
+          "position": { "x": 283, "y": 50, "width": 87, "height": 32 },
+          "style": {
+            "backgroundColor": "rgba(255, 255, 255, 0.2)",
+            "borderRadius": "16px",
+            "border": "0.5px solid #EAEAEA"
+          }
+        }
+      ]
+    },
+    {
+      "id": "logo-section",
+      "type": "brand",
+      "position": { "x": 120, "y": 104, "width": 134, "height": 32 },
+      "layout": {
+        "display": "flex",
+        "flexDirection": "row",
+        "alignItems": "center",
+        "justifyContent": "center"
+      },
+      "children": [
+        {
+          "id": "app-icon",
+          "type": "icon",
+          "position": { "x": 124.28, "y": 106.56, "width": 26.88, "height": 26.88 },
+          "style": {
+            "borderRadius": "5.99px",
+            "backgroundColor": "#1E2939"
+          }
+        },
+        {
+          "id": "brand-text",
+          "type": "text-group",
+          "position": { "x": 157.88, "y": 110.4, "width": 93.44, "height": 17.92 },
+          "children": [
+            {
+              "id": "app-name",
+              "text": "扫描全能王",
+              "color": "#FFFFFF"
+            },
+            {
+              "id": "tm-mark",
+              "text": "TM",
+              "fontSize": "small"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "main-title",
+      "type": "heading",
+      "position": { "x": 60, "y": 160, "width": 252, "height": 72 },
+      "text": "欢迎兑换\n扫描全能王高级会员",
+      "style": {
+        "fontFamily": "HarmonyOS Sans SC",
+        "fontWeight": 700,
+        "fontSize": "28px",
+        "lineHeight": "1.29",
+        "textAlign": "center",
+        "background": "linear-gradient(180deg, #F6E2A7 0%, #CCAD74 100%)",
+        "webkitBackgroundClip": "text",
+        "webkitTextFillColor": "transparent"
+      }
+    },
+    {
+      "id": "phone-illustration",
+      "type": "illustration",
+      "position": { "x": 14, "y": 309, "width": 347, "height": 240 },
+      "description": "3D手机渲染图，包含装饰性背景和光效",
+      "style": {
+        "background": "radial-gradient(circle, #39425B 0%, #252B3D 100%)",
+        "borderRadius": "8px"
+      },
+      "children": [
+        {
+          "id": "phone-device",
+          "type": "device-render",
+          "position": { "x": 156.5, "y": 391, "width": 58, "height": 58 },
+          "style": {
+            "borderRadius": "50%",
+            "boxShadow": "0px 3px 4px 0px rgba(30, 35, 52, 1)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "status-message",
+      "type": "status",
+      "position": { "x": 109, "y": 573, "width": 157, "height": 28 },
+      "text": "高级会员兑换中...",
+      "style": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 500,
+        "fontSize": "20px",
+        "lineHeight": "1.4",
+        "textAlign": "center",
+        "color": "#D5B87F"
+      }
+    },
+    {
+      "id": "home-indicator",
+      "type": "component",
+      "position": { "x": 0, "y": 778, "width": 375, "height": 34 },
+      "componentRef": "HomeIndicator",
+      "props": {
+        "theme": "dark"
+      }
+    }
+  ],
+  "assets": [
+    {
+      "name": "ic_back",
+      "type": "svg",
+      "usage": "导航返回按钮"
+    },
+    {
+      "name": "app_logo",
+      "type": "svg", 
+      "usage": "扫描全能王应用图标"
+    },
+    {
+      "name": "phone_illustration",
+      "type": "3d_render",
+      "usage": "装饰性3D手机渲染图"
+    }
+  ],
+  "colors": {
+    "background": "#1E2334",
+    "text_primary": "#FFFFFF",
+    "text_accent": "#D5B87F",
+    "gradient_gold": "linear-gradient(180deg, #F6E2A7 0%, #CCAD74 100%)",
+    "surface_glass": "rgba(255, 255, 255, 0.2)",
+    "illustration_bg": "radial-gradient(circle, #39425B 0%, #252B3D 100%)"
+  },
+  "typography": {
+    "mainTitle": {
+      "fontFamily": "HarmonyOS Sans SC",
+      "fontWeight": 700,
+      "fontSize": "28px",
+      "lineHeight": "1.29"
+    },
+    "statusText": {
+      "fontFamily": "PingFang SC", 
+      "fontWeight": 500,
+      "fontSize": "20px",
+      "lineHeight": "1.4"
+    }
+  }
+} 

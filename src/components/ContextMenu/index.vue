@@ -180,9 +180,6 @@ const elements = [
 
 // 计算属性
 const menuStyle = computed(() => ({
-  position: 'absolute',
-  left: `${props.x}px`,
-  top: `${props.y}px`,
   display: props.visible ? 'flex' : 'none'
 }))
 
@@ -225,13 +222,12 @@ const handleMenuClick = (action: string) => {
   background-color: #FFFFFF;
   border-radius: 4px;
   box-shadow: 0px 5px 30px 0px rgba(48, 61, 60, 0.15), 0px 2px 8px 0px rgba(48, 61, 60, 0.1);
+
   width: 156px;
   height: auto;
   max-height: none;
   user-select: none;
-  z-index: 1000;
   overflow: visible;
-  position: relative;
 }
 
 .menu-item {
@@ -279,11 +275,13 @@ const handleMenuClick = (action: string) => {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
   filter: brightness(0) saturate(100%) invert(35%) sepia(0%) saturate(1482%) hue-rotate(158deg) brightness(93%) contrast(87%);
 }
 
 .menu-icon--danger {
-  filter: brightness(0) saturate(100%) invert(45%) sepia(98%) saturate(2684%) hue-rotate(3deg) brightness(101%) contrast(98%);
+  filter: brightness(0) saturate(100%) invert(45%) sepia(98%) saturate(2684%) hue-rotate(3deg) brightness(101%) contrast(98%) !important;
 }
 
 .menu-text {
@@ -321,5 +319,15 @@ const handleMenuClick = (action: string) => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+}
+
+/* 更精确的字体渲染 */
+.menu-text, .shortcut {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
 }
 </style> 
