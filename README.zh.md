@@ -64,21 +64,59 @@ node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
 
 ### MCP服务器配置
 
-Add to your MCP client configuration:
+#### 🌐 远端版本（推荐）
+
+使用发布的npm包，无需本地安装，自动获得最新更新：
+
+**步骤1**: 添加MCP服务器配置到Cursor设置（`~/.cursor/mcp.json`）:
 
 ```json
 {
   "mcpServers": {
-    "vue-figma-tools": {
-      "command": "node",
-      "args": ["path/to/figma-restoration-mcp-vue-tools/src/server.js"],
+    "figma-restoration-mcp-vue-tools": {
+      "command": "npx",
+             "args": [
+         "-y",
+         "figma-restoration-mcp-vue-tools",
+         "start"
+       ],
       "env": {
-        "CHROME_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "NODE_ENV": "production"
       }
     }
   }
 }
 ```
+
+**步骤2**: 重启Cursor编辑器。
+
+**步骤3**: 在Cursor中使用以下MCP工具：
+- `snapdom_screenshot` - 高质量组件截图
+- `figma_compare` - Figma设计对比分析
+- `optimize_svg` - SVG资源优化
+
+#### 🔧 本地开发版本
+
+适用于需要修改源码的贡献者或高级用户：
+
+```json
+{
+  "mcpServers": {
+    "figma-restoration-mcp-vue-tools": {
+      "command": "node",
+      "args": ["/绝对路径/figma-restoration-mcp-vue-tools/src/server.js"],
+      "cwd": "/绝对路径/figma-restoration-mcp-vue-tools",
+      "env": {
+        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
+```
+
+**注意**: 将 `/绝对路径/figma-restoration-mcp-vue-tools` 替换为实际的项目路径。
 
 ## 🛠️ 核心工具
 

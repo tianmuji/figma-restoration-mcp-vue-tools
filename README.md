@@ -16,25 +16,71 @@ A professional toolkit for Figma-to-Vue component restoration using Model Contex
 
 ## Quick Start
 
-Add the MCP server to your Cursor settings:
+### 🌐 Remote Version (Recommended)
+
+Use the published npm package for easy setup and automatic updates:
+
+**Step 1**: Add the MCP server to your Cursor configuration (`~/.cursor/mcp.json`):
 
 ```json
 {
-  "mcp": {
-    "servers": {
-      "figma-restoration": {
-        "command": "npx",
-        "args": ["figma-restoration-mcp-vue-tools", "start"]
+  "mcpServers": {
+    "figma-restoration-mcp-vue-tools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "figma-restoration-mcp-vue-tools",
+        "start"
+      ],
+      "env": {
+        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "NODE_ENV": "production"
       }
     }
   }
 }
 ```
 
-**Restart Cursor** after adding the configuration, then ask Cursor to use the tools:
+**Step 2**: **Restart Cursor** after adding the configuration.
+
+**Step 3**: Ask Cursor to use the tools:
 - `snapdom_screenshot` - Take high-quality component screenshots
-- `figma_compare` - Compare components with Figma designs
+- `figma_compare` - Compare components with Figma designs  
 - `optimize_svg` - Optimize SVG assets
+
+### 🔧 Local Development Version
+
+For contributors or advanced users who need to modify the source code:
+
+**Step 1**: Clone and setup the repository:
+
+```bash
+git clone https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git
+cd figma-restoration-mcp-vue-tools
+npm install
+```
+
+**Step 2**: Add the local MCP server to your Cursor configuration:
+
+```json
+{
+  "mcpServers": {
+    "figma-restoration-mcp-vue-tools": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/figma-restoration-mcp-vue-tools/src/server.js"
+      ],
+      "cwd": "/absolute/path/to/figma-restoration-mcp-vue-tools",
+      "env": {
+        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
+```
+
+**Note**: Replace `/absolute/path/to/figma-restoration-mcp-vue-tools` with the actual path to your cloned repository.
 
 ## MCP Tools
 

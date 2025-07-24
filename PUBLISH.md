@@ -132,18 +132,60 @@ git push -f origin main
 
 1. **安装包**:
    ```bash
-   npm install @figma-restoration/mcp-vue-tools
+   npm install figma-restoration-mcp-vue-tools
    ```
 
 2. **使用 CLI**:
    ```bash
-   npx @figma-restoration/mcp-vue-tools init
-   npx @figma-restoration/mcp-vue-tools start
+   npx figma-restoration-mcp-vue-tools init
+   npx figma-restoration-mcp-vue-tools start
    ```
 
-3. **查看文档**:
-   - npm: https://www.npmjs.com/package/@figma-restoration/mcp-vue-tools
-   - GitHub: https://github.com/yujie-wu/figma-restoration-mcp-vue-tools
+3. **在Cursor中使用MCP服务器**:
+   ```json
+   {
+     "mcpServers": {
+       "figma-restoration-mcp-vue-tools": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "figma-restoration-mcp-vue-tools",
+           "start"
+         ],
+         "env": {
+           "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+           "NODE_ENV": "production"
+         }
+       }
+     }
+   }
+   ```
+
+4. **查看文档**:
+   - npm: https://www.npmjs.com/package/figma-restoration-mcp-vue-tools
+   - GitHub: https://github.com/tianmuji/figma-restoration-mcp-vue-tools
+
+## 📖 用户使用指南
+
+### 远端版本使用（推荐）
+
+用户无需克隆仓库，直接通过npm包使用：
+
+1. **配置Cursor MCP**: 在 `~/.cursor/mcp.json` 中添加服务器配置
+2. **重启Cursor**: 重启编辑器以加载新配置
+3. **使用工具**: 直接在Cursor中使用MCP工具
+   - `snapdom_screenshot`: 高质量组件截图
+   - `figma_compare`: Figma设计对比
+   - `optimize_svg`: SVG优化
+
+### 本地开发版本
+
+适用于需要修改源码的贡献者：
+
+1. **克隆仓库**: `git clone https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git`
+2. **安装依赖**: `npm install`
+3. **配置MCP**: 使用本地路径配置
+4. **开发调试**: 修改代码并测试
 
 ## 📞 支持
 
