@@ -1,0 +1,1230 @@
+{
+  "metadata": {
+    "name": "🖥️  PC-1｜文档管理 & 阅读体验优化",
+    "lastModified": "2025-07-11T10:28:17Z",
+    "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/9195dc2b-629a-49a9-bbec-a278b43f15b3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ4GOSFWC3X5W3ZQB%2F20250724%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250724T000000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=543f1012113e3f50f4b01813e633eccaf8a739b584bf0d45954ed41a1cad051b",
+    "components": {
+      "1528:58109": {
+        "id": "1528:58109",
+        "key": "8f6fd902a350b7c24a59daee1caabe5525fdeb89",
+        "name": "菜单项状态=默认, 菜单需要勾选=off, 快捷键=on, 二级菜单=off",
+        "componentSetId": "1528:57930"
+      },
+      "681:11395": {
+        "id": "681:11395",
+        "key": "67bd6c2d0a24af6179653924c975d7473ed4ae05",
+        "name": "cs_ic_common_complete_完成保存"
+      },
+      "1530:35829": {
+        "id": "1530:35829",
+        "key": "30d0d64774169399af6717a95d0691b2c6089f82",
+        "name": "cs_ic_common_erase_rectangle_矩形擦除"
+      },
+      "1018:22198": {
+        "id": "1018:22198",
+        "key": "fb67c36650d3776d8ddab761a476b403b969219d",
+        "name": "icon/向右"
+      },
+      "665:8693": {
+        "id": "665:8693",
+        "key": "0c9378e67f6e4bf278cae6d648e39034b583b881",
+        "name": "cs_ic_common_share_ios_分享、共享"
+      },
+      "1528:58117": {
+        "id": "1528:58117",
+        "key": "0b5bdbf42d4c12c4ee272e6c76ed6c5336a66b14",
+        "name": "菜单项/hover/off/on/off"
+      },
+      "1530:36297": {
+        "id": "1530:36297",
+        "key": "3157be9410a76b333cb9084933e87ac6a66c522f",
+        "name": "cs_ic_common_download_下载"
+      },
+      "1530:35907": {
+        "id": "1530:35907",
+        "key": "7ae7dc1533223a8539b60f7d8050bb3bfad6c607",
+        "name": "cs_ic_common_copy_复制"
+      },
+      "1530:35818": {
+        "id": "1530:35818",
+        "key": "c925b91356c45857fda1b250ef1917142b030e96",
+        "name": "cs_ic_common_rename_重命名"
+      },
+      "1530:35941": {
+        "id": "1530:35941",
+        "key": "b022e98a49f9499277b6a141e1ab631600e8e38d",
+        "name": "cs_ic_common_tags_标签"
+      },
+      "1270:24949": {
+        "id": "1270:24949",
+        "key": "2169f4ee821450e20dca883f468003f12b0f91ed",
+        "name": "cs_ic_common_delete_删除、垃圾桶"
+      }
+    },
+    "componentSets": {
+      "1528:57930": {
+        "id": "1528:57930",
+        "key": "c454cbd1d778ba7c41b28af5cce0c5fb131b4573",
+        "name": "菜单项",
+        "description": ""
+      }
+    }
+  },
+  "nodes": [
+    {
+      "id": "2812:70161",
+      "name": "右键菜单-我的文档-单选文档",
+      "type": "FRAME",
+      "fills": "fill_BI5CWC",
+      "effects": "effect_DGZQJN",
+      "layout": "layout_1WYH0E",
+      "borderRadius": "4px",
+      "children": [
+        {
+          "id": "2812:70162",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70162;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70162;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70162;1528:58113",
+                      "name": "cs_ic_common_erase_rectangle_矩形擦除",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35829",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70162;1528:58113;4414:17108",
+                          "name": "Rectangle 1148 (Stroke)",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.33349609375,
+                            "y": 14.3330078125,
+                            "width": 13.333333969116211,
+                            "height": 11.333333969116211
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_6PXK5K"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70162;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_VOL6JC",
+                      "text": "打开"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70162;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "id": "2812:70163",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70163;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70163;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70163;1528:58113",
+                      "name": "cs_ic_common_share_ios_分享、共享",
+                      "type": "INSTANCE",
+                      "componentId": "665:8693",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70163;1528:58113;3556:7969",
+                          "name": "icon",
+                          "type": "BOOLEAN_OPERATION",
+                          "boundingBox": {
+                            "x": 17.83349609375,
+                            "y": 45.2333984375,
+                            "width": 12.333333969116211,
+                            "height": 12.90000057220459
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_UFCMLQ",
+                          "children": [
+                            {
+                              "id": "I2812:70163;1528:58113;4469:730",
+                              "name": "Subtract",
+                              "type": "IMAGE-SVG",
+                              "fills": "fill_ALXXZ1",
+                              "layout": "layout_8MJ1YC"
+                            },
+                            {
+                              "id": "I2812:70163;1528:58113;2672:36681",
+                              "name": "Vector 153 (Stroke)",
+                              "type": "IMAGE-SVG",
+                              "fills": "fill_ALXXZ1",
+                              "layout": "layout_STF6T2",
+                              "borderRadius": "0px 0px 0px 0px"
+                            },
+                            {
+                              "id": "I2812:70163;1528:58113;2672:36682",
+                              "name": "Vector 154 (Stroke)",
+                              "type": "IMAGE-SVG",
+                              "fills": "fill_ALXXZ1",
+                              "layout": "layout_CR9QIB",
+                              "borderRadius": "0.5px"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70163;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_WERC2Y",
+                      "text": "分享"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70163;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "id": "2812:70164",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58117",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:13",
+              "value": "true",
+              "type": "BOOLEAN"
+            }
+          ],
+          "fills": "fill_AQSMC1",
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70164;1528:58118",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70164;1528:58120",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70164;1528:58121",
+                      "name": "cs_ic_common_download_下载",
+                      "type": "INSTANCE",
+                      "componentId": "1530:36297",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70164;1528:58121;7326:13769",
+                          "name": "Union",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.33349609375,
+                            "y": 77.8330078125,
+                            "width": 13.333333969116211,
+                            "height": 11.833333969116211
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_HLAVMU"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70164;1528:58122",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_WERC2Y",
+                      "text": "下载"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70164;1528:58124",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "id": "2812:70165",
+          "name": "分割线",
+          "type": "FRAME",
+          "layout": "layout_31FZPZ",
+          "children": [
+            {
+              "id": "2812:70166",
+              "name": "Rectangle 1520",
+              "type": "RECTANGLE",
+              "boundingBox": {
+                "x": 0,
+                "y": 104,
+                "width": 156,
+                "height": 1
+              },
+              "fills": "fill_A88V4V",
+              "layout": "layout_DPYY6G"
+            }
+          ]
+        },
+        {
+          "id": "2812:70167",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70167;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70167;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_ERIJGM",
+                  "children": [
+                    {
+                      "id": "I2812:70167;1528:58113",
+                      "name": "cs_ic_common_copy_复制",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35907",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70167;1528:58113;4470:18988",
+                          "name": "icon",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.83349609375,
+                            "y": 118.8330078125,
+                            "width": 12.333333969116211,
+                            "height": 12.333333969116211
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_KIP6RD"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70167;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_WERC2Y",
+                      "text": "复制"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70167;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⌘C"
+            }
+          ]
+        },
+        {
+          "id": "2812:70168",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70168;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70168;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70168;1528:58113",
+                      "name": "cs_ic_common_erase_rectangle_矩形擦除",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35829",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70168;1528:58113;4414:17108",
+                          "name": "Rectangle 1148 (Stroke)",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.33349609375,
+                            "y": 151.3330078125,
+                            "width": 13.333333969116211,
+                            "height": 11.333333969116211
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_6PXK5K"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70168;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_VOL6JC",
+                      "text": "剪切"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70168;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⌘X"
+            }
+          ]
+        },
+        {
+          "id": "2812:70169",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "opacity": 0.30000001192092896,
+          "children": [
+            {
+              "id": "I2812:70169;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70169;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70169;1528:58113",
+                      "name": "cs_ic_common_erase_rectangle_矩形擦除",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35829",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70169;1528:58113;4414:17108",
+                          "name": "Rectangle 1148 (Stroke)",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.33349609375,
+                            "y": 183.3330078125,
+                            "width": 13.333333969116211,
+                            "height": 11.333333969116211
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_6PXK5K"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70169;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_VOL6JC",
+                      "text": "粘贴"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70169;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⌘V"
+            }
+          ]
+        },
+        {
+          "id": "2812:70172",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_A9W0TH",
+          "children": [
+            {
+              "id": "I2812:70172;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_0JQHOG",
+              "children": [
+                {
+                  "id": "I2812:70172;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70172;1528:58113",
+                      "name": "cs_ic_common_rename_重命名",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35818",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70172;1528:58113;7323:13755",
+                          "name": "Union",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 18,
+                            "y": 215.15234375,
+                            "width": 12.666666984558105,
+                            "height": 11.84783935546875
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_AO16AF"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70172;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_VOL6JC",
+                      "text": "重命名"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70172;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "id": "2812:70173",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70173;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70173;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70173;1528:58113",
+                      "name": "cs_ic_common_tags_标签",
+                      "type": "INSTANCE",
+                      "componentId": "1530:35941",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70173;1528:58113;7325:13768",
+                          "name": "Union",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.33056640625,
+                            "y": 246.8330078125,
+                            "width": 12.83627700805664,
+                            "height": 12.83627700805664
+                          },
+                          "fills": "fill_T0BF1B",
+                          "layout": "layout_TO7ZL4"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70173;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_ALXXZ1",
+                      "layout": "layout_VOL6JC",
+                      "text": "标签"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70173;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_ALXXZ1",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "id": "2812:70174",
+          "name": "分割线",
+          "type": "FRAME",
+          "layout": "layout_31FZPZ",
+          "children": [
+            {
+              "id": "2812:70175",
+              "name": "Rectangle 1520",
+              "type": "RECTANGLE",
+              "boundingBox": {
+                "x": 0,
+                "y": 273,
+                "width": 156,
+                "height": 1
+              },
+              "fills": "fill_A88V4V",
+              "layout": "layout_DPYY6G"
+            }
+          ]
+        },
+        {
+          "id": "2812:70176",
+          "name": "菜单项",
+          "type": "INSTANCE",
+          "componentId": "1528:58109",
+          "componentProperties": [
+            {
+              "name": "Show icon#6979:0",
+              "value": "true",
+              "type": "BOOLEAN"
+            },
+            {
+              "name": "菜单项状态",
+              "value": "默认",
+              "type": "VARIANT"
+            },
+            {
+              "name": "菜单需要勾选",
+              "value": "off",
+              "type": "VARIANT"
+            },
+            {
+              "name": "快捷键",
+              "value": "on",
+              "type": "VARIANT"
+            },
+            {
+              "name": "二级菜单",
+              "value": "off",
+              "type": "VARIANT"
+            }
+          ],
+          "layout": "layout_W01QGN",
+          "children": [
+            {
+              "id": "I2812:70176;1528:58110",
+              "name": "右侧内容",
+              "type": "FRAME",
+              "layout": "layout_B7VLW5",
+              "children": [
+                {
+                  "id": "I2812:70176;1528:58112",
+                  "name": "icon & text",
+                  "type": "FRAME",
+                  "layout": "layout_937DT1",
+                  "children": [
+                    {
+                      "id": "I2812:70176;1528:58113",
+                      "name": "cs_ic_common_delete_删除、垃圾桶",
+                      "type": "INSTANCE",
+                      "componentId": "1270:24949",
+                      "layout": "layout_8JLI45",
+                      "children": [
+                        {
+                          "id": "I2812:70176;1528:58113;7056:13925",
+                          "name": "Union",
+                          "type": "IMAGE-SVG",
+                          "boundingBox": {
+                            "x": 17.83349609375,
+                            "y": 287.3330078125,
+                            "width": 12.333333969116211,
+                            "height": 13.333333015441895
+                          },
+                          "fills": "fill_OYV51Z",
+                          "layout": "layout_FDUNT3"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I2812:70176;1528:58114",
+                      "name": "文字",
+                      "type": "TEXT",
+                      "textStyle": "style_9LS5WU",
+                      "fills": "fill_OYV51Z",
+                      "layout": "layout_VOL6JC",
+                      "text": "删除"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "I2812:70176;1528:58116",
+              "name": "快捷键",
+              "type": "TEXT",
+              "textStyle": "style_CIDNT6",
+              "fills": "fill_OYV51Z",
+              "layout": "layout_73HDPI",
+              "text": "⇧⌘C",
+              "opacity": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalVars": {
+    "styles": {
+      "fill_BI5CWC": [
+        "#FFFFFF"
+      ],
+      "effect_DGZQJN": {
+        "boxShadow": "0px 5px 30px 0px rgba(48, 61, 60, 0.15), 0px 2px 8px 0px rgba(48, 61, 60, 0.1)"
+      },
+      "layout_1WYH0E": {
+        "mode": "column",
+        "padding": "4px 0px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "layout_W01QGN": {
+        "mode": "row",
+        "alignItems": "center",
+        "alignSelf": "stretch",
+        "gap": "16px",
+        "padding": "6px 16px 6px 12px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_B7VLW5": {
+        "mode": "row",
+        "alignItems": "center",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_937DT1": {
+        "mode": "row",
+        "alignItems": "center",
+        "gap": "8px",
+        "padding": "0px 0px 0px 4px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "layout_8JLI45": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 16,
+          "height": 16
+        }
+      },
+      "fill_T0BF1B": [
+        "#5A5A5A"
+      ],
+      "layout_6PXK5K": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.33,
+          "y": 2.33
+        },
+        "dimensions": {
+          "width": 13.33,
+          "height": 11.33
+        }
+      },
+      "style_9LS5WU": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 400,
+        "fontSize": 14,
+        "lineHeight": "1.4285714285714286em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "fill_ALXXZ1": [
+        "#212121"
+      ],
+      "layout_VOL6JC": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "style_CIDNT6": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 400,
+        "fontSize": 14,
+        "lineHeight": "1.4285714285714286em",
+        "letterSpacing": "20%",
+        "textAlignHorizontal": "RIGHT",
+        "textAlignVertical": "TOP"
+      },
+      "layout_73HDPI": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "hug"
+        },
+        "dimensions": {
+          "width": 42
+        }
+      },
+      "layout_UFCMLQ": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.83,
+          "y": 1.23
+        },
+        "dimensions": {
+          "width": 12.33,
+          "height": 12.9
+        }
+      },
+      "layout_8MJ1YC": {
+        "mode": "none",
+        "dimensions": {
+          "width": 12.33,
+          "height": 8.33
+        }
+      },
+      "layout_STF6T2": {
+        "mode": "none",
+        "dimensions": {
+          "width": 7.03,
+          "height": 4.12
+        }
+      },
+      "layout_CR9QIB": {
+        "mode": "none",
+        "dimensions": {
+          "width": 1.2,
+          "height": 9.2
+        }
+      },
+      "layout_WERC2Y": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "fill_AQSMC1": [
+        "#F7F7F7"
+      ],
+      "layout_HLAVMU": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.33,
+          "y": 1.83
+        },
+        "dimensions": {
+          "width": 13.33,
+          "height": 11.83
+        }
+      },
+      "layout_31FZPZ": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 9
+        }
+      },
+      "fill_A88V4V": [
+        "#F1F1F1"
+      ],
+      "layout_DPYY6G": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 4
+        },
+        "dimensions": {
+          "width": 156,
+          "height": 1
+        }
+      },
+      "layout_ERIJGM": {
+        "mode": "row",
+        "alignItems": "center",
+        "gap": "8px",
+        "padding": "0px 0px 0px 4px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_KIP6RD": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.83,
+          "y": 1.83
+        },
+        "dimensions": {
+          "width": 12.33,
+          "height": 12.33
+        }
+      },
+      "layout_A9W0TH": {
+        "mode": "row",
+        "alignItems": "center",
+        "gap": "16px",
+        "padding": "6px 16px 6px 12px",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "layout_0JQHOG": {
+        "mode": "row",
+        "alignItems": "center",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "layout_AO16AF": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 2,
+          "y": 2.15
+        },
+        "dimensions": {
+          "width": 12.67,
+          "height": 11.85
+        }
+      },
+      "layout_TO7ZL4": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.33,
+          "y": 1.83
+        },
+        "dimensions": {
+          "width": 12.84,
+          "height": 12.84
+        }
+      },
+      "fill_OYV51Z": [
+        "#FE501E"
+      ],
+      "layout_FDUNT3": {
+        "mode": "none",
+        "locationRelativeToParent": {
+          "x": 1.83,
+          "y": 1.33
+        },
+        "dimensions": {
+          "width": 12.33,
+          "height": 13.33
+        }
+      }
+    }
+  }
+}

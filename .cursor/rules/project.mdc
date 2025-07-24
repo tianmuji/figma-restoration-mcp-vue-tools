@@ -1,3 +1,6 @@
+---
+alwaysApply: true
+---
 # Cursor 编辑器规则配置
 
 ## 🚫 禁止修改的文件
