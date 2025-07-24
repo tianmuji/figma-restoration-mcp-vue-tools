@@ -87,9 +87,9 @@ alwaysApply: true
     └── region-analysis.json      # 区域分析
 ```
 - **素材准备方式**:
+  - 从Figma手动导出图片素材到images目录
   - 确保素材命名符合规范（icon_xxx.svg, image_xxx.png等）
-  - svg 使用tool进行优化
-  - 推荐使用高分辨率素材 3x图
+  - 推荐使用高分辨率素材（2x或3x）
 
 ### 步骤4: 递归还原子组件
 对于识别出的子组件：
