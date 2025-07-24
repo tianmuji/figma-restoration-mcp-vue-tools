@@ -28,7 +28,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "figma-restoration-mcp-vue-tools@3.0.6",
+                 "figma-restoration-mcp-vue-tools",
         "start"
       ],
       "env": {

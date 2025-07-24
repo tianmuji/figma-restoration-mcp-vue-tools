@@ -2,7 +2,7 @@
 
 ## 🎉 npm 发布成功！
 
-✅ **包已成功发布到 npm**: `figma-restoration-mcp-vue-tools@1.0.1`
+✅ **包已成功发布到 npm**: `figma-restoration-mcp-vue-tools`
 ✅ **npm 链接**: https://www.npmjs.com/package/figma-restoration-mcp-vue-tools
 
 ## 📚 下一步：设置 GitHub 仓库
