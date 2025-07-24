@@ -2,19 +2,18 @@
 
 [![npm version](https://badge.fury.io/js/figma-restoration-mcp-vue-tools.svg)](https://badge.fury.io/js/figma-restoration-mcp-vue-tools)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-A professional toolkit for Figma-to-Vue component restoration using Model Context Protocol (MCP). Features high-quality DOM screenshots, intelligent shadow detection, and automated visual comparison for pixel-perfect component restoration.
+🛠️ Professional Figma Component Restoration Kit - A comprehensive MCP (Model Context Protocol) server for Vue component development and Figma design restoration. Features snapDOM-powered high-quality screenshots, intelligent visual comparison, and automated SVG optimization.
 
-## Features
+## 🚀 Features
 
-- **High-Quality Screenshots**: snapDOM-powered 3x scaling with shadow support and font embedding
-- **Intelligent Shadow Detection**: Automatic padding calculation based on Figma shadow data
-- **Advanced Image Comparison**: Pixel-perfect analysis with smart debugging and quality assessment
-- **SVG Optimization**: SVGO integration with customizable configuration
-- **MCP Integration**: Seamless integration with AI coding assistants via Model Context Protocol
+- **🎯 High-Quality Screenshots**: snapDOM technology with 3x scaling, font embedding, and intelligent shadow detection
+- **🔍 Advanced Visual Comparison**: Pixel-perfect analysis with smart difference detection and quality assessment  
+- **🎨 SVG Optimization**: Built-in SVGO integration with customizable configuration
+- **🤖 MCP Integration**: Seamless integration with AI coding assistants (Cursor, Claude, etc.)
 
-## Quick Start
+## 📦 Quick Start
 
 ### 🌐 Remote Version (Recommended)
 
@@ -29,7 +28,7 @@ Use the published npm package for easy setup and automatic updates:
       "command": "npx",
       "args": [
         "-y",
-        "figma-restoration-mcp-vue-tools",
+        "figma-restoration-mcp-vue-tools@3.0.6",
         "start"
       ],
       "env": {
@@ -43,9 +42,9 @@ Use the published npm package for easy setup and automatic updates:
 
 **Step 2**: **Restart Cursor** after adding the configuration.
 
-**Step 3**: Ask Cursor to use the tools:
-- `snapdom_screenshot` - Take high-quality component screenshots
-- `figma_compare` - Compare components with Figma designs  
+**Step 3**: Use the MCP tools in Cursor:
+- `figma_compare` - Compare components with Figma designs
+- `snapdom_screenshot` - Take high-quality component screenshots  
 - `optimize_svg` - Optimize SVG assets
 
 ### 🔧 Local Development Version
@@ -80,54 +79,77 @@ npm install
 }
 ```
 
-**Note**: Replace `/absolute/path/to/figma-restoration-mcp-vue-tools` with the actual path to your cloned repository.
-
-## MCP Tools
-
-### snapdom_screenshot
-
-Captures high-quality DOM screenshots with intelligent shadow detection.
-
-```json
-{
-  "tool": "snapdom_screenshot",
-  "arguments": {
-    "componentName": "MyComponent",
-    "snapDOMOptions": {
-      "scale": 3,
-      "compress": true,
-      "embedFonts": true,
-      "padding": 0
-    }
-  }
-}
-```
+## 🛠️ MCP Tools
 
 ### figma_compare
 
-Performs advanced image comparison and generates detailed analysis reports.
+Advanced component comparison tool that analyzes differences between expected and actual screenshots.
 
+**Parameters:**
 ```json
 {
   "tool": "figma_compare",
   "arguments": {
     "componentName": "MyComponent",
-    "generateReport": true,
-    "threshold": 0.1
+    "projectPath": "/path/to/your/vue/project",
+    "threshold": 0.1,
+    "outputPath": "/custom/output/directory"
   }
 }
 ```
 
+**Features:**
+- Pixel-perfect difference detection
+- Quality assessment scoring
+- Detailed analysis reports (JSON & Markdown)
+- Customizable comparison threshold
+
+### snapdom_screenshot
+
+High-quality DOM screenshot tool using snapDOM technology for precise component capture.
+
+**Parameters:**
+```json
+{
+  "tool": "snapdom_screenshot", 
+  "arguments": {
+    "componentName": "MyComponent",
+    "projectPath": "/path/to/your/vue/project",
+    "port": 3000,
+    "viewport": {
+      "width": 1440,
+      "height": 800
+    },
+    "snapDOMOptions": {
+      "scale": 3,
+      "compress": true,
+      "embedFonts": true,
+      "backgroundColor": "transparent",
+      "padding": 0
+    },
+    "outputPath": "/custom/output/path.png"
+  }
+}
+```
+
+**Features:**
+- 3x scaling for high-resolution output
+- Intelligent shadow and effect capture
+- Font embedding support
+- Transparent background support
+- Custom viewport and output settings
+
 ### optimize_svg
 
-Optimizes SVG files using SVGO with customizable configuration.
+SVG optimization tool powered by SVGO with customizable configuration.
 
+**Parameters:**
 ```json
 {
   "tool": "optimize_svg",
   "arguments": {
-    "inputPath": "path/to/input.svg",
-    "outputPath": "path/to/optimized.svg",
+    "inputPath": "/path/to/input.svg",
+    "outputPath": "/path/to/optimized.svg",
     "svgoConfig": {
       "plugins": ["preset-default"],
       "multipass": true,
@@ -137,11 +159,22 @@ Optimizes SVG files using SVGO with customizable configuration.
 }
 ```
 
-## Configuration
+**Features:**
+- Advanced SVG optimization
+- Customizable SVGO configuration
+- Batch processing support
+- Size reduction reports
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+- `PUPPETEER_EXECUTABLE_PATH`: Path to Chrome/Chromium executable
+- `NODE_ENV`: Environment mode (development/production)
 
 ### Shadow Detection
 
-For components with shadows, the tool automatically calculates optimal padding:
+For components with shadows, the tool automatically calculates optimal padding based on effect data:
 
 ```json
 {
@@ -149,27 +182,42 @@ For components with shadows, the tool automatically calculates optimal padding:
     "scale": 3,
     "padding": 0,
     "figmaEffects": [
-      {"type": "DROP_SHADOW", "offset": {"x": 0, "y": 5}, "radius": 30, "spread": 0}
+      {
+        "type": "DROP_SHADOW", 
+        "offset": {"x": 0, "y": 5}, 
+        "radius": 30, 
+        "spread": 0
+      }
     ]
   }
 }
 ```
 
-### Accuracy Benchmarks
+### Comparison Thresholds
 
-| Configuration | Accuracy | Use Case |
-|---------------|----------|----------|
-| Auto-calculated padding | 98.33% | Components with shadows |
-| Zero padding | 92.66% | Clean components |
-| Fixed padding | Not recommended | Hardcoded values |
+| Threshold | Sensitivity | Use Case |
+|-----------|-------------|----------|
+| 0.0-0.05  | Very Strict | Pixel-perfect matching |
+| 0.05-0.1  | Strict      | High-quality components |
+| 0.1-0.2   | Moderate    | General comparison |
+| 0.2+      | Loose       | Rough similarity check |
 
-## Requirements
+## 🎯 Typical Workflow
 
-- Node.js ≥ 20.0.0
-- Vue.js project (for component restoration)
-- MCP-compatible AI coding assistant (Cursor IDE, Claude, etc.)
+1. **Setup**: Configure MCP server in Cursor
+2. **Screenshot**: Use `snapdom_screenshot` to capture component
+3. **Compare**: Use `figma_compare` to analyze differences
+4. **Optimize**: Use `optimize_svg` for asset optimization
+5. **Iterate**: Refine component based on analysis results
 
-## Contributing
+## 📋 Requirements
+
+- **Node.js**: ≥ 18.0.0
+- **Chrome/Chromium**: For screenshot generation
+- **Vue.js project**: For component restoration
+- **MCP-compatible client**: Cursor IDE, Claude Desktop, etc.
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-feature`)
@@ -177,18 +225,23 @@ For components with shadows, the tool automatically calculates optimal padding:
 4. Push to the branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Links
+## 🔗 Links
 
-- [GitHub Repository](https://github.com/tianmuji/figma-restoration-mcp-vue-tools)
-- [npm Package](https://www.npmjs.com/package/figma-restoration-mcp-vue-tools)
-- [Issues](https://github.com/tianmuji/figma-restoration-mcp-vue-tools/issues)
+- **GitHub**: [tianmuji/figma-restoration-mcp-vue-tools](https://github.com/tianmuji/figma-restoration-mcp-vue-tools)
+- **npm**: [figma-restoration-mcp-vue-tools](https://www.npmjs.com/package/figma-restoration-mcp-vue-tools)
+- **Issues**: [Report bugs & feature requests](https://github.com/tianmuji/figma-restoration-mcp-vue-tools/issues)
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- [snapDOM](https://github.com/zumer/snapdom) - High-quality DOM screenshots
-- [Model Context Protocol](https://modelcontextprotocol.io/) - MCP framework
-- [Vue.js](https://vuejs.org/) - Progressive JavaScript framework
+- **[snapDOM](https://github.com/zumer/snapdom)**: High-quality DOM screenshots
+- **[Model Context Protocol](https://modelcontextprotocol.io/)**: MCP framework
+- **[Vue.js](https://vuejs.org/)**: Progressive JavaScript framework
+- **[SVGO](https://github.com/svg/svgo)**: SVG optimization library
+
+---
+
+🎨 **Built for developers who demand pixel-perfect component restoration** 🎨

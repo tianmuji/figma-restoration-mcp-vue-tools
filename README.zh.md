@@ -1,70 +1,21 @@
 # 🛠️ Figma组件还原工具包
 
-基于MCP (Model Context Protocol) 的Vue组件开发和Figma还原工具集。专注于AI生成的Vue组件验证和像素级对比分析，支持3倍图归一化处理和智能差异定位。
+[![npm version](https://badge.fury.io/js/figma-restoration-mcp-vue-tools.svg)](https://badge.fury.io/js/figma-restoration-mcp-vue-tools)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-## 📋 核心功能
+🛠️ 专业级Figma组件还原工具包 - 基于MCP（模型上下文协议）的Vue组件开发和Figma设计还原综合服务器。具备snapDOM驱动的高质量截图、智能视觉对比和自动化SVG优化功能。
 
-### 🎯 智能调试系统 (v2.1.0 新增)
-- **三级优先级调试法**: 系统化问题诊断和解决方案
-  1. 🔴 大区域差异 → 素材问题 (最高优先级)
-  2. 🟡 普通元素差异 → 布局问题 (中等优先级)
-  3. 🟢 字体差异 → 可忽略 (最低优先级)
+## 🚀 核心功能
 
-### 🔍 增强分析引擎
-- **智能差异检测**: 四象限分析，精确定位问题区域
-- **Figma元素匹配**: 自动匹配差异区域与Figma设计元素
-- **置信度评分**: 基于重叠度和尺寸的智能评分系统
-- **质量等级评估**: 完美/优秀/良好/需改进/不合格五级评估
+- **🎯 高质量截图**: snapDOM技术支持3倍缩放、字体嵌入和智能阴影检测
+- **🔍 高级视觉对比**: 像素级精确分析，智能差异检测和质量评估
+- **🎨 SVG优化**: 内置SVGO集成，支持自定义配置
+- **🤖 MCP集成**: 无缝集成AI编码助手（Cursor、Claude等）
 
-### 🛠️ 传统功能
-- **🎨 Vue组件编译渲染**: 编译Vue组件并生成高质量截图 (✅ 无白边)
-- **🔍 像素级对比分析**: 与Figma设计进行精确的像素对比，支持3倍图归一化
-- **🎯 智能元素差异定位**: 基于Figma位置信息精确定位问题元素
-- **🛠️ 自动CSS修复建议**: 根据差异分析自动生成针对性修复代码
-- **📊 完整质量评估**: 自动生成匹配度报告和改进建议
-- **🔄 一站式工作流程**: 从Vue代码到修复建议的端到端自动化
+## 📦 快速开始
 
-## 📁 目录结构
-
-```
-figma-restoration-mcp-vue-tools/
-├── figma-restoration-toolkit.mjs         # 🎯 核心工具包 (一站式解决方案)
-├── compare-pixelmatch-enhanced.mjs       # 🔍 增强版像素对比工具
-├── compile-and-render.mjs                # 🖼️ Vue组件编译渲染工具
-├── clean-component.mjs                   # 🗑️ 智能组件清理工具
-├── show-diff-details.mjs                 # 📊 详细差异分析工具
-├── example.mjs                           # 📖 使用示例
-├── src/server.js                         # 🛠️ MCP服务器
-├── mcp-config.json                       # ⚙️ MCP配置
-├── results/                              # 📁 分析结果目录
-└── temp/                                 # 📁 临时文件目录
-```
-
-## 🚀 快速开始
-
-### 安装依赖
-
-```bash
-cd figma-restoration-mcp-vue-tools
-yarn install  # 或 npm install
-```
-
-### 基本使用
-
-```bash
-# 使用核心工具包进行完整还原分析
-node figma-restoration-toolkit.mjs MyComponent ./MyComponent.vue
-
-# 或者单独使用编译渲染工具
-node compile-and-render.mjs MyComponent
-
-# 单独使用像素对比工具
-node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
-```
-
-### MCP服务器配置
-
-#### 🌐 远端版本（推荐）
+### 🌐 远端版本（推荐）
 
 使用发布的npm包，无需本地安装，自动获得最新更新：
 
@@ -75,11 +26,11 @@ node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
   "mcpServers": {
     "figma-restoration-mcp-vue-tools": {
       "command": "npx",
-             "args": [
-         "-y",
-         "figma-restoration-mcp-vue-tools",
-         "start"
-       ],
+      "args": [
+        "-y",
+        "figma-restoration-mcp-vue-tools@3.0.6",
+        "start"
+      ],
       "env": {
         "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         "NODE_ENV": "production"
@@ -92,20 +43,32 @@ node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
 **步骤2**: 重启Cursor编辑器。
 
 **步骤3**: 在Cursor中使用以下MCP工具：
-- `snapdom_screenshot` - 高质量组件截图
 - `figma_compare` - Figma设计对比分析
+- `snapdom_screenshot` - 高质量组件截图
 - `optimize_svg` - SVG资源优化
 
-#### 🔧 本地开发版本
+### 🔧 本地开发版本
 
 适用于需要修改源码的贡献者或高级用户：
+
+**步骤1**: 克隆并设置仓库：
+
+```bash
+git clone https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git
+cd figma-restoration-mcp-vue-tools
+npm install
+```
+
+**步骤2**: 添加本地MCP服务器配置：
 
 ```json
 {
   "mcpServers": {
     "figma-restoration-mcp-vue-tools": {
       "command": "node",
-      "args": ["/绝对路径/figma-restoration-mcp-vue-tools/src/server.js"],
+      "args": [
+        "/绝对路径/figma-restoration-mcp-vue-tools/src/server.js"
+      ],
       "cwd": "/绝对路径/figma-restoration-mcp-vue-tools",
       "env": {
         "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -116,335 +79,198 @@ node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
 }
 ```
 
-**注意**: 将 `/绝对路径/figma-restoration-mcp-vue-tools` 替换为实际的项目路径。
+## 🛠️ MCP工具详解
 
-## 🛠️ 核心工具
+### figma_compare
 
-### 1. figma-restoration-toolkit.mjs ⭐ **主要工具**
-一站式Figma组件还原解决方案，包含完整的分析和修复流程。
+高级组件对比工具，分析预期截图与实际截图之间的差异。
 
-**功能特性:**
-- 🎨 Vue组件编译和渲染
-- 🔍 像素级对比分析 (支持3倍图归一化)
-- 🎯 智能元素差异定位
-- 🛠️ 自动CSS修复建议生成
-- 📊 完整质量评估报告
-
-**使用方法:**
-```bash
-node figma-restoration-toolkit.mjs <component-name> <vue-file-path>
-
-# 示例
-node figma-restoration-toolkit.mjs MyButton ./components/MyButton.vue
+**参数配置:**
+```json
+{
+  "tool": "figma_compare",
+  "arguments": {
+    "componentName": "MyComponent",
+    "projectPath": "/你的Vue项目路径",
+    "threshold": 0.1,
+    "outputPath": "/自定义输出目录"
+  }
+}
 ```
 
-**输出结果:**
-- 组件截图 (actual.png)
-- 差异对比图 (diff.png)
-- 详细分析报告 (restoration-report.json)
-- CSS修复建议
+**核心功能:**
+- 像素级差异检测
+- 质量评估评分
+- 详细分析报告（JSON和Markdown格式）
+- 可定制对比阈值
 
-### 2. compare-pixelmatch-enhanced.mjs 🔍 **像素对比工具**
-增强版像素对比分析工具，支持3倍图归一化和详细差异分析。
+### snapdom_screenshot
 
-**功能特性:**
-- 🔢 自动图片尺寸归一化处理
-- 📊 网格化差异区域分析
-- 🎨 颜色差异统计
-- 📈 详细匹配度报告
-- 💡 智能修复建议
+使用snapDOM技术的高质量DOM截图工具，专为精确组件捕获设计。
 
-**使用方法:**
+**参数配置:**
+```json
+{
+  "tool": "snapdom_screenshot", 
+  "arguments": {
+    "componentName": "MyComponent",
+    "projectPath": "/你的Vue项目路径",
+    "port": 3000,
+    "viewport": {
+      "width": 1440,
+      "height": 800
+    },
+    "snapDOMOptions": {
+      "scale": 3,
+      "compress": true,
+      "embedFonts": true,
+      "backgroundColor": "transparent",
+      "padding": 0
+    },
+    "outputPath": "/自定义输出路径.png"
+  }
+}
+```
+
+**核心功能:**
+- 3倍缩放高分辨率输出
+- 智能阴影和效果捕获
+- 字体嵌入支持
+- 透明背景支持
+- 自定义视窗和输出设置
+
+### optimize_svg
+
+基于SVGO的SVG优化工具，支持自定义配置。
+
+**参数配置:**
+```json
+{
+  "tool": "optimize_svg",
+  "arguments": {
+    "inputPath": "/输入文件路径.svg",
+    "outputPath": "/优化后文件路径.svg",
+    "svgoConfig": {
+      "plugins": ["preset-default"],
+      "multipass": true,
+      "floatPrecision": 2
+    }
+  }
+}
+```
+
+**核心功能:**
+- 高级SVG优化
+- 可定制SVGO配置
+- 批量处理支持
+- 文件大小减少报告
+
+## ⚙️ 配置说明
+
+### 环境变量
+
+- `PUPPETEER_EXECUTABLE_PATH`: Chrome/Chromium可执行文件路径
+- `NODE_ENV`: 环境模式（development/production）
+
+### 阴影检测
+
+对于带有阴影的组件，工具会根据效果数据自动计算最佳padding：
+
+```json
+{
+  "snapDOMOptions": {
+    "scale": 3,
+    "padding": 0,
+    "figmaEffects": [
+      {
+        "type": "DROP_SHADOW", 
+        "offset": {"x": 0, "y": 5}, 
+        "radius": 30, 
+        "spread": 0
+      }
+    ]
+  }
+}
+```
+
+### 对比阈值说明
+
+| 阈值范围 | 敏感度 | 使用场景 |
+|----------|--------|----------|
+| 0.0-0.05 | 极严格 | 像素级完美匹配 |
+| 0.05-0.1 | 严格   | 高质量组件对比 |
+| 0.1-0.2  | 中等   | 常规对比分析 |
+| 0.2+     | 宽松   | 大致相似性检查 |
+
+## 🎯 典型工作流程
+
+1. **环境配置**: 在Cursor中配置MCP服务器
+2. **组件截图**: 使用 `snapdom_screenshot` 捕获组件
+3. **对比分析**: 使用 `figma_compare` 分析差异
+4. **资源优化**: 使用 `optimize_svg` 优化素材
+5. **迭代改进**: 根据分析结果优化组件
+
+## 📋 系统要求
+
+- **Node.js**: ≥ 18.0.0
+- **Chrome/Chromium**: 用于截图生成
+- **Vue.js项目**: 组件还原目标
+- **MCP兼容客户端**: Cursor IDE、Claude Desktop等
+
+## 🛠️ 核心工具详解（传统命令行版本）
+
+### 智能调试系统
+
+- **三级优先级调试法**: 系统化问题诊断和解决方案
+  1. 🔴 大区域差异 → 素材问题 (最高优先级)
+  2. 🟡 普通元素差异 → 布局问题 (中等优先级)
+  3. 🟢 字体差异 → 可忽略 (最低优先级)
+
+### 增强分析引擎
+
+- **智能差异检测**: 四象限分析，精确定位问题区域
+- **Figma元素匹配**: 自动匹配差异区域与Figma设计元素
+- **置信度评分**: 基于重叠度和尺寸的智能评分系统
+- **质量等级评估**: 完美/优秀/良好/需改进/不合格五级评估
+
+### 基本使用（命令行）
+
 ```bash
-node compare-pixelmatch-enhanced.mjs <expected-image> <actual-image> <diff-output>
+# 使用核心工具包进行完整还原分析
+node figma-restoration-toolkit.mjs MyComponent ./MyComponent.vue
 
-# 示例
+# 或者单独使用编译渲染工具
+node compile-and-render.mjs MyComponent
+
+# 单独使用像素对比工具
 node compare-pixelmatch-enhanced.mjs expected.png actual.png diff.png
 ```
 
-### 3. compile-and-render.mjs 🖼️ **组件渲染工具**
-Vue组件编译和截图工具，支持自动元素检测和高质量渲染。
+## 🤝 参与贡献
 
-**功能特性:**
-- 📝 Vue SFC解析和编译
-- 🖼️ 自动组件截图
-- 🎯 智能元素选择器
-- ⚙️ 可配置渲染参数
+1. Fork 仓库
+2. 创建功能分支 (`git checkout -b feature/new-feature`)
+3. 提交更改 (`git commit -m '添加新功能'`)
+4. 推送到分支 (`git push origin feature/new-feature`)
+5. 开启 Pull Request
 
-**使用方法:**
-```bash
-node compile-and-render.mjs <component-name> [output-dir]
+## 📄 开源协议
 
-# 示例
-node compile-and-render.mjs MyButton ./results/MyButton
-```
+本项目基于 MIT 协议开源。详见 [LICENSE](LICENSE) 文件。
 
-### 4. clean-component.mjs 🗑️ **智能清理工具**
-智能组件文件清理工具，避免重复生成时文件堆积。
+## 🔗 相关链接
 
-**功能特性:**
-- 🗑️ 智能清理组件文件
-- 📌 保留重要文件 (expected.png, README.md)
-- 🔍 预览模式，安全操作
-- 📊 清理统计和文件管理
+- **GitHub**: [tianmuji/figma-restoration-mcp-vue-tools](https://github.com/tianmuji/figma-restoration-mcp-vue-tools)
+- **npm**: [figma-restoration-mcp-vue-tools](https://www.npmjs.com/package/figma-restoration-mcp-vue-tools)
+- **问题反馈**: [报告Bug和功能请求](https://github.com/tianmuji/figma-restoration-mcp-vue-tools/issues)
 
-**使用方法:**
-```bash
-# 预览清理 (安全模式)
-node clean-component.mjs clean MyComponent
+## 🙏 致谢
 
-# 执行清理
-node clean-component.mjs clean MyComponent --execute
+- **[snapDOM](https://github.com/zumer/snapdom)**: 高质量DOM截图库
+- **[Model Context Protocol](https://modelcontextprotocol.io/)**: MCP框架
+- **[Vue.js](https://vuejs.org/)**: 渐进式JavaScript框架
+- **[SVGO](https://github.com/svg/svgo)**: SVG优化库
 
-# 清理所有组件
-node clean-component.mjs clean-all --execute
+---
 
-# 查看清理统计
-node clean-component.mjs stats
-```
-
-### 5. show-diff-details.mjs 📊 **详细差异分析**
-显示完整的差异分析结果，包含位置信息和元素匹配。
-
-**使用方法:**
-```bash
-node show-diff-details.mjs <component-name>
-
-# 示例
-node show-diff-details.mjs MyButton
-```
-
-## 📋 工作流程示例
-
-### 完整还原工作流程
-
-**步骤1: 准备Vue组件代码**
-```vue
-<template>
-  <div class="my-button">
-    <span class="button-text">Click me</span>
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'MyButton'
-}
-</script>
-
-<style scoped>
-.my-button {
-  width: 120px;
-  height: 40px;
-  background: #007bff;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.button-text {
-  color: white;
-  font-size: 14px;
-}
-</style>
-```
-
-**步骤2: 运行完整分析**
-```bash
-node figma-restoration-toolkit.mjs MyButton ./MyButton.vue
-```
-
-**步骤3: 查看分析结果**
-```
-🎉 还原工作流程完成！
-📊 还原总结:
-   匹配度: 97.47%
-   质量评级: high
-   差异区域: 4个
-   修复建议: 2个
-
-💡 建议:
-   ✅ 高质量还原，建议直接使用
-   🔧 可以应用细节修复建议进一步优化
-
-📁 结果文件: ./results/MyButton/restoration-report.json
-```
-
-## 🚀 MCP工具 (v2.1.0 简化版)
-
-**重要更新**: 为了简化工作流程，我们移除了独立的`vue_dev_server`和`save_vue_component`工具：
-
-- ✅ **开发服务器管理**: 已集成到截图工具中，自动检查和启动
-- ✅ **组件保存**: 通过cursor rules配置，AI直接创建文件到指定路径
-
-这样的设计更加自动化和用户友好！
-
-### figma_compare 🎯 **一站式对比分析** ⭐
-**核心工具** - 完整的Figma组件还原对比分析解决方案，集成snapDOM高质量截图技术。
-
-**功能特性:**
-- 📸 snapDOM高质量DOM截图 (无需传统浏览器自动化)
-- 🔍 像素级图片对比分析
-- 📊 详细质量评估报告
-- 💡 智能优化建议
-- 📋 Markdown + JSON双格式报告
-- ⚡ 更快的截图性能和更高的保真度
-- 🛠️ **自定义输出路径支持** (v2.2.0 新增)
-
-**MCP调用示例:**
-```javascript
-// 使用默认路径（组件目录）
-{
-  "tool": "figma_compare",
-  "arguments": {
-    "componentName": "BeeSchoolHomepage",
-    "threshold": 0.1,
-    "generateReport": true
-  }
-}
-
-// 🆕 使用自定义绝对路径
-{
-  "tool": "figma_compare",
-  "arguments": {
-    "componentName": "BeeSchoolHomepage",
-    "outputPath": "/Users/username/project/custom-results/BeeSchoolHomepage",
-    "threshold": 0.1,
-    "generateReport": true
-  }
-}
-```
-
-### snapdom_screenshot 📸 **高质量截图** ⭐
-**核心工具** - 基于snapDOM技术的高保真DOM截图工具，支持阴影效果和字体嵌入。
-
-**功能特性:**
-- 🎯 snapDOM技术：直接DOM到图片转换，无需浏览器渲染
-- 🎨 完美阴影支持：智能检测和捕获box-shadow效果
-- 📝 字体嵌入：确保跨平台字体一致性
-- ⚡ 高性能：比传统截图快3-5倍
-- 🔧 智能padding：根据阴影效果自动计算边距
-- 🛠️ **自定义输出路径支持** (v2.2.0 新增)
-
-**MCP调用示例:**
-```javascript
-// 使用默认路径（组件目录）
-{
-  "tool": "snapdom_screenshot",
-  "arguments": {
-    "componentName": "BeeSchoolHomepage",
-    "snapDOMOptions": {
-      "scale": 3,
-      "compress": true,
-      "embedFonts": true,
-      "padding": 0
-    }
-  }
-}
-
-// 🆕 使用自定义绝对路径
-{
-  "tool": "snapdom_screenshot",
-  "arguments": {
-    "componentName": "BeeSchoolHomepage",
-    "outputPath": "/Users/username/project/custom-screenshots/BeeSchoolHomepage",
-    "snapDOMOptions": {
-      "scale": 3,
-      "compress": true,
-      "embedFonts": true,
-      "padding": 0
-    }
-  }
-}
-```
-
-**工作流程:**
-1. 📸 高质量DOM截图 (actual.png)
-2. 🔍 像素级对比分析 (diff.png) 
-3. 📊 生成详细分析报告 (JSON + Markdown)
-4. 💡 提供优化建议和下一步行动
-
-**输出文件结构:**
-```
-自定义路径/
-├── actual.png                    # snapDOM高质量截图
-├── expected.png                  # Figma原图 (需手动放置)
-├── diff.png                      # 差异对比图
-├── figma-analysis-report.json    # 详细分析报告
-├── figma-analysis-report.md      # Markdown格式报告
-└── region-analysis.json          # 区域差异分析
-```
-
-**输出报告示例:**
-```markdown
-# ExchangeSuccess Figma还原分析报告
-
-## 📊 总体评估
-- **还原度**: 97.20%
-- **状态**: ✨ 优秀级别
-- **发现问题**: 2 个
-- **预计改进**: +1.5%
-
-## 🎯 问题分布
-| 优先级 | 数量 | 说明 |
-|--------|------|------|
-| 🔴 高优先级 | 0 | 需要立即修复 |
-| 🟡 中优先级 | 2 | 建议优化 |
-| 🟢 低优先级 | 0 | 可选优化 |
-
-## 🔧 修复建议
-1. [MEDIUM] 调整卡片内容位置
-   - position: absolute; top: 20px; left: 46px;
-   - 检查父容器的定位和尺寸
-```
-
-## 🔧 高级功能
-
-### 坐标归一化处理
-工具包自动处理Figma 3倍图与Vue组件的坐标系转换：
-- 🔢 自动检测图片缩放比例
-- 📐 矩阵归一化坐标转换
-- 🎯 精确元素位置匹配
-
-### 智能差异定位
-基于Figma位置信息精确定位问题元素：
-- 📍 Figma元素位置信息解析
-- 🔍 差异区域与元素匹配
-- 💡 针对性修复建议生成
-
-### 质量评估体系
-- 🏆 **优秀** (99%+): 可直接使用
-- ✅ **高质量** (95-99%): 建议微调
-- ⚠️ **良好** (90-95%): 需要优化
-- ❌ **较差** (<90%): 需要重新实现
-
-## 📚 文档和最佳实践
-
-### 重要配置指南
-- 📖 [snapDOM最佳实践配置](./docs/snapdom-best-practices.md) - **必读**: 确保98%+对比精度
-- 📸 [3x截图指南](./docs/3x-screenshot-guide.md) - 高质量截图配置
-- 🔄 [工作流程文档](./docs/workflow.md) - 完整还原流程
-
-### ⚠️ 关键提醒
-正确的snapDOMOptions配置至关重要：
-```javascript
-"snapDOMOptions": {
-  "padding": 0,              // 关键: 确保精确对齐
-  "includeBoxShadow": true   // 完整视觉效果
-}
-```
-错误配置可能导致精度从98.33%降至93.23%！
-
-## 🌍 环境变量
-
-```bash
-# Chrome浏览器路径 (macOS) - snapDOM需要
-export CHROME_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-
-# 开发模式
-export NODE_ENV="development"
-```
-
-## 📄 License
-
-MIT
+🎨 **为追求像素级完美组件还原的开发者而生** 🎨
