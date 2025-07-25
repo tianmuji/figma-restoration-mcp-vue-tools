@@ -4,7 +4,7 @@
  */
 
 // 🚀 自动导入所有组件 - 无需手动维护！
-const componentModules = import.meta.glob<{ default: any }>('./*/index.vue', { eager: true })
+const componentModules = (import.meta as any).glob('./*/index.vue', { eager: true })
 
 // 自动提取组件名称和导出
 const componentMap: Record<string, any> = {}

@@ -18,6 +18,12 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   },
+  optimizeDeps: {
+    include: ['@zumer/snapdom']
+  },
+  define: {
+    global: 'globalThis'
+  },
   // 配置开发服务器中间件
   configureServer(server) {
     // 自定义中间件来处理src/components下的静态文件访问

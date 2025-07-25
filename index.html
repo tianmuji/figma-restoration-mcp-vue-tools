@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MCP Vue Tools - Figma Restoration Kit</title>
+    <script>
+      // Pre-load snapdom for screenshot functionality
+      window.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const module = await import('@zumer/snapdom');
+          window.snapdom = module.snapdom || module.default;
+          console.log('snapdom loaded successfully');
+        } catch (error) {
+          console.warn('snapdom preload failed, will try dynamic import later:', error);
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="app"></div>

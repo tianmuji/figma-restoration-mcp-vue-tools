@@ -4,20 +4,30 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-🛠️ 专业级Figma组件还原工具包 - 基于MCP（模型上下文协议）的Vue组件开发和Figma设计还原综合服务器。具备snapDOM驱动的高质量截图、智能视觉对比和自动化SVG优化功能。
+🛠️ **专业级Figma组件还原工具包** - 基于MCP（模型上下文协议）的Vue组件开发和Figma设计还原综合服务器。具备snapDOM驱动的高质量截图、智能视觉对比和自动化SVG优化功能，**零配置浏览器安装**。
 
-## 🚀 核心功能
+## 🚀 v4.1.0新特性
+
+- ✅ **零配置浏览器设置**: 自动Chrome/Chromium安装和管理
+- ✅ **纯本地依赖**: 无外部CDN依赖，提升安全性和可靠性
+- ✅ **增强snapDOM集成**: 优化性能和兼容性
+- ✅ **改进错误处理**: 更好的超时管理和回退机制
+- ✅ **清理依赖结构**: 移除循环依赖，优化包结构
+
+## 🌟 核心功能
 
 - **🎯 高质量截图**: snapDOM技术支持3倍缩放、字体嵌入和智能阴影检测
 - **🔍 高级视觉对比**: 像素级精确分析，智能差异检测和质量评估
 - **🎨 SVG优化**: 内置SVGO集成，支持自定义配置
 - **🤖 MCP集成**: 无缝集成AI编码助手（Cursor、Claude等）
+- **🔧 零配置**: 自动浏览器安装和依赖管理
+- **🛡️ 安全优先**: 无外部CDN依赖，所有资源本地提供
 
 ## 📦 快速开始
 
 ### 🌐 远端版本（推荐）
 
-使用发布的npm包，无需本地安装，自动获得最新更新：
+最简单的使用方式 - 无需手动安装浏览器！
 
 **步骤1**: 添加MCP服务器配置到Cursor设置（`~/.cursor/mcp.json`）:
 
@@ -28,11 +38,10 @@
       "command": "npx",
       "args": [
         "-y",
-                 "figma-restoration-mcp-vue-tools",
+        "figma-restoration-mcp-vue-tools@^4.1.0",
         "start"
       ],
       "env": {
-        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         "NODE_ENV": "production"
       }
     }
@@ -42,14 +51,19 @@
 
 **步骤2**: 重启Cursor编辑器。
 
-**步骤3**: 在Cursor中使用以下MCP工具：
+**步骤3**: 包会自动：
+- 安装最新的Chrome测试浏览器
+- 本地设置所有依赖
+- 配置截图的最优设置
+
+**步骤4**: 在Cursor中使用以下MCP工具：
 - `figma_compare` - Figma设计对比分析
 - `snapdom_screenshot` - 高质量组件截图
 - `optimize_svg` - SVG资源优化
 
 ### 🔧 本地开发版本
 
-适用于需要修改源码的贡献者或高级用户：
+适用于贡献者或需要修改源代码的高级用户：
 
 **步骤1**: 克隆并设置仓库：
 
@@ -57,6 +71,9 @@
 git clone https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git
 cd figma-restoration-mcp-vue-tools
 npm install
+
+# 浏览器会在npm install期间自动安装
+# 无需额外设置！
 ```
 
 **步骤2**: 添加本地MCP服务器配置：
@@ -71,7 +88,6 @@ npm install
       ],
       "cwd": "/绝对路径/figma-restoration-mcp-vue-tools",
       "env": {
-        "PUPPETEER_EXECUTABLE_PATH": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         "NODE_ENV": "development"
       }
     }

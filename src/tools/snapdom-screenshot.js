@@ -369,15 +369,24 @@ export class SnapDOMScreenshotTool {
           throw new Error(`Element not found: ${sel}`);
         }
 
-        // Import snapdom from CDN as fallback
+        // Import snapdom from local installation only
         let snapdom;
         try {
-          const module = await import('/@fs/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/node_modules/@zumer/snapdom/dist/snapdom.mjs');
-          snapdom = module.snapdom;
+          // Try to import snapdom using different methods
+          if (typeof window !== 'undefined' && window.snapdom) {
+            snapdom = window.snapdom;
+          } else {
+            // Try dynamic import with relative path
+            const module = await import('@zumer/snapdom');
+            snapdom = module.snapdom || module.default;
+          }
+          
+          if (!snapdom) {
+            throw new Error('snapdom function not found');
+          }
         } catch (error) {
-          // Fallback to CDN if local import fails
-          const module = await import('https://unpkg.com/@zumer/snapdom@1.9.5/dist/snapdom.mjs');
-          snapdom = module.snapdom;
+          console.error('Failed to load snapdom:', error);
+          throw new Error('Failed to load snapdom library. Please ensure @zumer/snapdom is properly installed.');
         }
 
         // Smart shadow detection and padding calculation
