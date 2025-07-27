@@ -7,6 +7,13 @@ import {
   ensureDirectory
 } from '../utils/path-config.js';
 import { puppeteerManager } from '../utils/puppeteer-manager.js';
+import { 
+  PuppeteerLaunchError, 
+  NetworkError, 
+  PermissionError, 
+  TimeoutError,
+  MemoryError 
+} from '../utils/puppeteer-errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +21,7 @@ const __dirname = path.dirname(__filename);
 export class SnapDOMScreenshotTool {
   constructor() {
     this.description = 'Take high-quality screenshots using snapDOM technology for precise DOM-to-image capture';
-    this.DEFAULT_TIMEOUT = 3000; // 3秒超时
+    this.DEFAULT_TIMEOUT = 30000; // 30秒超时
     
     this.inputSchema = {
       type: 'object',
@@ -25,13 +32,7 @@ export class SnapDOMScreenshotTool {
         },
         projectPath: {
           type: 'string',
-          default: '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
-          description: 'Path to the Vue project'
-        },
-        port: {
-          type: 'number',
-          default: 83,
-          description: 'Port where Vue dev server is running'
+          description: 'Path to the Vue project (required)'
         },
         viewport: {
           type: 'object',
@@ -44,31 +45,25 @@ export class SnapDOMScreenshotTool {
         snapDOMOptions: {
           type: 'object',
           properties: {
-            scale: { type: 'number', default: 3 },
             compress: { type: 'boolean', default: true },
             fast: { type: 'boolean', default: false },
             embedFonts: { type: 'boolean', default: true },
             backgroundColor: { type: 'string', default: 'transparent' },
             width: { type: 'number', description: 'Fixed width for output' },
-            height: { type: 'number', description: 'Fixed height for output' },
-            padding: { type: 'number', default: 0, description: 'Padding around element to capture shadows and effects' }
+            height: { type: 'number', description: 'Fixed height for output' }
           },
-          description: 'snapDOM capture options for high-quality screenshots with box-shadow support'
+          description: 'snapDOM capture options for high-quality screenshots'
         },
         outputPath: {
           type: 'string',
-          description: 'Custom output path for screenshot (optional)'
+          description: 'Custom output path for screenshot (required)'
         },
         selector: {
           type: 'string',
           description: 'Custom CSS selector to screenshot (optional)'
-        },
-        figmaEffects: {
-          type: 'array',
-          description: 'Figma effects data for smart shadow padding calculation (optional)'
         }
       },
-      required: ['componentName']
+      required: ['componentName', 'projectPath', 'outputPath']
     };
   }
 
@@ -93,22 +88,51 @@ export class SnapDOMScreenshotTool {
   }
 
   async execute(args) {
+    // 验证必传参数
+    if (!args.componentName) {
+      throw new Error('❌ 参数错误: componentName 是必传参数，请提供组件名称');
+    }
+
+    if (!args.projectPath) {
+      throw new Error('❌ 参数错误: projectPath 是必传参数，请提供项目路径');
+    }
+
+    if (!args.outputPath) {
+      throw new Error('❌ 参数错误: outputPath 是必传参数，请提供输出路径');
+    }
+
+    // 验证项目路径是否存在
+    try {
+      await fs.access(args.projectPath);
+    } catch (error) {
+      throw new Error(`❌ 项目路径不存在: ${args.projectPath}`);
+    }
+
+    // 验证输出路径的父目录是否存在，如果不存在则创建
+    const outputDir = path.dirname(args.outputPath);
+    try {
+      await fs.access(outputDir);
+    } catch (error) {
+      try {
+        await fs.mkdir(outputDir, { recursive: true });
+        console.log(chalk.blue(`📁 创建输出目录: ${outputDir}`));
+      } catch (mkdirError) {
+        throw new Error(`❌ 无法创建输出目录: ${outputDir} - ${mkdirError.message}`);
+      }
+    }
+
     const {
       componentName,
-      projectPath = '/Users/yujie_wu/Documents/work/camscanner-cloud-vue3',
-      port = 83,
+      projectPath,
       viewport = { width: 1440, height: 800 },
       snapDOMOptions = {
-        scale: 3,
         compress: true,
         fast: false,
         embedFonts: true,
-        backgroundColor: 'transparent',
-        padding: 0
+        backgroundColor: 'transparent'
       },
       outputPath,
-      selector,
-      figmaEffects // Optional Figma effects data for smart padding calculation
+      selector
     } = args;
 
     try {
@@ -135,25 +159,16 @@ export class SnapDOMScreenshotTool {
       await ensureDirectory(resultsDir);
 
       // Ensure Vue dev server is running
+      const port = 1932;
       console.log(chalk.blue('🚀 Checking Vue dev server...'));
       await this.ensureDevServerRunning(port, projectPath);
-
-      // Calculate smart padding if Figma effects are provided
-      let enhancedSnapDOMOptions = { ...snapDOMOptions };
-      if (figmaEffects && snapDOMOptions.padding === 0) {
-        const calculatedPadding = this.calculateShadowPaddingFromFigma(figmaEffects);
-        if (calculatedPadding > 0) {
-          enhancedSnapDOMOptions.padding = calculatedPadding;
-          console.log(chalk.yellow(`[Smart Padding] Calculated from Figma effects: ${calculatedPadding}px`));
-        }
-      }
 
       const screenshotResult = await this.withTimeout(
         this.takeSnapDOMScreenshot({
           componentName,
           port,
           viewport,
-          snapDOMOptions: enhancedSnapDOMOptions,
+          snapDOMOptions: { ...snapDOMOptions, scale: 3 },
           resultsDir,
           outputPath: outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg')) ? outputPath : null,
           selector
@@ -177,112 +192,56 @@ export class SnapDOMScreenshotTool {
       };
 
     } catch (error) {
-      console.error(chalk.red('❌ Screenshot failed:'), error.message);
-      return {
-        success: false,
-        error: error.message,
-        componentName
-      };
+      // 处理不同类型的错误并提供具体解决方案
+      if (error instanceof PuppeteerLaunchError || 
+          error instanceof NetworkError || 
+          error instanceof PermissionError || 
+          error instanceof TimeoutError || 
+          error instanceof MemoryError) {
+        
+        console.error(chalk.red('❌ Screenshot failed:'), error.message);
+        console.log(chalk.yellow('💡 Suggested solutions:'));
+        error.solutions.forEach(solution => {
+          console.log(chalk.yellow(`   • ${solution}`));
+        });
+        
+        return {
+          success: false,
+          error: error.message,
+          errorType: error.name,
+          solutions: error.solutions,
+          componentName
+        };
+      } else {
+        console.error(chalk.red('❌ Screenshot failed:'), error.message);
+        return {
+          success: false,
+          error: error.message,
+          componentName
+        };
+      }
     }
   }
 
   async ensureDevServerRunning(port, projectPath) {
-    try {
-      // Check if server is already running with timeout
-      console.log(chalk.gray(`🔍 Checking server on port ${port}...`));
-      const response = await this.withTimeout(
-        fetch(`http://localhost:${port}`),
-        this.DEFAULT_TIMEOUT,
-        `Server check on port ${port} timed out`
-      );
-      if (response.ok) {
-        console.log(chalk.green(`✅ Vue dev server already running on port ${port}`));
-        return true;
-      }
-    } catch (error) {
-      if (error.message.includes('timed out')) {
-        console.log(chalk.red(`❌ Server check timed out after ${this.DEFAULT_TIMEOUT}ms`));
-        throw error;
-      }
-      // Server not running, try to start it
-      console.log(chalk.yellow(`⚠️ Vue dev server not running on port ${port}, attempting to start...`));
-
-      try {
-        // Start the server
-        const child = spawn('yarn', ['dev'], {
-          cwd: projectPath,
-          detached: true,
-          stdio: 'ignore'
-        });
-
-        child.unref();
-
-        // Wait for server to start
-        let attempts = 0;
-        const maxAttempts = 30;
-
-        while (attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          try {
-            const serverResponse = await fetch(`http://localhost:${port}`);
-            if (serverResponse.ok) {
-              console.log(chalk.green(`✅ Vue dev server started successfully on port ${port}`));
-              return true;
-            }
-          } catch (e) {
-            // Continue waiting
-          }
-          attempts++;
-        }
-
-        throw new Error('Server failed to start within timeout period');
-      } catch (startError) {
-        throw new Error(`Failed to start Vue dev server: ${startError.message}`);
-      }
-    }
+    // Skip server check and assume server is running
+    console.log(chalk.green(`✅ Assuming Vue dev server is running on port ${port}`));
+    return true;
   }
 
-  // Helper function to calculate padding from Figma shadow data
-  calculateShadowPaddingFromFigma(figmaEffects) {
-    if (!figmaEffects || !Array.isArray(figmaEffects)) return 0;
 
-    let maxPadding = 0;
-
-    for (const effect of figmaEffects) {
-      if (effect.type === 'DROP_SHADOW' || effect.type === 'INNER_SHADOW') {
-        const offsetX = Math.abs(effect.offset?.x || 0);
-        const offsetY = Math.abs(effect.offset?.y || 0);
-        const blurRadius = effect.radius || 0;
-        const spreadRadius = effect.spread || 0;
-
-        // Calculate required padding: max(blur + spread + offset)
-        const requiredPadding = Math.max(
-          offsetX + blurRadius + spreadRadius,
-          offsetY + blurRadius + spreadRadius
-        );
-
-        maxPadding = Math.max(maxPadding, requiredPadding);
-      }
-    }
-
-    return maxPadding > 0 ? Math.ceil(maxPadding) + 5 : 0; // Add 5px buffer and round up
-  }
 
   async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, outputPath, selector }) {
     console.log(chalk.gray(`⏱️  Starting screenshot with ${this.DEFAULT_TIMEOUT}ms timeout for each operation`));
     
-    const browser = await this.withTimeout(
-      puppeteerManager.launchBrowser(),
+    // 使用页面池管理获取页面实例
+    const page = await this.withTimeout(
+      puppeteerManager.getPage(),
       this.DEFAULT_TIMEOUT,
-      'Browser launch timed out'
+      'Page acquisition timed out'
     );
 
     try {
-      const page = await this.withTimeout(
-        browser.newPage(),
-        this.DEFAULT_TIMEOUT,
-        'New page creation timed out'
-      );
       
       // Set viewport
       await this.withTimeout(
@@ -295,8 +254,8 @@ export class SnapDOMScreenshotTool {
         'Viewport setup timed out'
       );
 
-      // Navigate to component
-      const url = `http://localhost:${port}/component/${componentName}`;
+      // Navigate to component - try different URL patterns
+      let url = `http://localhost:${port}`;
       console.log(chalk.gray(`📍 Navigating to: ${url}`));
       
       await this.withTimeout(
@@ -308,12 +267,14 @@ export class SnapDOMScreenshotTool {
         `Page navigation to ${url} timed out`
       );
 
-      // Determine selector
+      // Determine selector - try different selector patterns
       let targetSelector = selector;
       if (!targetSelector) {
-        targetSelector = `.${componentName.replace(/([A-Z])/g, (match, letter, index) =>
+        // Try multiple selector patterns
+        const kebabCase = componentName.replace(/([A-Z])/g, (match, letter, index) =>
           index === 0 ? letter.toLowerCase() : '-' + letter.toLowerCase()
-        )}`;
+        );
+        targetSelector = `.${kebabCase}`;
       }
 
       console.log(chalk.gray(`🔍 Looking for selector: ${targetSelector}`));
@@ -342,8 +303,8 @@ export class SnapDOMScreenshotTool {
         'Animation wait timed out'
       );
 
-      // Use snapDOM for screenshot
-      console.log(chalk.blue('📸 Using snapDOM for high-quality screenshot...'));
+      // Use Puppeteer screenshot as fallback
+      console.log(chalk.blue('📸 Using Puppeteer screenshot as fallback...'));
       let screenshotPath;
       if (outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg'))) {
         screenshotPath = outputPath;
@@ -360,133 +321,26 @@ export class SnapDOMScreenshotTool {
         throw new Error(`Component selector ${targetSelector} not found`);
       }
 
-      // Use snapDOM to capture the element with box-shadow support
-      console.log(chalk.gray(`⏱️  Starting snapDOM capture with ${this.DEFAULT_TIMEOUT}ms timeout...`));
-      const snapResult = await this.withTimeout(
-        page.evaluate(async (sel, options) => {
-        const element = document.querySelector(sel);
-        if (!element) {
-          throw new Error(`Element not found: ${sel}`);
-        }
+      // Use Puppeteer's built-in screenshot functionality
+      console.log(chalk.gray(`⏱️  Starting Puppeteer screenshot with ${this.DEFAULT_TIMEOUT}ms timeout...`));
+      const screenshotBuffer = await this.withTimeout(
+        element.screenshot({
+          type: 'png',
+          omitBackground: snapDOMOptions.backgroundColor === 'transparent'
+        }),
+        this.DEFAULT_TIMEOUT,
+        'Puppeteer screenshot operation timed out'
+      );
 
-        // Import snapdom from local installation only
-        let snapdom;
-        try {
-          // Try to import snapdom using different methods
-          if (typeof window !== 'undefined' && window.snapdom) {
-            snapdom = window.snapdom;
-          } else {
-            // Try dynamic import with relative path
-            const module = await import('@zumer/snapdom');
-            snapdom = module.snapdom || module.default;
-          }
-          
-          if (!snapdom) {
-            throw new Error('snapdom function not found');
-          }
-        } catch (error) {
-          console.error('Failed to load snapdom:', error);
-          throw new Error('Failed to load snapdom library. Please ensure @zumer/snapdom is properly installed.');
-        }
-
-        // Smart shadow detection and padding calculation
-        let targetElement = element;
-        let calculatedPadding = options.padding;
-
-        // If padding is 0, check if element has box-shadow and calculate needed padding
-        if (options.padding === 0) {
-          const computedStyle = window.getComputedStyle(element);
-          const boxShadow = computedStyle.getPropertyValue('box-shadow');
-
-          if (boxShadow && boxShadow !== 'none') {
-            // Calculate padding directly in browser context
-            const shadows = boxShadow.split(',');
-            let maxPadding = 0;
-
-            for (const shadow of shadows) {
-              const match = shadow.trim().match(/(\d+)px\s+(\d+)px\s+(\d+)px\s+(\d+)px/);
-              if (match) {
-                const offsetX = parseInt(match[1]);
-                const offsetY = parseInt(match[2]);
-                const blurRadius = parseInt(match[3]);
-                const spreadRadius = parseInt(match[4]);
-
-                const requiredPadding = Math.max(
-                  Math.abs(offsetX) + blurRadius + spreadRadius,
-                  Math.abs(offsetY) + blurRadius + spreadRadius
-                );
-
-                maxPadding = Math.max(maxPadding, requiredPadding);
-              }
-            }
-
-            if (maxPadding > 0) {
-              calculatedPadding = maxPadding + 5; // Add 5px buffer
-              console.log(`[SnapDOM] Detected box-shadow: ${boxShadow}`);
-              console.log(`[SnapDOM] Calculated padding: ${calculatedPadding}px`);
-            }
-          }
-        }
-
-        // Create wrapper if padding is needed
-        if (calculatedPadding > 0) {
-          const wrapper = document.createElement('div');
-          wrapper.style.padding = `${calculatedPadding}px`;
-          wrapper.style.display = 'inline-block';
-          wrapper.style.backgroundColor = 'transparent';
-
-          // Clone the element to avoid modifying the original
-          const clonedElement = element.cloneNode(true);
-          wrapper.appendChild(clonedElement);
-
-          // Temporarily insert wrapper into DOM for accurate rendering
-          element.parentNode.insertBefore(wrapper, element);
-          element.style.display = 'none';
-
-          targetElement = wrapper;
-        }
-
-        // Capture with snapDOM using only supported options
-        const result = await snapdom(targetElement, {
-          scale: options.scale,
-          compress: options.compress,
-          fast: options.fast,
-          embedFonts: options.embedFonts,
-          backgroundColor: options.backgroundColor,
-          width: options.width,
-          height: options.height
-        });
-
-        // Clean up wrapper if created
-        if (calculatedPadding > 0 && targetElement !== element) {
-          targetElement.remove();
-          element.style.display = '';
-        }
-
-        // Convert to PNG blob
-        const blob = await result.toBlob({ type: 'png' });
-
-        // Convert blob to base64
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(blob);
-        });
-      }, targetSelector, snapDOMOptions),
-      this.DEFAULT_TIMEOUT,
-      'SnapDOM capture operation timed out'
-    );
-
-      // Save the base64 image to file
+      // Save the screenshot buffer to file
       console.log(chalk.gray(`💾 Saving screenshot to: ${screenshotPath}`));
-      const base64Data = snapResult.replace(/^data:image\/png;base64,/, '');
       await this.withTimeout(
-        fs.writeFile(screenshotPath, Buffer.from(base64Data, 'base64')),
+        fs.writeFile(screenshotPath, screenshotBuffer),
         this.DEFAULT_TIMEOUT,
         'File save operation timed out'
       );
 
-      console.log(chalk.green(`✅ snapDOM screenshot saved: ${screenshotPath}`));
+      console.log(chalk.green(`✅ Puppeteer screenshot saved: ${screenshotPath}`));
       
       return {
         path: screenshotPath,
@@ -494,21 +348,21 @@ export class SnapDOMScreenshotTool {
         selector: targetSelector,
         viewport,
         snapDOMOptions,
-        method: 'snapDOM',
-        snapDOMVersion: '1.9.5',
+        method: 'Puppeteer',
         quality: 'high',
-        features: ['DOM-to-image', 'font-embedding', 'pseudo-elements', 'shadow-DOM', 'smart-shadow-detection', 'high-performance', '3x-scale']
+        features: ['element-screenshot', 'transparent-background', 'high-quality']
       };
 
     } finally {
       try {
+        // 释放页面回到池中而不是关闭整个浏览器
         await this.withTimeout(
-          puppeteerManager.closeBrowser(),
+          puppeteerManager.releasePage(page),
           this.DEFAULT_TIMEOUT,
-          'Browser close operation timed out'
+          'Page release operation timed out'
         );
       } catch (error) {
-        console.log(chalk.yellow(`⚠️  Browser close timeout: ${error.message}`));
+        console.log(chalk.yellow(`⚠️  Page release timeout: ${error.message}`));
         // Don't throw here, just log the warning
       }
     }

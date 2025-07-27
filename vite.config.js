@@ -19,10 +19,14 @@ export default defineConfig({
     outDir: 'dist'
   },
   optimizeDeps: {
-    include: ['@zumer/snapdom']
+    include: ['@zumer/snapdom'],
+    force: true
   },
   define: {
     global: 'globalThis'
+  },
+  ssr: {
+    noExternal: ['@zumer/snapdom']
   },
   // 配置开发服务器中间件
   configureServer(server) {

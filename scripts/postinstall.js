@@ -2,143 +2,92 @@
 
 /**
  * Post-installation script for figma-restoration-mcp-vue-tools
- * Ensures proper configuration and prevents Puppeteer download issues
+ * Simple setup with Puppeteer bundled Chromium
  */
 
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 console.log('🔧 Configuring figma-restoration-mcp-vue-tools...');
 
-// Set environment variables to prevent Puppeteer download
-process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
-process.env.PUPPETEER_SKIP_DOWNLOAD = 'true';
-
-// Common Chrome executable paths
-const chromeExecutablePaths = {
-  darwin: [
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
-  ],
-  linux: [
-    '/usr/bin/google-chrome',
-    '/usr/bin/google-chrome-stable',
-    '/usr/bin/chromium-browser',
-    '/usr/bin/chromium',
-    '/snap/bin/chromium'
-  ],
-  win32: [
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files\\Google\\Chrome Beta\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Google\\Chrome Beta\\Application\\chrome.exe'
-  ]
-};
-
-// Find available Chrome executable
-function findChromeExecutable() {
-  const platform = process.platform;
-  const paths = chromeExecutablePaths[platform] || [];
-  
-  for (const chromePath of paths) {
-    try {
-      if (fs.existsSync(chromePath)) {
-        return chromePath;
-      }
-    } catch (error) {
-      // Continue searching
-    }
-  }
-  
-  return null;
-}
-
-// Create or update .puppeteerrc.cjs if it doesn't exist
-function createPuppeteerConfig() {
+/**
+ * 检查并清理废弃的配置文件
+ */
+function cleanupDeprecatedFiles() {
   const puppeteerConfigPath = path.join(process.cwd(), '.puppeteerrc.cjs');
   
-  if (!fs.existsSync(puppeteerConfigPath)) {
-    const chromeExecutable = findChromeExecutable();
-    
-    const config = `/**
- * Puppeteer configuration for figma-restoration-mcp-vue-tools
- * This configuration prevents Chrome download during package installation
- */
-
-module.exports = {
-  // Skip Chrome download during installation
-  skipDownload: true,
-  
-  // Use system Chrome if available
-  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 
-                  process.env.CHROME_EXECUTABLE_PATH || 
-                  '${chromeExecutable || '/usr/bin/google-chrome'}',
-  
-  // Default launch options
-  defaultViewport: {
-    width: 1440,
-    height: 800
-  },
-  
-  // Launch options for headless mode
-  headless: true,
-  
-  // Additional launch arguments
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-accelerated-2d-canvas',
-    '--no-first-run',
-    '--no-zygote',
-    '--disable-gpu'
-  ]
-};`;
-
+  if (fs.existsSync(puppeteerConfigPath)) {
     try {
-      fs.writeFileSync(puppeteerConfigPath, config);
-      console.log('✅ Created .puppeteerrc.cjs configuration');
+      fs.unlinkSync(puppeteerConfigPath);
+      console.log('🧹 Removed deprecated .puppeteerrc.cjs configuration');
     } catch (error) {
-      console.log('⚠️  Could not create .puppeteerrc.cjs:', error.message);
+      console.log('⚠️  Could not remove .puppeteerrc.cjs:', error.message);
     }
   }
 }
 
-// Main configuration function
+/**
+ * 检查废弃的环境变量并给出警告
+ */
+function checkDeprecatedEnvVars() {
+  const deprecatedVars = [
+    'PUPPETEER_SKIP_CHROMIUM_DOWNLOAD',
+    'PUPPETEER_SKIP_DOWNLOAD', 
+    'PUPPETEER_EXECUTABLE_PATH',
+    'CHROME_EXECUTABLE_PATH'
+  ];
+  
+  const foundDeprecated = [];
+  
+  for (const envVar of deprecatedVars) {
+    if (process.env[envVar]) {
+      foundDeprecated.push(envVar);
+    }
+  }
+  
+  if (foundDeprecated.length > 0) {
+    console.log('⚠️  Deprecated environment variables detected:');
+    foundDeprecated.forEach(envVar => {
+      console.log(`   - ${envVar} (will be ignored)`);
+    });
+    console.log('   Puppeteer now uses bundled Chromium automatically');
+    console.log('');
+  }
+}
+
+/**
+ * 主配置函数
+ */
 function configure() {
   try {
-    // Create Puppeteer configuration
-    createPuppeteerConfig();
+    // 清理废弃文件
+    cleanupDeprecatedFiles();
     
-    // Find Chrome executable
-    const chromeExecutable = findChromeExecutable();
-    if (chromeExecutable) {
-      console.log(`✅ Found Chrome executable: ${chromeExecutable}`);
-    } else {
-      console.log('⚠️  Chrome executable not found. Please install Google Chrome or set PUPPETEER_EXECUTABLE_PATH environment variable.');
-    }
+    // 检查废弃环境变量
+    checkDeprecatedEnvVars();
     
-    console.log('✅ figma-restoration-mcp-vue-tools configured successfully!');
+    console.log('✅ Puppeteer with bundled Chromium installed successfully!');
+    console.log('');
+    console.log('🎯 Key improvements:');
+    console.log('• No Chrome installation required');
+    console.log('• No path configuration needed');
+    console.log('• Cross-platform compatibility guaranteed');
+    console.log('• Simplified error handling');
     console.log('');
     console.log('📚 Next steps:');
-    console.log('1. Install Puppeteer (optional): npm install puppeteer');
-    console.log('2. Initialize configuration: npx figma-restoration-mcp-vue-tools init');
-    console.log('3. Start MCP server: npx figma-restoration-mcp-vue-tools start');
-    console.log('4. Check documentation: https://github.com/tianmuji/figma-restoration-mcp-vue-tools');
+    console.log('1. Start MCP server: npx figma-restoration-mcp-vue-tools start');
+    console.log('2. Check documentation: https://github.com/tianmuji/figma-restoration-mcp-vue-tools');
+    console.log('');
+    console.log('🚀 Ready to use! No additional configuration required.');
     
   } catch (error) {
     console.error('❌ Configuration failed:', error.message);
     console.log('');
-    console.log('🔧 Manual setup:');
-    console.log('1. Set environment variable: export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true');
-    console.log('2. Install Chrome: https://www.google.com/chrome/');
-    console.log('3. Try again: npx figma-restoration-mcp-vue-tools init');
+    console.log('🔧 Troubleshooting:');
+    console.log('1. Clear npm cache: npm cache clean --force');
+    console.log('2. Reinstall: npm install --force');
+    console.log('3. Check Node.js version: node --version (requires >=18.0.0)');
+    console.log('4. Report issues: https://github.com/tianmuji/figma-restoration-mcp-vue-tools/issues');
   }
 }
 

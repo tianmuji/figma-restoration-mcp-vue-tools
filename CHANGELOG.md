@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **MCP Server Architecture**: Full Model Context Protocol implementation for AI assistant integration
 - **Visual Comparison Tools**: Advanced pixel-perfect comparison with detailed analysis
 - **SVG Optimization**: Built-in SVGO integration with customizable configuration
-- **Smart Shadow Detection**: Automatic padding calculation for shadow effects
+
 - **Component Screenshot Tool**: Automated high-quality component capture
 - **Figma Integration**: Direct Figma API integration for design data extraction
 

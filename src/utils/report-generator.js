@@ -1,195 +1,398 @@
+/**
+ * 报告生成系统
+ * 负责生成结构化的对比分析报告和可视化数据
+ */
+
+import fs from 'fs/promises';
+import path from 'path';
+import { PNG } from 'pngjs';
+import { ensureDirectory } from './path-config.js';
+
 export class ReportGenerator {
-  constructor(projectPath) {
-    this.projectPath = projectPath;
+  constructor(options = {}) {
+    this.version = options.version || '1.0.0';
+    this.includeHeatmap = options.includeHeatmap !== false;
+    this.includeThumbnails = options.includeThumbnails !== false;
   }
 
-  async generateReport(componentName) {
-    // 修改：使用组件目录作为存储位置
-    const resultsDir = path.join(this.projectPath, 'src', 'components', componentName);
-    const reportPath = path.join(resultsDir, 'report.json');
-    
+  /**
+   * 生成完整的对比报告
+   * @param {string} componentName - 组件名称
+   * @param {Object} comparisonResult - 对比分析结果
+   * @param {string} outputDir - 输出目录
+   * @returns {Promise<ComparisonReport>} 生成的报告对象
+   */
+  async generateReport(componentName, comparisonResult, outputDir) {
     try {
-      // 检查是否已有报告文件
-      if (fs.existsSync(reportPath)) {
-        const reportData = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-        return reportData;
+      await ensureDirectory(outputDir);
+
+      const timestamp = new Date().toISOString();
+      const status = this.determineStatus(comparisonResult.matchPercentage);
+
+      // 生成基础报告结构
+      const report = {
+        componentName,
+        timestamp,
+        version: this.version,
+        summary: {
+          matchPercentage: comparisonResult.matchPercentage,
+          status,
+          totalIssues: this.countIssues(comparisonResult.regions, comparisonResult.suggestions),
+          diffPixels: comparisonResult.diffPixels,
+          totalPixels: comparisonResult.totalPixels
+        },
+        images: {
+          expected: path.join(outputDir, 'expected.png'),
+          actual: path.join(outputDir, 'actual.png'),
+          diff: path.join(outputDir, 'diff.png')
+        },
+        analysis: {
+          matchPercentage: comparisonResult.matchPercentage,
+          diffPixels: comparisonResult.diffPixels,
+          totalPixels: comparisonResult.totalPixels,
+          dimensions: comparisonResult.dimensions,
+          regions: comparisonResult.regions || [],
+          colorAnalysis: comparisonResult.colorAnalysis || [],
+          metadata: comparisonResult.metadata || {}
+        },
+        recommendations: this.categorizeRecommendations(comparisonResult.suggestions || [])
+      };
+
+      // 生成热力图（如果启用）
+      if (this.includeHeatmap && comparisonResult.heatmapData) {
+        const heatmapPath = path.join(outputDir, 'heatmap.png');
+        await this.generateHeatmapImage(comparisonResult.heatmapData, heatmapPath);
+        report.images.heatmap = heatmapPath;
       }
 
-      // 生成新的报告
-      const report = await this.createReport(componentName, resultsDir);
-      
-      // 保存报告
-      fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-      
+      // 保存差异图片
+      if (comparisonResult.diffImageBuffer) {
+        await fs.writeFile(report.images.diff, comparisonResult.diffImageBuffer);
+      }
+
+      // 生成缩略图（如果启用）
+      if (this.includeThumbnails) {
+        await this.generateThumbnails(report.images, outputDir);
+        report.images.thumbnails = {
+          expected: path.join(outputDir, 'expected_thumb.png'),
+          actual: path.join(outputDir, 'actual_thumb.png'),
+          diff: path.join(outputDir, 'diff_thumb.png')
+        };
+      }
+
+      // 保存报告到文件
+      await this.saveReport(report, outputDir);
+
       return report;
+
     } catch (error) {
-      console.error('Failed to generate report:', error);
-      return this.createDefaultReport(componentName);
+      throw new Error(`Report generation failed: ${error.message}`);
     }
   }
 
-  async createReport(componentName, resultsDir) {
-    const files = {
-      expected: path.join(resultsDir, 'expected.png'),
-      actual: path.join(resultsDir, 'actual.png'),
-      diff: path.join(resultsDir, 'diff.png'),
-      component: path.join(resultsDir, 'index.vue'), // 组件文件就在同一目录
-      metadata: path.join(resultsDir, 'metadata.json')
-    };
+  /**
+   * 保存报告到文件
+   * @param {Object} report - 报告对象
+   * @param {string} outputDir - 输出目录
+   */
+  async saveReport(report, outputDir) {
+    const reportPath = path.join(outputDir, 'comparison-report.json');
+    const reportContent = JSON.stringify(report, null, 2);
+    await fs.writeFile(reportPath, reportContent, 'utf8');
 
-    // 检查文件存在性
-    const fileStatus = {};
-    for (const [key, filePath] of Object.entries(files)) {
-      fileStatus[key] = fs.existsSync(filePath);
+    // 同时生成人类可读的Markdown报告
+    const markdownReport = this.generateMarkdownReport(report);
+    const markdownPath = path.join(outputDir, 'comparison-report.md');
+    await fs.writeFile(markdownPath, markdownReport, 'utf8');
+  }
+
+  /**
+   * 生成热力图图片
+   * @param {Object} heatmapData - 热力图数据
+   * @param {string} outputPath - 输出路径
+   */
+  async generateHeatmapImage(heatmapData, outputPath) {
+    const { data, gridSize, width, height } = heatmapData;
+    const imageWidth = width * gridSize;
+    const imageHeight = height * gridSize;
+
+    const png = new PNG({ width: imageWidth, height: imageHeight });
+
+    // 生成热力图颜色
+    for (let gridY = 0; gridY < height; gridY++) {
+      for (let gridX = 0; gridX < width; gridX++) {
+        const intensity = data[gridY][gridX];
+        const color = this.intensityToColor(intensity);
+
+        // 填充网格区域
+        for (let py = 0; py < gridSize; py++) {
+          for (let px = 0; px < gridSize; px++) {
+            const x = gridX * gridSize + px;
+            const y = gridY * gridSize + py;
+            
+            if (x < imageWidth && y < imageHeight) {
+              const idx = (imageWidth * y + x) << 2;
+              png.data[idx] = color.r;
+              png.data[idx + 1] = color.g;
+              png.data[idx + 2] = color.b;
+              png.data[idx + 3] = color.a;
+            }
+          }
+        }
+      }
     }
 
-    // 读取元数据
-    let metadata = {};
-    if (fileStatus.metadata) {
+    const buffer = PNG.sync.write(png);
+    await fs.writeFile(outputPath, buffer);
+  }
+
+  /**
+   * 生成缩略图
+   * @param {Object} images - 图片路径对象
+   * @param {string} outputDir - 输出目录
+   */
+  async generateThumbnails(images, outputDir) {
+    const thumbnailSize = 200; // 缩略图尺寸
+
+    for (const [type, imagePath] of Object.entries(images)) {
+      if (type === 'thumbnails') continue;
+
       try {
-        metadata = JSON.parse(fs.readFileSync(files.metadata, 'utf8'));
+        const exists = await fs.access(imagePath).then(() => true).catch(() => false);
+        if (!exists) continue;
+
+        const imageBuffer = await fs.readFile(imagePath);
+        const png = PNG.sync.read(imageBuffer);
+        
+        const thumbnail = this.resizeImage(png, thumbnailSize, thumbnailSize);
+        const thumbnailBuffer = PNG.sync.write(thumbnail);
+        
+        const thumbnailPath = path.join(outputDir, `${type}_thumb.png`);
+        await fs.writeFile(thumbnailPath, thumbnailBuffer);
       } catch (error) {
-        console.error('Failed to read metadata:', error);
+        console.warn(`Failed to generate thumbnail for ${type}:`, error.message);
       }
     }
-
-    // 获取图像尺寸
-    const imageDimensions = await this.getImageDimensions(files);
-
-    // 计算匹配度（如果有diff文件的话）
-    let comparisonResult = null;
-    if (fileStatus.diff) {
-      comparisonResult = await this.analyzeComparison(files.diff);
-    }
-
-    const report = {
-      componentName,
-      timestamp: new Date().toISOString(),
-      metadata,
-      steps: {
-        create: {
-          success: fileStatus.component,
-          message: fileStatus.component ? 'Component created successfully' : 'Component file not found'
-        },
-        render: {
-          success: true, // 假设渲染成功，因为我们有截图
-          message: 'Component rendered successfully'
-        },
-        screenshot: {
-          success: fileStatus.actual,
-          message: fileStatus.actual ? 'Screenshot captured successfully' : 'Screenshot not found'
-        },
-        comparison: {
-          success: fileStatus.expected && fileStatus.actual,
-          message: fileStatus.expected && fileStatus.actual ? 'Images compared successfully' : 'Missing images for comparison',
-          error: !fileStatus.expected ? 'Expected image not found' : !fileStatus.actual ? 'Actual screenshot not found' : null
-        }
-      },
-      summary: {
-        componentCreated: fileStatus.component,
-        componentRendered: true,
-        screenshotTaken: fileStatus.actual,
-        comparisonAvailable: fileStatus.expected && fileStatus.actual,
-        pixelMatch: comparisonResult?.pixelDifferences || null,
-        matchPercentage: comparisonResult?.matchPercentage || 0,
-        files: {
-          component: fileStatus.component ? files.component : null,
-          screenshot: fileStatus.actual ? files.actual : null,
-          expected: fileStatus.expected ? files.expected : null,
-          diff: fileStatus.diff ? files.diff : null
-        },
-        urls: {
-          test: `http://localhost:83/component/${componentName}`,
-          figma: metadata.figmaUrl || null
-        }
-      },
-      comparison: {
-        expectedDimensions: imageDimensions.expected,
-        actualDimensions: imageDimensions.actual,
-        diffDimensions: imageDimensions.diff
-      },
-      validationOptions: {
-        viewport: { width: 198, height: 288 },
-        screenshotOptions: { deviceScaleFactor: 3, omitBackground: true },
-        comparisonThreshold: 0.1
-      }
-    }
-
-    return report
   }
 
-  createDefaultReport(componentName) {
+  /**
+   * 生成Markdown格式的报告
+   * @param {Object} report - 报告对象
+   * @returns {string} Markdown内容
+   */
+  generateMarkdownReport(report) {
+    const { componentName, timestamp, summary, analysis, recommendations } = report;
+
+    let markdown = `# ${componentName} 组件还原度报告\n\n`;
+    markdown += `**生成时间**: ${new Date(timestamp).toLocaleString('zh-CN')}\n`;
+    markdown += `**版本**: ${this.version}\n\n`;
+
+    // 概要信息
+    markdown += `## 📊 概要信息\n\n`;
+    markdown += `- **还原度**: ${summary.matchPercentage.toFixed(2)}%\n`;
+    markdown += `- **状态**: ${this.getStatusEmoji(summary.status)} ${this.getStatusText(summary.status)}\n`;
+    markdown += `- **总问题数**: ${summary.totalIssues}\n`;
+    markdown += `- **差异像素**: ${summary.diffPixels.toLocaleString()} / ${summary.totalPixels.toLocaleString()}\n`;
+    markdown += `- **图片尺寸**: ${analysis.dimensions.width} × ${analysis.dimensions.height}\n\n`;
+
+    // 图片对比
+    markdown += `## 🖼️ 图片对比\n\n`;
+    markdown += `| 原始设计 | 实际截图 | 差异对比 |\n`;
+    markdown += `|----------|----------|----------|\n`;
+    markdown += `| ![Expected](expected.png) | ![Actual](actual.png) | ![Diff](diff.png) |\n\n`;
+
+    // 差异区域分析
+    if (analysis.regions && analysis.regions.length > 0) {
+      markdown += `## 🎯 差异区域分析\n\n`;
+      analysis.regions.forEach((region, index) => {
+        markdown += `### ${index + 1}. ${region.description}\n\n`;
+        markdown += `- **位置**: (${region.x}, ${region.y})\n`;
+        markdown += `- **尺寸**: ${region.width} × ${region.height}\n`;
+        markdown += `- **严重程度**: ${this.getSeverityEmoji(region.severity)} ${region.severity}\n`;
+        markdown += `- **类型**: ${region.type}\n`;
+        markdown += `- **影响像素**: ${region.pixelCount}\n\n`;
+      });
+    }
+
+    // 颜色差异分析
+    if (analysis.colorAnalysis && analysis.colorAnalysis.length > 0) {
+      markdown += `## 🎨 颜色差异分析\n\n`;
+      markdown += `| 期望颜色 | 实际颜色 | 影响像素数 |\n`;
+      markdown += `|----------|----------|------------|\n`;
+      analysis.colorAnalysis.slice(0, 10).forEach(colorDiff => {
+        markdown += `| ${colorDiff.expectedColor} | ${colorDiff.actualColor} | ${colorDiff.pixelCount} |\n`;
+      });
+      markdown += `\n`;
+    }
+
+    // 优化建议
+    if (recommendations.immediate && recommendations.immediate.length > 0) {
+      markdown += `## 🚨 立即修复建议\n\n`;
+      recommendations.immediate.forEach((suggestion, index) => {
+        markdown += `### ${index + 1}. ${suggestion.description}\n\n`;
+        markdown += `- **类型**: ${suggestion.type}\n`;
+        markdown += `- **优先级**: ${this.getPriorityEmoji(suggestion.priority)} ${suggestion.priority}\n`;
+        markdown += `- **建议修复**: \`${suggestion.suggestedFix}\`\n`;
+        markdown += `- **影响区域**: ${suggestion.affectedArea}\n\n`;
+      });
+    }
+
+    if (recommendations.longTerm && recommendations.longTerm.length > 0) {
+      markdown += `## 📈 长期优化建议\n\n`;
+      recommendations.longTerm.forEach((suggestion, index) => {
+        markdown += `### ${index + 1}. ${suggestion.description}\n\n`;
+        markdown += `- **类型**: ${suggestion.type}\n`;
+        markdown += `- **建议修复**: \`${suggestion.suggestedFix}\`\n`;
+        markdown += `- **影响区域**: ${suggestion.affectedArea}\n\n`;
+      });
+    }
+
+    // 技术信息
+    markdown += `## 🔧 技术信息\n\n`;
+    markdown += `- **分析阈值**: ${analysis.metadata.threshold || 'N/A'}\n`;
+    markdown += `- **包含抗锯齿**: ${analysis.metadata.includeAA ? '是' : '否'}\n`;
+    markdown += `- **分析时间**: ${analysis.metadata.analysisTimestamp || 'N/A'}\n\n`;
+
+    return markdown;
+  }
+
+  // 辅助方法
+
+  /**
+   * 确定状态等级
+   * @param {number} matchPercentage - 匹配百分比
+   * @returns {string} 状态等级
+   */
+  determineStatus(matchPercentage) {
+    if (matchPercentage >= 95) return 'excellent';
+    if (matchPercentage >= 90) return 'good';
+    if (matchPercentage >= 80) return 'needs_improvement';
+    return 'poor';
+  }
+
+  /**
+   * 统计问题数量
+   * @param {Array} regions - 差异区域
+   * @param {Array} suggestions - 建议列表
+   * @returns {number} 问题总数
+   */
+  countIssues(regions = [], suggestions = []) {
+    const highSeverityRegions = regions.filter(r => r.severity === 'high').length;
+    const highPrioritySuggestions = suggestions.filter(s => s.priority === 'high').length;
+    return highSeverityRegions + highPrioritySuggestions;
+  }
+
+  /**
+   * 分类建议
+   * @param {Array} suggestions - 建议列表
+   * @returns {Object} 分类后的建议
+   */
+  categorizeRecommendations(suggestions) {
     return {
-      componentName,
-      timestamp: new Date().toISOString(),
-      metadata: {},
-      steps: {
-        create: { success: false, error: 'Failed to load component data' },
-        render: { success: false, error: 'Failed to render component' },
-        screenshot: { success: false, error: 'Failed to take screenshot' },
-        comparison: { success: false, error: 'Failed to compare images' }
-      },
-      summary: {
-        componentCreated: false,
-        componentRendered: false,
-        screenshotTaken: false,
-        comparisonAvailable: false,
-        pixelMatch: null,
-        matchPercentage: 0,
-        files: {
-          component: null,
-          screenshot: null,
-          expected: null,
-          diff: null
-        },
-        urls: {
-          test: `http://localhost:83/component/${componentName}`,
-          figma: null
-        }
-      },
-      comparison: {
-        expectedDimensions: null,
-        actualDimensions: null,
-        diffDimensions: null
-      },
-      validationOptions: {
-        viewport: { width: 198, height: 288 },
-        screenshotOptions: { deviceScaleFactor: 3, omitBackground: true },
-        comparisonThreshold: 0.1
+      immediate: suggestions.filter(s => s.priority === 'high'),
+      longTerm: suggestions.filter(s => s.priority === 'medium' || s.priority === 'low')
+    };
+  }
+
+  /**
+   * 强度转颜色（热力图）
+   * @param {number} intensity - 强度值 (0-1)
+   * @returns {Object} RGBA颜色对象
+   */
+  intensityToColor(intensity) {
+    if (intensity === 0) {
+      return { r: 0, g: 0, b: 0, a: 0 }; // 透明
+    }
+
+    // 从蓝色到红色的渐变
+    const red = Math.floor(255 * intensity);
+    const blue = Math.floor(255 * (1 - intensity));
+    const green = Math.floor(128 * (1 - Math.abs(intensity - 0.5) * 2));
+
+    return {
+      r: red,
+      g: green,
+      b: blue,
+      a: Math.floor(255 * Math.min(intensity + 0.3, 1)) // 半透明到不透明
+    };
+  }
+
+  /**
+   * 调整图片尺寸
+   * @param {PNG} png - 原始PNG对象
+   * @param {number} maxWidth - 最大宽度
+   * @param {number} maxHeight - 最大高度
+   * @returns {PNG} 调整后的PNG对象
+   */
+  resizeImage(png, maxWidth, maxHeight) {
+    const { width, height } = png;
+    
+    // 计算缩放比例
+    const scaleX = maxWidth / width;
+    const scaleY = maxHeight / height;
+    const scale = Math.min(scaleX, scaleY);
+    
+    const newWidth = Math.floor(width * scale);
+    const newHeight = Math.floor(height * scale);
+    
+    const resized = new PNG({ width: newWidth, height: newHeight });
+    
+    // 简单的最近邻插值
+    for (let y = 0; y < newHeight; y++) {
+      for (let x = 0; x < newWidth; x++) {
+        const srcX = Math.floor(x / scale);
+        const srcY = Math.floor(y / scale);
+        
+        const srcIdx = (width * srcY + srcX) << 2;
+        const dstIdx = (newWidth * y + x) << 2;
+        
+        resized.data[dstIdx] = png.data[srcIdx];
+        resized.data[dstIdx + 1] = png.data[srcIdx + 1];
+        resized.data[dstIdx + 2] = png.data[srcIdx + 2];
+        resized.data[dstIdx + 3] = png.data[srcIdx + 3];
       }
     }
+    
+    return resized;
   }
 
-  async getImageDimensions(files) {
-    const dimensions = {
-      expected: null,
-      actual: null,
-      diff: null
-    }
+  // UI辅助方法
 
-    // 这里应该使用图像处理库来获取真实尺寸
-    // 暂时返回模拟数据
-    if (fs.existsSync(files.expected)) {
-      dimensions.expected = { width: 594, height: 864 }
-    }
-    if (fs.existsSync(files.actual)) {
-      dimensions.actual = { width: 594, height: 984 }
-    }
-    if (fs.existsSync(files.diff)) {
-      dimensions.diff = { width: 594, height: 864 }
-    }
-
-    return dimensions
+  getStatusText(status) {
+    const statusMap = {
+      excellent: '优秀',
+      good: '良好',
+      needs_improvement: '需要改进',
+      poor: '较差'
+    };
+    return statusMap[status] || status;
   }
 
-  async analyzeComparison(diffPath) {
-    // 这里应该分析diff图像来计算匹配度
-    // 暂时返回模拟数据
-    return {
-      pixelDifferences: 1250,
-      matchPercentage: 97.5
-    }
+  getStatusEmoji(status) {
+    const emojiMap = {
+      excellent: '🎉',
+      good: '✅',
+      needs_improvement: '⚠️',
+      poor: '❌'
+    };
+    return emojiMap[status] || '❓';
+  }
+
+  getSeverityEmoji(severity) {
+    const emojiMap = {
+      high: '🔴',
+      medium: '🟡',
+      low: '🟢'
+    };
+    return emojiMap[severity] || '⚪';
+  }
+
+  getPriorityEmoji(priority) {
+    const emojiMap = {
+      high: '🚨',
+      medium: '⚠️',
+      low: '💡'
+    };
+    return emojiMap[priority] || '📝';
   }
 }
-
-export default ReportGenerator

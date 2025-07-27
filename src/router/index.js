@@ -1,0 +1,117 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import ComponentList from '../pages/ComponentList/ComponentList.vue';
+import ComparisonViewer from '../pages/ComparisonViewer/ComparisonViewer.vue';
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: ComponentList,
+    meta: {
+      title: '组件列表',
+      description: '查看所有组件的还原度情况'
+    }
+  },
+  {
+    path: '/components',
+    name: 'ComponentList',
+    component: ComponentList,
+    meta: {
+      title: '组件列表',
+      description: '查看所有组件的还原度情况'
+    }
+  },
+  {
+    path: '/component/:name',
+    name: 'ComponentDetail',
+    component: ComparisonViewer,
+    props: true,
+    meta: {
+      title: '组件详情',
+      description: '查看组件的详细对比分析'
+    }
+  },
+  {
+    path: '/comparison/:name',
+    name: 'ComparisonDetail',
+    component: ComparisonViewer,
+    props: true,
+    meta: {
+      title: '对比分析',
+      description: '查看组件的详细对比分析'
+    }
+  },
+  // 重定向旧路径
+  {
+    path: '/components/:name',
+    redirect: to => {
+      return { name: 'ComponentDetail', params: { name: to.params.name } };
+    }
+  },
+  // 404 页面
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../pages/NotFound.vue'),
+    meta: {
+      title: '页面未找到',
+      description: '请检查URL是否正确'
+    }
+  }
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    // 如果有保存的滚动位置，恢复它
+    if (savedPosition) {
+      return savedPosition;
+    }
+    // 如果有锚点，滚动到锚点
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: 'smooth'
+      };
+    }
+    // 否则滚动到顶部
+    return { top: 0 };
+  }
+});
+
+// 全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 设置页面标题
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - Figma 组件还原监控`;
+  }
+  
+  // 验证组件名称参数
+  if (to.params.name && typeof to.params.name === 'string') {
+    // 验证组件名称格式
+    const componentName = to.params.name;
+    if (!/^[a-zA-Z0-9_-]+$/.test(componentName)) {
+      console.warn('Invalid component name format:', componentName);
+      next({ name: 'NotFound' });
+      return;
+    }
+  }
+  
+  next();
+});
+
+// 全局后置钩子
+router.afterEach((to, from) => {
+  // 记录页面访问
+  console.log(`Navigated from ${from.path} to ${to.path}`);
+  
+  // 发送页面浏览事件（如果有分析工具）
+  if (typeof gtag !== 'undefined') {
+    gtag('config', 'GA_MEASUREMENT_ID', {
+      page_path: to.path
+    });
+  }
+});
+
+export default router;

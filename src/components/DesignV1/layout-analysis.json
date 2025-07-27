@@ -1,0 +1,136 @@
+{
+  "componentName": "DesignV1",
+  "description": "A vertical layout component with squares and a text rectangle",
+  "dimensions": {
+    "width": 194,
+    "height": 284
+  },
+  "layout": {
+    "type": "flex",
+    "direction": "column",
+    "gap": 12,
+    "padding": 16,
+    "border": {
+      "width": 2,
+      "color": "#000000",
+      "style": "solid"
+    }
+  },
+  "elements": [
+    {
+      "id": "frame1",
+      "name": "Frame 1",
+      "type": "container",
+      "layout": {
+        "type": "flex",
+        "direction": "row",
+        "gap": 12
+      },
+      "children": [
+        {
+          "id": "square1-top",
+          "name": "Square 1",
+          "type": "rectangle",
+          "dimensions": {
+            "width": 75,
+            "height": 75
+          },
+          "styles": {
+            "backgroundColor": "#D9D9D9"
+          }
+        },
+        {
+          "id": "square2-top",
+          "name": "Square 2", 
+          "type": "rectangle",
+          "dimensions": {
+            "width": 75,
+            "height": 75
+          },
+          "styles": {
+            "backgroundColor": "#D9D9D9"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rectangleGroup",
+      "name": "Rectangle Group",
+      "type": "container",
+      "dimensions": {
+        "width": 162,
+        "height": 77.25
+      },
+      "styles": {
+        "backgroundColor": "#D9D9D9",
+        "position": "relative"
+      },
+      "children": [
+        {
+          "id": "textInRectangle",
+          "name": "Text in Rectangle",
+          "type": "text",
+          "content": "Some Text In Here",
+          "position": {
+            "x": 28,
+            "y": 31
+          },
+          "dimensions": {
+            "width": 105,
+            "height": 15
+          },
+          "styles": {
+            "fontFamily": "Inter",
+            "fontWeight": 400,
+            "fontSize": 12,
+            "lineHeight": "1.21em",
+            "color": "#000000",
+            "textAlign": "left"
+          }
+        }
+      ]
+    },
+    {
+      "id": "frame2",
+      "name": "Frame 2",
+      "type": "container",
+      "layout": {
+        "type": "flex",
+        "direction": "row",
+        "gap": 12
+      },
+      "children": [
+        {
+          "id": "square1-bottom",
+          "name": "Square 1",
+          "type": "rectangle",
+          "dimensions": {
+            "width": 75,
+            "height": 75
+          },
+          "styles": {
+            "backgroundColor": "#D9D9D9"
+          }
+        },
+        {
+          "id": "square2-bottom",
+          "name": "Square 2",
+          "type": "rectangle", 
+          "dimensions": {
+            "width": 75,
+            "height": 75
+          },
+          "styles": {
+            "backgroundColor": "#D9D9D9"
+          }
+        }
+      ]
+    }
+  ],
+  "cssStrategy": {
+    "layoutMethod": "flexbox",
+    "positioning": "relative",
+    "boxSizing": "border-box",
+    "responsiveApproach": "fixed-dimensions"
+  }
+}

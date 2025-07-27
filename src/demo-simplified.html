@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简化版组件还原度对比系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .header p {
+            font-size: 18px;
+            color: #6b7280;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .component-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .component-card {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .component-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .component-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .match-percentage {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+        
+        .images-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .image-panel {
+            text-align: center;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .image-panel h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        
+        .image-panel img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .structure-info {
+            background: #1f2937;
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        .structure-info h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .structure-item {
+            padding: 20px;
+            background: #374151;
+            border-radius: 8px;
+        }
+        
+        .structure-item h3 {
+            color: #f9fafb;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .structure-item p {
+            color: #d1d5db;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .structure-item ul {
+            color: #9ca3af;
+            font-size: 12px;
+            padding-left: 16px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>🎯 简化版组件还原度对比系统</h1>
+            <p>专注于图片对比的轻量级 Figma 组件还原监控工具</p>
+        </div>
+
+        <!-- 组件演示 -->
+        <div class="section">
+            <h2>📊 DesignV1 组件对比演示</h2>
+            
+            <div class="component-demo">
+                <div class="component-card">
+                    <div class="component-name">DesignV1</div>
+                    <div class="component-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">还原度:</span>
+                            <span class="stat-value match-percentage">87.86%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">状态:</span>
+                            <span class="stat-value">需要改进</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">差异像素:</span>
+                            <span class="stat-value">62,308</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">总像素:</span>
+                            <span class="stat-value">513,216</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">图片尺寸:</span>
+                            <span class="stat-value">594 × 864</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="images-demo">
+                <div class="image-panel">
+                    <h3>原始设计 (Figma)</h3>
+                    <img src="./components/DesignV1/results/expected.png" alt="Figma 设计稿" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; padding:40px; color:#6b7280;">图片加载失败</div>
+                </div>
+                <div class="image-panel">
+                    <h3>实际截图</h3>
+                    <img src="./components/DesignV1/results/actual.png" alt="实际组件截图" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; padding:40px; color:#6b7280;">图片加载失败</div>
+                </div>
+                <div class="image-panel">
+                    <h3>差异对比</h3>
+                    <img src="./components/DesignV1/results/diff.png" alt="差异对比图" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; padding:40px; color:#6b7280;">图片加载失败</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 简化功能特性 -->
+        <div class="section">
+            <h2>🚀 简化后的核心功能</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <div class="feature-title">图片对比</div>
+                    <div class="feature-desc">直观的三图对比：原始设计、实际截图、差异图</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">基本统计</div>
+                    <div class="feature-desc">还原度百分比、差异像素数、图片尺寸等核心指标</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <div class="feature-title">组件列表</div>
+                    <div class="feature-desc">所有还原组件的汇总列表和状态概览</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">实时监控</div>
+                    <div class="feature-desc">文件变化自动检测和实时数据更新</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📤</div>
+                    <div class="feature-title">导出分享</div>
+                    <div class="feature-desc">PDF 报告导出和分享链接生成</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-title">简洁高效</div>
+                    <div class="feature-desc">移除复杂分析，专注核心对比功能</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目结构说明 -->
+        <div class="structure-info">
+            <h2>📁 重构后的项目结构</h2>
+            <div class="structure-grid">
+                <div class="structure-item">
+                    <h3>/src/components/ - 还原组件</h3>
+                    <p>只放置已经还原好的 Figma 组件</p>
+                    <ul>
+                        <li>DesignV1/ - 示例还原组件</li>
+                        <li>每个组件包含 index.vue 和 results/ 目录</li>
+                        <li>results/ 包含对比图片和报告数据</li>
+                    </ul>
+                </div>
+                
+                <div class="structure-item">
+                    <h3>/src/pages/ - 页面组件</h3>
+                    <p>系统的页面和工具组件</p>
+                    <ul>
+                        <li>ComparisonViewer/ - 对比查看页面</li>
+                        <li>ComponentList/ - 组件列表页面</li>
+                        <li>Navigation/ - 导航组件</li>
+                        <li>Common/ - 通用组件</li>
+                    </ul>
+                </div>
+                
+                <div class="structure-item">
+                    <h3>已移除的功能</h3>
+                    <p>为了简化系统而移除的复杂功能</p>
+                    <ul>
+                        <li>❌ 差异区域详细分析</li>
+                        <li>❌ 颜色差异分析</li>
+                        <li>❌ 优化建议和修复指导</li>
+                        <li>❌ HelloWorld 测试组件</li>
+                    </ul>
+                </div>
+                
+                <div class="structure-item">
+                    <h3>保留的核心功能</h3>
+                    <p>专注于最重要的对比功能</p>
+                    <ul>
+                        <li>✅ 图片三图对比展示</li>
+                        <li>✅ 基本统计信息</li>
+                        <li>✅ 组件列表和汇总</li>
+                        <li>✅ 实时更新监控</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openMainApp()">
+                🚀 打开主应用
+            </button>
+            <button class="btn btn-secondary" onclick="openTestPage()">
+                🧪 功能测试
+            </button>
+            <button class="btn btn-secondary" onclick="showProjectInfo()">
+                📖 项目说明
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function openMainApp() {
+            window.open('/', '_blank');
+        }
+        
+        function openTestPage() {
+            window.open('/src/test-components.html', '_blank');
+        }
+        
+        function showProjectInfo() {
+            alert(`📁 简化版组件还原度对比系统
+
+🎯 核心理念：
+• components/ 目录只放还原好的组件
+• 专注于图片对比，移除复杂分析
+• 简洁高效的用户体验
+
+🚀 使用流程：
+1. 在 src/components/ 下创建新组件
+2. 使用截图工具生成对比数据
+3. 在系统中查看对比结果
+
+📊 当前状态：
+• 已还原组件：1 个 (DesignV1)
+• 系统状态：正常运行
+• 平均还原度：87.86%
+
+💡 下一步：
+• 添加更多还原组件到 components/ 目录
+• 使用 MCP 工具进行截图和对比
+• 持续监控组件还原质量`);
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 简化版组件还原度对比系统演示页面已加载');
+            console.log('📁 项目结构已重构：components/ 只放还原组件，pages/ 放系统组件');
+            console.log('🚀 系统已简化：专注图片对比，移除复杂分析功能');
+        });
+    </script>
+</body>
+</html>

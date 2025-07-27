@@ -6,13 +6,13 @@
 
 🛠️ **Professional Figma Component Restoration Kit** - A comprehensive MCP (Model Context Protocol) server for Vue component development and Figma design restoration. Features snapDOM-powered high-quality screenshots, intelligent visual comparison, and automated SVG optimization with **zero-configuration browser setup**.
 
-## 🚀 What's New in v4.1.0
+## 🚀 What's New in v4.2.0
 
-- ✅ **Zero-Config Browser Setup**: Automatic Chrome/Chromium installation and management
-- ✅ **Local-Only Dependencies**: No external CDN dependencies, improved security and reliability
-- ✅ **Enhanced snapDOM Integration**: Optimized for better performance and compatibility
-- ✅ **Improved Error Handling**: Better timeout management and fallback mechanisms
-- ✅ **Cleaner Dependencies**: Removed circular dependencies and optimized package structure
+- ✅ **Simplified Puppeteer Integration**: Now uses bundled Chromium automatically - no Chrome installation required
+- ✅ **Enhanced Error Handling**: Intelligent error classification with specific solution suggestions
+- ✅ **Performance Optimization**: Browser instance reuse and page pooling for faster operations
+- ✅ **Zero Configuration**: Completely eliminated complex browser path detection and configuration files
+- ✅ **Cross-Platform Reliability**: Guaranteed compatibility across macOS, Linux, and Windows
 
 ## 🌟 Features
 
@@ -27,7 +27,7 @@
 
 ### 🌐 Remote Version (Recommended)
 
-The easiest way to get started - no manual browser installation required!
+The simplest way to get started - zero configuration required!
 
 **Step 1**: Add the MCP server to your Cursor configuration (`~/.cursor/mcp.json`):
 
@@ -38,7 +38,7 @@ The easiest way to get started - no manual browser installation required!
       "command": "npx",
       "args": [
         "-y",
-        "figma-restoration-mcp-vue-tools@^4.1.0",
+        "figma-restoration-mcp-vue-tools@^4.2.0",
         "start"
       ],
       "env": {
@@ -51,10 +51,10 @@ The easiest way to get started - no manual browser installation required!
 
 **Step 2**: **Restart Cursor** after adding the configuration.
 
-**Step 3**: The package will automatically:
-- Install the latest Chrome browser for testing
-- Set up all dependencies locally
-- Configure optimal settings for screenshot capture
+**Step 3**: Ready to use! The package automatically:
+- Downloads and uses Puppeteer's bundled Chromium
+- Sets up all dependencies with zero configuration
+- Provides intelligent error handling with solution suggestions
 
 **Step 4**: Use the MCP tools in Cursor:
 - `figma_compare` - Compare components with Figma designs
@@ -72,8 +72,8 @@ git clone https://github.com/tianmuji/figma-restoration-mcp-vue-tools.git
 cd figma-restoration-mcp-vue-tools
 npm install
 
-# Browser will be automatically installed during npm install
-# No additional setup required!
+# Puppeteer with bundled Chromium is automatically installed
+# No browser configuration needed!
 ```
 
 **Step 2**: Add the local MCP server to your Cursor configuration:
@@ -141,8 +141,7 @@ High-quality DOM screenshot tool using snapDOM technology for precise component 
       "scale": 3,
       "compress": true,
       "embedFonts": true,
-      "backgroundColor": "transparent",
-      "padding": 0
+      "backgroundColor": "transparent"
     },
     "outputPath": "/custom/output/path.png"
   }
@@ -188,9 +187,17 @@ SVG optimization tool powered by SVGO with customizable configuration.
 ### Environment Variables
 
 - `NODE_ENV`: Environment mode (development/production)
-- `PUPPETEER_EXECUTABLE_PATH`: (Optional) Custom Chrome executable path
 
-> 🎉 **No manual browser configuration needed!** The package automatically installs and manages Chrome for Testing.
+> 🎉 **Zero configuration required!** Puppeteer automatically uses its bundled Chromium - no browser installation or path configuration needed.
+
+### Deprecated Environment Variables
+
+The following environment variables are no longer needed and will be ignored:
+- ~~`PUPPETEER_EXECUTABLE_PATH`~~ - Puppeteer now uses bundled Chromium
+- ~~`CHROME_EXECUTABLE_PATH`~~ - No longer required
+- ~~`PUPPETEER_SKIP_CHROMIUM_DOWNLOAD`~~ - Handled automatically
+
+If you have these set, you'll see a warning message during installation, but they won't affect functionality.
 
 ### Shadow Detection & Smart Padding
 
@@ -247,7 +254,7 @@ For components with shadows, the tool automatically calculates optimal padding b
 - **Vue.js project**: For component restoration (Vue 3 recommended)
 - **MCP-compatible client**: Cursor IDE, Claude Desktop, etc.
 
-> 📝 **Note**: Chrome/Chromium is automatically installed and managed - no manual setup required!
+> 📝 **Note**: No browser installation required! Puppeteer automatically downloads and uses its bundled Chromium.
 
 ## 🤝 Contributing
 
@@ -291,7 +298,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## 📈 Version History
 
-### v4.1.0 (Latest)
+### v4.2.0 (Latest)
+- ✅ **Simplified Puppeteer Integration**: Uses bundled Chromium automatically
+- ✅ **Enhanced Error Handling**: Intelligent error classification with specific solutions
+- ✅ **Performance Optimization**: Browser instance reuse and page pooling
+- ✅ **Zero Configuration**: Eliminated browser path detection and config files
+- ✅ **Cross-Platform Reliability**: Guaranteed compatibility across all platforms
+
+### v4.1.0
 - ✅ Zero-configuration browser setup
 - ✅ Enhanced security with local-only dependencies  
 - ✅ Improved performance and error handling

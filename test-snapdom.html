@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test snapDOM</title>
+</head>
+<body>
+    <div id="test" style="width: 200px; height: 100px; background: red; color: white; padding: 20px;">
+        Test Element
+    </div>
+    
+    <script type="module">
+        async function testSnapdom() {
+            try {
+                console.log('Testing snapdom import...');
+                const { snapdom } = await import('@zumer/snapdom');
+                console.log('snapdom imported successfully:', typeof snapdom);
+                
+                const element = document.getElementById('test');
+                const result = await snapdom(element, {
+                    scale: 2,
+                    backgroundColor: 'transparent'
+                });
+                
+                console.log('snapdom result:', result);
+                
+                // Convert to blob and create download link
+                const blob = await result.toBlob({ type: 'png' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'test-snapdom.png';
+                link.textContent = 'Download Test Image';
+                document.body.appendChild(link);
+                
+                console.log('Test completed successfully!');
+            } catch (error) {
+                console.error('snapdom test failed:', error);
+            }
+        }
+        
+        testSnapdom();
+    </script>
+</body>
+</html>

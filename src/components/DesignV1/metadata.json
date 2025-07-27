@@ -1,0 +1,15 @@
+{
+  "name": "DesignV1",
+  "description": "A vertical layout component with squares and a text rectangle",
+  "figmaNodeId": "2836:1478",
+  "figmaFileKey": "hdyf6u2eqRkmXY0I7d9S98",
+  "dimensions": {
+    "width": 194,
+    "height": 284
+  },
+  "category": "layout",
+  "tags": ["layout", "squares", "text", "frame"],
+  "version": "1.0.0",
+  "createdAt": "2025-07-26T14:31:47.500Z",
+  "lastModified": "2025-07-26T14:31:47.500Z"
+}
