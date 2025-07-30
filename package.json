@@ -1,6 +1,6 @@
 {
   "name": "figma-restoration-mcp-vue-tools",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Professional Figma Component Restoration Kit - MCP tools with snapDOM-powered high-quality screenshots, intelligent shadow detection, and smart debugging for Vue component restoration. Includes figma_compare and snapdom_screenshot tools.",
   "type": "module",
   "main": "src/server.js",
@@ -16,7 +16,6 @@
     "dev-status": "node scripts/utils/status-manager.js status",
     "build": "echo \"Build completed - no build step required\" && exit 0",
     "preview": "vite preview",
-
     "clean": "node test-clean-tools.mjs",
     "install-kit": "chmod +x scripts/setup/install.sh && ./scripts/setup/install.sh",
     "setup": "chmod +x scripts/setup/setup.sh && ./scripts/setup/setup.sh",
@@ -27,7 +26,6 @@
     "version:minor": "npm version minor",
     "version:major": "npm version major"
   },
-
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
     "@zumer/snapdom": "^1.9.5",
@@ -52,7 +50,6 @@
     "vue": "^3.4.0",
     "vue-router": "^4.5.1"
   },
-
   "keywords": [
     "figma",
     "restoration",
