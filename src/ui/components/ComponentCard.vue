@@ -17,7 +17,9 @@
       <!-- 对比状态指示器 -->
       <div v-if="component.hasComparison" class="comparison-badge">
         <span class="badge-icon">📊</span>
-        <span class="badge-text">有对比</span>
+        <span class="badge-text">
+          {{ getRestorationPercentage(component.comparisonData) }}%
+        </span>
       </div>
     </div>
 
@@ -96,6 +98,21 @@ const getSimilarityClass = (similarity) => {
   if (similarity >= 0.8) return 'good'
   if (similarity >= 0.6) return 'fair'
   return 'poor'
+}
+
+const getRestorationPercentage = (comparisonData) => {
+  if (!comparisonData) return 0
+  
+  // 优先使用 matchPercentage，如果没有则使用 similarity
+  if (comparisonData.matchPercentage !== undefined) {
+    return Math.round(comparisonData.matchPercentage)
+  }
+  
+  if (comparisonData.similarity !== undefined) {
+    return Math.round(comparisonData.similarity * 100)
+  }
+  
+  return 0
 }
 </script>
 

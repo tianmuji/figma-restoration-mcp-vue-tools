@@ -1,57 +1,24 @@
 {
   "name": "DesignV1",
-  "description": "Design v1 component from Figma - Optimized with correct border handling",
+  "description": "Simple layout component with squares and text rectangle",
+  "figmaNodeId": "2836-1478",
+  "figmaFileKey": "hdyf6u2eqRkmXY0I7d9S98",
   "dimensions": {
     "width": 194,
     "height": 271
   },
-  "figmaData": {
-    "fileKey": "hdyf6u2eqRkmXY0I7d9S98",
-    "nodeId": "2836-1478",
-    "originalName": "Design v1"
-  },
-  "borderStrategy": {
-    "type": "outer",
-    "strokeWeight": "2px",
-    "color": "#000000",
-    "webImplementation": "outline",
-    "reason": "Figma outer stroke doesn't affect layout dimensions"
-  },
-  "layout": {
-    "type": "flex",
-    "direction": "column",
-    "gap": "12px",
-    "padding": "16px"
-  },
-  "elements": [
-    {
-      "type": "frame",
-      "name": "Frame 1",
-      "children": ["square", "square"]
+  "createdAt": "2025-07-30T08:50:45.721Z",
+  "version": "1.0.0",
+  "tags": ["layout", "simple", "squares", "text"],
+  "restorationData": {
+    "matchPercentage": 91.13519028670544,
+    "diffPixels": 43442,
+    "totalPixels": 490050,
+    "dimensions": {
+      "width": 594,
+      "height": 825
     },
-    {
-      "type": "rectangle",
-      "name": "Rectangle Group",
-      "containsText": true
-    },
-    {
-      "type": "frame", 
-      "name": "Frame 2",
-      "children": ["square", "square"]
-    }
-  ],
-  "colors": {
-    "primary": "#D9D9D9",
-    "text": "#000000",
-    "border": "#000000"
-  },
-  "fonts": {
-    "primary": "Inter"
-  },
-  "optimizations": {
-    "fontSmoothing": "antialiased",
-    "flexShrink": "disabled",
-    "boxSizing": "border-box",
-    "borderHandling": "outline"
+    "timestamp": "2025-07-30T08:55:00.000Z",
+    "status": "completed"
   }
 } 

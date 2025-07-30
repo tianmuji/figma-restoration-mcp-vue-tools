@@ -127,15 +127,30 @@ const loadComponents = async () => {
           // 元数据加载失败，使用默认值
         }
 
-        // 尝试加载对比数据
-        try {
-          const comparisonResponse = await fetch(`/src/components/${name}/results/comparison-report.json`)
-          if (comparisonResponse.ok) {
-            component.comparisonData = await comparisonResponse.json()
-            component.hasComparison = true
+        // 检查是否有还原度数据（从metadata.json中读取）
+        if (component.metadata && component.metadata.restorationData) {
+          component.hasComparison = true
+          component.comparisonData = {
+            similarity: component.metadata.restorationData.matchPercentage / 100,
+            matchPercentage: component.metadata.restorationData.matchPercentage
           }
-        } catch (error) {
-          // 对比数据加载失败，使用默认值
+          console.log(`✅ 从metadata.json加载 ${name} 的还原度数据:`, component.metadata.restorationData.matchPercentage)
+        } else {
+          // 如果没有还原度数据，检查是否有diff.png作为备用
+          try {
+            const diffResponse = await fetch(`/src/components/${name}/results/diff.png`)
+            if (diffResponse.ok) {
+              component.hasComparison = true
+              component.comparisonData = {
+                similarity: 0, // 需要更新metadata.json获取真实数据
+                matchPercentage: 0
+              }
+              console.log(`⚠️ ${name} 有diff.png但metadata.json中缺少restorationData，需要更新metadata`)
+            }
+          } catch (error) {
+            // 对比数据加载失败，使用默认值
+            console.log(`${name} 对比数据加载失败:`, error)
+          }
         }
 
         return component

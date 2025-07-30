@@ -69,16 +69,54 @@
         <h3>对比摘要</h3>
         <div class="comparison-summary">
           <div class="summary-item">
-            <span class="summary-label">相似度:</span>
-            <span class="summary-value" :class="getSimilarityClass(comparisonData.similarity)">
-              {{ Math.round(comparisonData.similarity * 100) }}%
+            <span class="summary-label">还原度:</span>
+            <span class="summary-value" :class="getRestorationClass(getRestorationPercentage())">
+              {{ getRestorationPercentage() }}%
             </span>
           </div>
-          <div v-if="comparisonData.restorationRatio" class="summary-item">
-            <span class="summary-label">还原度:</span>
-            <span class="summary-value">
-              {{ Math.round(comparisonData.restorationRatio * 100) }}%
-            </span>
+          <div v-if="comparisonData.diffPixels" class="summary-item">
+            <span class="summary-label">差异像素:</span>
+            <span class="summary-value">{{ comparisonData.diffPixels.toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 对比图像展示 -->
+      <div v-if="hasComparison" class="panel-section">
+        <h3>对比图像</h3>
+        <div class="comparison-images">
+          <!-- 预期图像 -->
+          <div class="image-item">
+            <h4>预期 (Figma)</h4>
+            <div class="image-container">
+              <img 
+                v-if="expectedImageUrl && imageLoadingStates.expected" 
+                :src="expectedImageUrl" 
+                alt="Figma 预期图"
+                class="comparison-image"
+                @error="imageLoadingStates.expected = false"
+              />
+              <div v-else class="image-placeholder">
+                <span>{{ imageLoadingStates.expected === false ? '预期图加载失败' : '预期图不可用' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 实际图像 -->
+          <div class="image-item">
+            <h4>实际 (Vue)</h4>
+            <div class="image-container">
+              <img 
+                v-if="actualImageUrl && imageLoadingStates.actual" 
+                :src="actualImageUrl" 
+                alt="Vue 实际图"
+                class="comparison-image"
+                @error="imageLoadingStates.actual = false"
+              />
+              <div v-else class="image-placeholder">
+                <span>{{ imageLoadingStates.actual === false ? '实际图加载失败' : '实际图不可用' }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -117,6 +155,44 @@ const hasComparison = computed(() => {
   return comparisonData.value !== null
 })
 
+// 图像URL计算属性
+const expectedImageUrl = computed(() => {
+  if (!hasComparison.value) return null
+  return `/src/components/${componentName.value}/results/expected.png`
+})
+
+const actualImageUrl = computed(() => {
+  if (!hasComparison.value) return null
+  return `/src/components/${componentName.value}/results/actual.png`
+})
+
+// 添加图像加载状态
+const imageLoadingStates = ref({
+  expected: false,
+  actual: false
+})
+
+// 验证图像是否可访问
+const validateImages = async () => {
+  if (!hasComparison.value) return
+  
+  const images = [
+    { key: 'expected', url: expectedImageUrl.value },
+    { key: 'actual', url: actualImageUrl.value }
+  ]
+  
+  for (const image of images) {
+    try {
+      const response = await fetch(image.url)
+      imageLoadingStates.value[image.key] = response.ok
+      console.log(`${image.key} image accessible:`, response.ok)
+    } catch (error) {
+      imageLoadingStates.value[image.key] = false
+      console.error(`${image.key} image not accessible:`, error)
+    }
+  }
+}
+
 // 方法
 const loadComponentData = async () => {
   try {
@@ -129,15 +205,37 @@ const loadComponentData = async () => {
     console.log('元数据加载失败:', error)
   }
 
-  try {
-    // 加载对比数据
-    const comparisonResponse = await fetch(`/src/components/${componentName.value}/results/comparison-report.json`)
-    if (comparisonResponse.ok) {
-      comparisonData.value = await comparisonResponse.json()
+  // 检查是否有还原度数据（从metadata.json中读取）
+  if (metadata.value && metadata.value.restorationData) {
+    comparisonData.value = {
+      matchPercentage: metadata.value.restorationData.matchPercentage,
+      diffPixels: metadata.value.restorationData.diffPixels,
+      totalPixels: metadata.value.restorationData.totalPixels,
+      dimensions: metadata.value.restorationData.dimensions,
+      timestamp: metadata.value.restorationData.timestamp
     }
-  } catch (error) {
-    console.log('对比数据加载失败:', error)
+    console.log('✅ 从metadata.json加载还原度数据:', comparisonData.value)
+  } else {
+    // 如果没有还原度数据，检查是否有diff.png作为备用
+    const diffPath = `/src/components/${componentName.value}/results/diff.png`
+    try {
+      const diffResponse = await fetch(diffPath)
+      if (diffResponse.ok) {
+        comparisonData.value = {
+          matchPercentage: 0, // 需要更新metadata.json获取真实数据
+          diffPixels: 0,
+          totalPixels: 0,
+          dimensions: { width: 0, height: 0 }
+        }
+        console.log('⚠️ 发现diff.png但metadata.json中缺少restorationData，需要更新metadata')
+      }
+    } catch (error) {
+      console.log('对比数据加载失败:', error)
+    }
   }
+  
+  // 验证图像是否可访问
+  await validateImages()
 }
 
 const goBack = () => {
@@ -152,6 +250,28 @@ const getSimilarityClass = (similarity) => {
   if (similarity >= 0.9) return 'excellent'
   if (similarity >= 0.8) return 'good'
   if (similarity >= 0.6) return 'fair'
+  return 'poor'
+}
+
+const getRestorationPercentage = () => {
+  if (!comparisonData.value) return 0
+  
+  // 优先使用 matchPercentage，如果没有则使用 similarity
+  if (comparisonData.value.matchPercentage !== undefined) {
+    return Math.round(comparisonData.value.matchPercentage)
+  }
+  
+  if (comparisonData.value.similarity !== undefined) {
+    return Math.round(comparisonData.value.similarity * 100)
+  }
+  
+  return 0
+}
+
+const getRestorationClass = (percentage) => {
+  if (percentage >= 99) return 'excellent'
+  if (percentage >= 95) return 'good'
+  if (percentage >= 90) return 'fair'
   return 'poor'
 }
 
@@ -402,5 +522,52 @@ onMounted(() => {
   .info-panel {
     padding: 16px;
   }
+}
+
+/* 对比图像样式 */
+.comparison-images {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.image-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image-item h4 {
+  margin: 0;
+  padding: 8px 12px;
+  background: #f9fafb;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.image-container {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  overflow: hidden;
+}
+
+.comparison-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280;
+  font-size: 12px;
 }
 </style>

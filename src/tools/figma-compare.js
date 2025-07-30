@@ -93,13 +93,28 @@ export class FigmaCompareTool {
         console.log(chalk.green('🎉 恭喜！已达到98%还原度标准！'));
       }
 
+      // 保存还原度数据到JSON文件
+      const comparisonData = {
+        matchPercentage: comparisonResult.matchPercentage,
+        diffPixels: comparisonResult.diffPixels,
+        totalPixels: comparisonResult.totalPixels,
+        dimensions: comparisonResult.dimensions,
+        timestamp: new Date().toISOString(),
+        componentName: componentName
+      };
+      
+      const comparisonDataPath = path.join(resultsDir, 'comparison-data.json');
+      await fs.writeFile(comparisonDataPath, JSON.stringify(comparisonData, null, 2));
+      console.log(chalk.green(`📊 还原度数据已保存: ${comparisonDataPath}`));
+
       return {
         success: true,
         componentName,
         matchPercentage: comparisonResult.matchPercentage,
         diffPixels: comparisonResult.diffPixels,
         totalPixels: comparisonResult.totalPixels,
-        diffImagePath: comparisonResult.paths.diff
+        diffImagePath: comparisonResult.paths.diff,
+        comparisonDataPath: comparisonDataPath
       };
 
     } catch (error) {
