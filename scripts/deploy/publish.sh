@@ -8,9 +8,19 @@ set -e
 echo "🚀 Figma Restoration MCP Vue Tools - 发布脚本"
 echo "=================================================="
 
+# 获取脚本所在目录的上级目录（项目根目录）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# 切换到项目根目录
+cd "$PROJECT_ROOT"
+
+echo "📁 项目根目录: $PROJECT_ROOT"
+
 # 检查是否在正确的目录
 if [ ! -f "package.json" ]; then
-    echo "❌ 错误: 请在项目根目录运行此脚本"
+    echo "❌ 错误: 无法找到 package.json 文件"
+    echo "当前目录: $(pwd)"
     exit 1
 fi
 
