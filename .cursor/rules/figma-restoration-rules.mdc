@@ -1,18 +1,12 @@
----
-alwaysApply: true
----
 
 # 🔄 持续生效规则：Figma组件还原流程
 
-# 工作目录范围
+## 📋 工作目录范围
 你始终在 figma-restoration-mcp-vue-tools目录下的文件工作
 
-# Figma组件还原流程规则
+## 🎯 核心优势与定位
 
-## 概述
-当用户要求还原Figma组件并提供Figma链接时，严格按照以下7步流程执行。
-
-**⭐ 核心优势提示**: **你是Claude AI，具备强大的图像元素识别能力**。在Figma组件还原流程中，**专注利用你的视觉识别能力**来：
+**⭐ 你是Claude AI，具备强大的图像元素识别能力**。在Figma组件还原流程中，**专注利用你的视觉识别能力**来：
 - **直接识别expected.png中的视觉元素**: 无需依赖文件读取，直接观察和识别图片中的所有可见元素
 - **智能过滤冗余元素**: 基于视觉验证，准确判断原始Figma JSON中的哪些元素在图片中真正可见、哪些是冗余的
 - **确定真实元素层级**: 通过观察图片中的视觉层级关系，优化JSON中可能不合理的嵌套结构
@@ -23,7 +17,7 @@ alwaysApply: true
 - **原始Figma JSON只能保证视觉呈现正确**，但无法保证元素层级合理性和去除冗余元素
 - **Claude的价值在于基于视觉真实性优化JSON结构**，确保最终实现更精确、更简洁
 
-## 流程步骤
+## 🔄 标准流程步骤
 
 ### 步骤1: 获取Figma数据
 - 使用工具获取Figma JSON数据
@@ -31,9 +25,8 @@ alwaysApply: true
   - `fileKey`: 从Figma链接中提取
   - `nodeId`: 从Figma链接中提取
   - **⭐ savePath**: **必须使用绝对路径** `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/figma-data`
-- **🆕 文件命名规范**: 工具会自动保存JSON到指定目录，文件名包含node-id便于快速查找
+- **文件命名规范**: 工具会自动保存JSON到指定目录，文件名包含node-id便于快速查找
   - 格式：`figma-{fileKey}-{nodeId}-{timestamp}.json`
-  - 示例：`figma-Mbz0mgLIVbz46bxPwBFnSl-4211-72472-2025-07-24T03-22-23-609Z.json`
 
 ### 步骤2: 下载预期截图获取视觉目标
 **⭐ 首先获取视觉标准** - 在分析JSON之前先获取实际视觉效果：
@@ -52,71 +45,43 @@ alwaysApply: true
   1. **layout-analysis.json** (1倍设计尺寸) - 主要依据 ✅
   2. **Figma JSON boundingBox** (1倍设计尺寸) - 验证依据
   3. **图片观察** (视觉识别) - 辅助判断，不用于数值设置
-- **图片用途明确**:
-  - **expected.png**: 视觉目标参考、元素识别、结构分析
-  - **diff.png**: 像素差异可视化（橙色/红色 = 差异区域，非设计颜色）
-- **⭐ 关键经验**: 参考 `/src/restoration-tips/截图对比-3倍图缩放与样式尺寸设置.md`
 
-### 步骤3: 结合expected.png和原始figma.json分析得到layout-analysis
+### 步骤3: 视觉驱动分析layout-analysis
 **⭐ 视觉驱动的智能分析** - 结合视觉目标和技术数据进行分析：
 
 **第一步：视觉元素识别**
-**⭐ 重要提示**: **你是Claude AI，具备直接分析图片内容的能力**。无需依赖read_file读取图片，可以直接查看和分析图片的视觉内容。
-
-**视觉分析能力运用**:
 - **直接查看expected.png**: 利用Claude的图像识别能力，直接分析图片中的所有可见元素
 - **精确元素识别**: 识别图片中实际存在的文本、图标、按钮、背景、颜色、阴影等具体视觉元素
 - **布局关系分析**: 观察元素间的相对位置、对齐方式、间距关系和层级结构
 - **样式效果记录**: 记录实际的颜色值、字体样式、边框效果、阴影参数等视觉属性
-- **交互元素识别**: 识别按钮、链接、输入框等交互组件的视觉状态
-
-**基于视觉的精确分析**:
-- 仔细分析expected.png中实际可见的每个元素
-- 识别主要的视觉组件：文本、图标、按钮、背景等
-- 确定元素的相对位置和层级关系  
-- 记录实际的颜色、尺寸和样式效果
-- **⭐ 为后续JSON对比提供精确的视觉基准**
 
 **第二步：JSON数据映射**
-- 从`/src/figma-data`目录读取原始figma JSON数据（按node-id快速定位文件）
+- 从`/src/figma-data`目录读取原始figma JSON数据（按node-id快速定位最新的文件）
 - 分析原始figma.json数据，确认以下关键信息：
   1. **页面结构**: 
      - 组件层级关系
      - 布局方式（**优先使用flex布局，非必要不使用绝对定位**）
      - 尺寸和位置信息
-  2. **🆕 智能素材节点识别**:
+  2. **智能素材节点识别**:
      - **根据节点名字识别**: 检测名字中含有 `ic`、`ic_`、`素材`、`material`、`asset`、`icon`、`img`、`image` 等关键词
      - **自动跳过子节点**: 当识别为素材节点时，直接导出该节点，不再分析其子节点
      - **图片节点**: imageRef填充的节点
      - **图标节点**: SVG矢量图标
      - **背景图片**: 背景填充图片
      - **优先级**: 名字识别 > 类型+填充识别
-  3. **子组件识别**:
-     - 嵌套的组件实例
-     - 可复用的UI元素
-  4. **样式信息**:
-     - 颜色、字体、边框
-     - **🆕 边框分析**: 识别Figma边框类型（内边框/外边框/中边框）和视觉效果
-     - 阴影、圆角等效果
-     - 响应式布局需求
+  3. **子组件识别**: 嵌套的组件实例，可复用的UI元素
+  4. **样式信息**: 颜色、字体、边框、阴影、圆角等效果
 
 **第三步：冗余元素过滤与结构优化**
-**⭐ 利用Claude视觉元素识别能力进行结构优化**:
-
 - **基于视觉真实性的结构优化**:
   - **视觉元素清单**: 利用Claude的图像识别能力，列出expected.png中所有真正可见的视觉元素
   - **JSON元素映射**: 将原始Figma JSON中的每个技术元素与视觉清单进行映射验证
   - **冗余元素智能识别**：
     - **不可见元素过滤**: 识别JSON中opacity为0、尺寸为0、或在视觉上完全不可见的元素
     - **重复元素合并**: 发现JSON中描述相同视觉效果的多个技术元素
-    - **辅助性元素清理**: 移除在expected.png中无视觉体现的技术性辅助元素（如边界框、定位参考等）
-  - **视觉层级结构分析**: 观察图片中元素的实际层级关系（前景/背景、包含关系等）
-  - **节点结构合理化**: 基于视觉层级优化JSON的嵌套结构，避免不必要的深层嵌套
-
-- **结构优化策略**:
-  - **保留视觉必要元素**: 只保留在expected.png中真正产生视觉效果的元素
-  - **简化技术结构**: 移除JSON中过度复杂但视觉上无意义的嵌套层级
-  - **优化层级关系**: 根据视觉观察调整元素的父子关系，使其更符合实际的视觉层级
+    - **辅助性元素清理**: 移除在expected.png中无视觉体现的技术性辅助元素
+  - **视觉层级结构分析**: 观察图片中元素的实际层级关系
+  - **节点结构合理化**: 基于视觉层级优化JSON的嵌套结构
 
 **第四步：布局结构优化**
 - 将Figma的绝对定位转换为现代flex布局
@@ -130,61 +95,19 @@ alwaysApply: true
 - 精确的尺寸和间距规范
 - 符合Web标准的实现方案
 
-### 步骤4: 使用tool下载素材
-- **🆕 规范目录结构** - **⭐ 素材和结果文件分类存储**：
-```
-# 🆕 统一Figma数据目录
-/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/figma-data/
-├── figma-{fileKey}-{nodeId}-{timestamp}.json  # 按node-id命名的Figma原始数据
-├── figma-{fileKey}-{nodeId2}-{timestamp}.json # 其他组件数据
-└── ...
-
-# 🆕 还原经验知识库
-/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/restoration-tips/
-├── 冗余元素识别-透明度为0的边界元素.md           # 文件名直接体现经验核心
-├── flex布局优化-文件夹图标位置偏移问题.md        # 具体问题的解决方案
-├── 字体渲染优化-PingFangSC抗锯齿设置.md        # 字体相关经验
-├── 截图对比-背景色差异导致还原度低.md           # 对比问题解决
-└── ...
-
-# 组件目录结构  
-/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/
-├── index.vue                     # Vue 组件
-├── metadata.json                 # 组件元数据
-├── layout-analysis.json          # 布局分析JSON
-├── images/                       # ⭐ 素材文件目录
-│   ├── folder-icon.svg           # 图标文件
-│   ├── project-icon.svg          # 项目图标
-│   └── background.png            # 背景图片等
-└── results/                      # ⭐ 截图对比结果目录
-    ├── expected.png              # Figma原图
-    ├── actual.png                # 组件截图
-    ├── diff.png                  # 差异对比图
-    ├── figma-analysis-report.json # 分析报告
-    ├── figma-analysis-report.md   # 分析报告MD
-    └── region-analysis.json      # 区域分析
-```
-- **🆕 素材识别策略**:
-  - **⭐ 视觉驱动判断**: 基于Claude分析expected.png，确定真正需要的视觉素材
-    - 观察实际视觉效果，判断真实尺寸需求
-    - 区分语义化容器与具体视觉素材
-    - 以视觉真实性为准选择下载节点
-  - **⭐ 节点名字判断规则**:
+### 步骤4: 下载素材
+- **素材识别策略**:
+  - **视觉驱动判断**: 基于Claude分析expected.png，确定真正需要的视觉素材
+  - **节点名字判断规则**:
     - **语义化名称** (`"单选"`、`"按钮"`、`"图标组"`) → 通常是容器，需检查子元素
     - **具体形状名称** (`"Rectangle 3464324"`、`"Vector 297"`) → 真正的素材，优先下载
-  - **⭐ 节点类型优先级**:
+  - **节点类型优先级**:
     - **RECTANGLE/VECTOR/PATH** → 具体绘制元素，优先下载
     - **INSTANCE/COMPONENT** → 容器组件，需检查内部具体元素
     - **GROUP/FRAME** → 布局容器，通常不是素材本身
-  - **⭐ 尺寸精确匹配原则**:
+  - **尺寸精确匹配原则**:
     - **SVG原始尺寸 = CSS设置尺寸**，避免任何缩放变换
-    - 如发现容器与内部元素尺寸不匹配，优先下载内部具体元素
     - 确保viewBox与实际使用尺寸一致
-- **素材准备方式**:
-  - 确保素材命名符合规范（icon_xxx.svg, image_xxx.png等）
-  - svg 使用tool进行优化
-  - 推荐使用高分辨率素材 3x图
-  - **⭐ 重要经验**: 参考 `/src/restoration-tips/素材识别-容器节点vs具体素材元素判断策略.md`
 
 ### 步骤5: 递归还原子组件
 对于识别出的子组件：
@@ -199,20 +122,15 @@ alwaysApply: true
   - Vue 3 Composition API
   - TypeScript支持
   - **优先使用flex布局，避免绝对定位**
-- **🆕 边框处理策略**:
+- **边框处理策略**:
   - **分析Figma边框类型**: 检查是内边框、外边框还是中边框
   - **选择合适的Web属性**:
     - 装饰性边框 → 使用 `outline` 或 `box-shadow`
     - 影响布局的边框 → 使用 `border` 并调整总尺寸
     - 复杂边框效果 → 使用 `box-shadow` 模拟多层边框
-  - **尺寸调整原则**: 使用 `border` 时必须调整总尺寸以匹配Figma设计
-- **代码结构**:
-  - 响应式设计
-  - 不需要语义化HTML结构
 - **文件生成**:
   - `index.vue`: 主组件文件
   - `metadata.json`: 组件元数据（尺寸、描述等）
-- **⭐ 组件自动注册**: Vue组件在项目中通过 `src/components/index.ts` 自动注册，无需检查注册相关代码
 
 ### 步骤7: 组件截图
 使用工具进行高质量组件截图：
@@ -222,16 +140,14 @@ alwaysApply: true
   - `port`: **⭐ 用户会启动服务在1932端口** (默认使用1932)
 - **⭐ 必须指定输出路径**:
   - **outputPath**: **必须使用绝对路径到组件的results目录下的actual.png**
-  - **路径格式**: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/results/actual.png`
 - **截图配置**:
   - `snapDOMOptions`: 高质量截图配置
     - `scale`: 3（高分辨率）
-    - **⭐ padding设置规则**:
-      - **无阴影组件**: `padding: 0` （精确裁切，提升还原度）
+    - **padding设置规则**: **无阴影组件**: `padding: 0` （精确裁切，提升还原度）
     - `backgroundColor`: "transparent"
     - `embedFonts`: true
 
-### 步骤8: 还原度对比
+### 步骤8: 还原度对比与数据管理
 **⭐ 前置条件**: expected.png已在步骤2中下载完成
 
 **直接进行像素级对比分析**：
@@ -241,11 +157,29 @@ alwaysApply: true
   - `generateReport`: true
 - **⭐ 必须指定输出路径**:
   - **必须与步骤6使用相同的results目录**
-  - **路径格式**: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/results`
 - **⭐ 结果存储位置**:
   - expected.png, actual.png, diff.png 存储在组件的results目录
-  - 分析报告存储在同一results目录下
-- 分析对比结果，识别差异点
+
+**🆕 还原度数据管理**:
+- **数据存储位置**: 将还原度数据存储在`metadata.json`的`restorationData`字段中
+- **数据格式**:
+  ```json
+  {
+    "restorationData": {
+      "matchPercentage": 91.13519028670544,
+      "diffPixels": 43442,
+      "totalPixels": 490050,
+      "dimensions": {
+        "width": 594,
+        "height": 825
+      },
+      "timestamp": "2025-07-30T08:55:00.000Z",
+      "status": "completed"
+    }
+  }
+  ```
+- **页面数据读取**: 所有页面组件从metadata.json的restorationData字段读取还原度数据
+- **优势**: 数据集中管理，避免额外的comparison-data.json文件
 
 ### 步骤9: 自我反思优化
 如果还原度 < 98%：
@@ -253,116 +187,100 @@ alwaysApply: true
   - 布局差异（位置、尺寸、对齐）
   - 样式差异（颜色、字体、效果）
   - 素材问题（缺失、错误、质量）
-  - **🆕 素材节点问题**: 检查是否正确识别了所有素材节点
-  - **🆕 冗余元素问题**: 检查是否包含了不必要的冗余元素
+  - 素材节点问题: 检查是否正确识别了所有素材节点
+  - 冗余元素问题: 检查是否包含了不必要的冗余元素
 - **优化策略**:
-  - **🆕 重新执行步骤3**: **基于expected.png重新优化layout-analysis结构**
-    - **⭐ 充分利用Claude的视觉元素识别能力**: 重新分析expected.png中的所有可见元素
-    - 从`/src/figma-data`目录读取对应的原始figma JSON数据
-    - **重新建立视觉清单**: 基于图片重新列出所有真正需要的视觉元素
-    - **重新映射JSON结构**: 确保JSON中的每个元素都对应图片中的真实视觉效果
-    - **重新过滤冗余元素**: 移除在视觉上不产生效果的技术性元素
-    - **重新优化层级结构**: 基于视觉层级关系调整JSON嵌套结构
-    - 生成更精确的layout-analysis.json
-  - **🆕 验证素材节点识别**: 确认所有 `ic`、`ic_`、`素材` 等关键词节点已正确处理
-  - **🆕 冗余元素清理**: **重新基于expected.png进行视觉验证**，确保移除所有在视觉上不可见或无意义的元素
-  - **🆕 结构合理性验证**: **通过观察expected.png的视觉层级**，确保JSON结构的合理性和简洁性
-  - **🆕 实现精度提升**: 基于优化后的结构重新实现组件，**图片差异分析由专门的对比工具完成**
-  - **🆕 边框处理优化**: 根据Figma边框类型选择合适的Web属性（border/outline/box-shadow）
+  - **重新执行步骤3**: **基于expected.png重新优化layout-analysis结构**
+  - 验证素材节点识别: 确认所有 `ic`、`ic_`、`素材` 等关键词节点已正确处理
+  - 冗余元素清理: **重新基于expected.png进行视觉验证**
+  - 结构合理性验证: **通过观察expected.png的视觉层级**
+  - 边框处理优化: 根据Figma边框类型选择合适的Web属性
   - 调整CSS样式和布局（**优先使用flex布局优化**）
-  - 重新准备或优化素材
-  - 修复子组件问题
 - **迭代流程**:
   - 最多迭代3次
-  - **🆕 每次迭代都可以重复执行步骤3的结构优化过程**
   - 每次迭代都要重新截图和使用对比工具分析
-  - **🆕 每次迭代都要重新基于expected.png优化元素结构**
   - 记录改进点和剩余问题
-- **🆕 经验积累**:
+- **经验积累**:
   - **重要问题必须记录**: 当遇到新的技术难点、特殊的Figma结构、或创新的解决方案时
   - **存储位置**: `/src/restoration-tips/` 目录
   - **文件命名规范**: `{问题类型}-{核心关键词}.md`
-    - 示例：`冗余元素识别-透明度为0的边界元素.md`
-    - 示例：`flex布局优化-图标位置偏移问题.md`
-    - 示例：`字体渲染-PingFangSC抗锯齿设置.md`
-  - **内容结构**: 问题描述 + 解决方案 + 代码示例 + 注意事项
-  - **用户提示**: 当用户明确指出某个经验需要保存时，必须立即创建对应的经验文件
 
-## 🆕 路径配置最佳实践
+### 步骤10: 经验知识库查找与优化
+**⭐ 当还原度不足时，优先查找历史经验**：
+- **经验查找路径**: `/src/restoration-tips/` 目录
+- **查找策略**:
+  - **按问题类型搜索**: 布局分析、截图对比、素材识别、文本渲染、边框盒模型等
+  - **按关键词搜索**: 还原度、像素差异、尺寸设置、素材优化等
+  - **按组件特征搜索**: 文件夹、按钮、图标、文本等具体元素类型
+- **经验应用流程**:
+  1. **问题匹配**: 将当前问题与历史经验进行匹配
+  2. **方案验证**: 检查经验中的解决方案是否适用于当前场景
+  3. **代码复用**: 直接应用经验中的代码示例和配置参数
+  4. **效果验证**: 应用后重新截图对比，验证改进效果
+- **常见优化经验**:
+  - **3倍图缩放问题**: 参考"截图对比-3倍图缩放与样式尺寸设置.md"
+  - **素材节点识别**: 参考"素材识别-容器节点vs具体素材元素判断策略.md"
+  - **复杂元素优化**: 参考"复杂元素优化-转素材策略提升还原度.md"
+  - **文本渲染差异**: 参考"文本渲染差异-pixelMatch阈值优化策略.md"
+  - **边框盒模型**: 参考"边框盒模型差异-Figma与Web尺寸计算.md"
+  - **布局分析问题**: 参考"布局分析-FolderItem大面积差异问题.md"
+- **经验更新机制**:
+  - **新问题记录**: 遇到新的技术难点时及时记录
+  - **方案验证**: 验证历史经验在新场景下的有效性
+  - **持续优化**: 基于实际效果不断改进和补充经验库
 
-### ⭐ 分类路径配置（推荐）
-- **🆕 Figma数据savePath**: **必须使用绝对路径**到统一数据目录 `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/figma-data`
-- **素材下载localPath**: **必须使用绝对路径**到组件的images目录
-- **🆕 Figma预期截图**: **必须在步骤2中下载到results目录**（expected.png）- 用于视觉驱动分析
-- **截图工具outputPath**: **必须使用绝对路径**到results目录下的actual.png
-- **对比工具outputPath**: **必须使用绝对路径**到results目录
-- **🆕 经验文件存储**: **必须使用绝对路径**到经验目录 `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/restoration-tips`
+## 📁 文件结构与路径配置
 
-**路径格式**:
-- **素材路径**: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/images`
-- **结果路径**: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/results`
-- **🆕 经验路径**: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/restoration-tips`
+### 🎯 标准目录结构
+```
+# 统一Figma数据目录
+/src/figma-data/
+├── figma-{fileKey}-{nodeId}-{timestamp}.json  # 按node-id命名的Figma原始数据
+
+# 还原经验知识库
+/src/restoration-tips/
+├── 冗余元素识别-透明度为0的边界元素.md
+├── flex布局优化-文件夹图标位置偏移问题.md
+└── ...
+
+# 组件目录结构
+/src/components/{ComponentName}/
+├── index.vue                     # Vue 组件
+├── metadata.json                 # ⭐ 组件元数据（包含还原度数据）
+├── layout-analysis.json          # 布局分析JSON
+├── images/                       # ⭐ 素材文件目录
+│   ├── folder-icon.svg           # 图标文件
+│   └── background.png            # 背景图片等
+└── results/                      # ⭐ 截图对比结果目录
+    ├── expected.png              # Figma原图
+    ├── actual.png                # 组件截图
+    └── diff.png                  # 差异对比图
+```
 
 ### 🎯 路径规则
-- **🆕 Figma JSON savePath**: 统一数据目录的绝对路径 `/src/figma-data`（按node-id命名便于查找）
+- **Figma JSON savePath**: 统一数据目录的绝对路径 `/src/figma-data`
 - **素材下载**: images目录的绝对路径
 - **截图对比**: results目录的绝对路径  
-- **🆕 经验文件**: restoration-tips目录的绝对路径（按问题类型-关键词命名）
+- **经验文件**: restoration-tips目录的绝对路径
 - **必须分类存储**: 素材文件在images目录，结果文件在results目录，经验文件在restoration-tips目录
 - **必须保持一致**: 截图和对比工具使用相同的results文件夹
 
-### 🆕 冗余元素识别示例
-**步骤3优化流程示例**：
-1. **生成layout-analysis.json** - 分析所有Figma元素
-2. **下载expected.png** - 获取实际视觉效果
-3. **对比验证** - 发现以下情况时需要清理：
-   ```json
-   // 需要移除的冗余元素示例
-   {
-     "name": "hiddenBounds",     // 透明度为0的边界元素
-     "opacity": 0.00009999999747378752,
-     "visible": false           // 在expected.png中不可见
-   },
-   {
-     "name": "zeroSizeHelper",   // 尺寸为0的辅助元素  
-     "width": 0,
-     "height": 0               // 在expected.png中无视觉效果
-   }
-   ```
-4. **输出优化后的layout-analysis.json** - 只包含可见和必要的元素
-5. **🆕 记录重要经验** - 如果发现新的冗余元素类型或解决方案，创建经验文件
-   - 文件名：`冗余元素识别-opacity为0的Bounds元素.md`
-   - 内容模板：
-     ```markdown
-     # 冗余元素识别：opacity为0的Bounds元素
-     
-     ## 问题描述
-     Figma组件中经常包含透明度为0的Bounds元素，这些元素在视觉上不可见但会影响还原精度
-     
-     ## 识别方法
-     - 检查元素的opacity属性是否为0或接近0
-     - 确认元素在expected.png中是否不可见
-     
-     ## 解决方案
-     在layout-analysis阶段过滤掉这些元素
-     
-     ## 代码示例
-     \`\`\`javascript
-     if (element.opacity < 0.01) {
-       // 跳过透明元素
-       return null;
-     }
-     \`\`\`
-     
-     ## 注意事项
-     - 某些透明元素可能用于布局占位，需要仔细判断
-     - 建议结合expected.png进行视觉验证
-     ```
+### 🆕 页面数据读取规范
+- **还原度数据来源**: 所有页面组件从metadata.json的restorationData字段读取
+- **数据读取优先级**:
+  1. **metadata.json.restorationData** - 主要数据源 ✅
+  2. **diff.png存在性检查** - 备用检测方式
+  3. **默认值** - 无数据时的降级处理
+- **页面组件更新**:
+  - ComponentShowcase.vue: 从metadata.json读取还原度数据
+  - DynamicComponent.vue: 从metadata.json读取还原度数据  
+  - ComparisonViewer.vue: 从metadata.json读取还原度数据
+- **数据格式统一**: 所有页面使用相同的restorationData字段结构
 
-## 🚀 优化流程总结
+## 🚀 流程总结与质量标准
 
-### 🔄 新的执行顺序（8+1步骤）
-1. **获取Figma数据** → 2. **下载expected.png** → 3. **视觉驱动分析layout-analysis** → 4. **下载素材** → 5. **递归还原子组件** → 6. **生成Vue组件** → 7. **组件截图** → 8. **还原度对比** → 9. **自我反思优化**
+### 🔄 执行顺序（10步骤）
+1. **获取Figma数据** → 2. **下载expected.png** → 3. **视觉驱动分析layout-analysis** → 4. **下载素材** → 5. **递归还原子组件** → 6. **生成Vue组件** → 7. **组件截图** → 8. **还原度对比** → 9. **自我反思优化** → 10. **经验知识库查找与优化**
 
 ### ⭐ 核心优化点
 - **视觉识别优先**: 先获取expected.png并进行视觉元素识别，再优化JSON结构
@@ -370,29 +288,30 @@ alwaysApply: true
 - **可重复性**: 步骤9可以重复执行步骤3的结构优化过程
 - **视觉驱动**: 以expected.png中的实际视觉元素为准，而非盲目使用所有JSON元素
 - **分工明确**: Claude负责元素识别和结构优化，专门工具负责图片对比分析
-- **🆕 统一数据管理**: Figma原始JSON统一存储在`/src/figma-data`，按node-id命名便于查找和复用
-- **🆕 经验知识库**: 还原过程中的问题和解决方案统一存储在`/src/restoration-tips`，积累可复用的技术经验
+- **统一数据管理**: Figma原始JSON统一存储在`/src/figma-data`，按node-id命名便于查找和复用
+- **经验知识库**: 还原过程中的问题和解决方案统一存储在`/src/restoration-tips`，积累可复用的技术经验
+- **还原度数据集中管理**: 将还原度数据存储在metadata.json的restorationData字段中，避免额外的comparison-data.json文件
 
 ### 📈 预期提升效果
 - **提高结构精度**: 基于视觉真实性移除冗余元素，优化JSON结构，专注核心视觉组件
 - **减少迭代次数**: 前期充分的视觉元素识别和结构优化，减少后期调整
 - **提升实现质量**: 视觉元素识别驱动，确保每个JSON元素都对应实际的视觉效果
 - **简化技术复杂度**: 移除原始Figma JSON中不必要的技术层级，获得更简洁的实现结构
-- **🆕 便于数据复用**: 统一存储便于快速查找历史数据，避免重复下载相同组件
-- **🆕 经验复用**: 积累的技术经验可以快速解决类似问题，避免重复踩坑
-- **🆕 知识传承**: 形成系统化的还原技术知识库，提升团队整体技术水平
+- **便于数据复用**: 统一存储便于快速查找历史数据，避免重复下载相同组件
+- **经验复用**: 积累的技术经验可以快速解决类似问题，避免重复踩坑
+- **知识传承**: 形成系统化的还原技术知识库，提升团队整体技术水平
 
-## 质量标准
+## 🎯 质量标准
 
 ### 代码质量
 - 遵循Vue 3最佳实践
 - TypeScript支持
 - **优先使用flex布局，避免绝对定位**
-- **🆕 CSS盒模型规范**:
+- **CSS盒模型规范**:
   - **任何设置了padding的元素必须设置 `box-sizing: border-box`**
   - 这遵循Figma的实现方式，确保元素尺寸包含padding
   - 推荐在组件根元素设置通用规则：`.component, .component * { box-sizing: border-box; }`
-- **🆕 Figma边框与Web边框差异处理**:
+- **Figma边框与Web边框差异处理**:
   - **Figma边框特性**: 边框不占用元素宽度，可以设置内边框、外边框、中边框
   - **Web边框选择策略**:
     - **border**: 占用宽度，适合需要影响布局的边框
@@ -406,6 +325,6 @@ alwaysApply: true
 - 无障碍访问性
 - 性能优化
 
-
+### 工作质量
 - 及时更新进度和状态
 - 遇到问题时主动寻求帮助
