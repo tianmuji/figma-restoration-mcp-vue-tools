@@ -1,0 +1,37 @@
+{
+  "enabled": true,
+  "command": "yarn dev",
+  "port": 1932,
+  "timeout": 30000,
+  "retryCount": 3,
+  "checkDependencies": true,
+  "showNotifications": true,
+  "environment": {
+    "nodeMinVersion": "18.0.0",
+    "preferredPackageManager": "yarn"
+  },
+  "portOptions": {
+    "defaultPorts": [
+      1932,
+      3000,
+      5173,
+      8080,
+      8000
+    ],
+    "autoSelectAlternative": true,
+    "killConflictingProcesses": false
+  },
+  "logging": {
+    "level": "info",
+    "logFile": ".vscode/dev-server.log",
+    "keepLogs": true,
+    "maxLogSize": "10MB"
+  },
+  "startup": {
+    "delay": 0,
+    "checkInterval": 2000,
+    "maxStartupTime": 30000,
+    "gracefulShutdown": true
+  },
+  "checkInterval": 2000
+}

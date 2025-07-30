@@ -239,9 +239,12 @@
 - TypeScript支持
 - **优先使用flex布局，避免绝对定位**
 - **🆕 CSS盒模型规范**:
-  - **任何设置了padding的元素必须设置 `box-sizing: border-box`**
-  - 这遵循Figma的实现方式，确保元素尺寸包含padding
+  - **⭐ 关键差异**: Figma中边框不占用内容尺寸，Web默认边框占用总尺寸
+  - **正确做法**: 调整总尺寸 = Figma尺寸 + 边框宽度×2
+  - **示例**: Figma 194×271px + 2px边框 → Web 198×275px
+  - **必须设置**: `box-sizing: border-box` 确保子元素一致性
   - 推荐在组件根元素设置通用规则：`.component, .component * { box-sizing: border-box; }`
+  - **参考经验**: `/src/restoration-tips/边框盒模型差异-Figma与Web尺寸计算.md`
 - 响应式设计支持
 - 无障碍访问性
 - 性能优化

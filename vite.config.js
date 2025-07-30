@@ -7,7 +7,14 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
+      '@/core': path.resolve(__dirname, './src/core'),
+      '@/ui': path.resolve(__dirname, './src/ui'),
+      '@/utils': path.resolve(__dirname, './src/utils'),
+      '@/services': path.resolve(__dirname, './src/services'),
+      '@/types': path.resolve(__dirname, './src/types'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/tools': path.resolve(__dirname, './src/tools')
     }
   },
   server: {

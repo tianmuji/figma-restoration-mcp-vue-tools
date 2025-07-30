@@ -1,28 +1,21 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { fileURLToPath } from 'url';
-import { spawn } from 'child_process';
-import {
-  ensureDirectory
-} from '../utils/path-config.js';
+import { ensureDirectory } from '../utils/path-config.js';
 import { puppeteerManager } from '../utils/puppeteer-manager.js';
-import { 
-  PuppeteerLaunchError, 
-  NetworkError, 
-  PermissionError, 
+import {
+  PuppeteerLaunchError,
+  NetworkError,
+  PermissionError,
   TimeoutError,
-  MemoryError 
+  MemoryError
 } from '../utils/puppeteer-errors.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export class SnapDOMScreenshotTool {
   constructor() {
-    this.description = 'Take high-quality screenshots using snapDOM technology for precise DOM-to-image capture';
+    this.description = 'Take high-quality 3x scale screenshots using snapDOM technology for precise DOM-to-image capture';
     this.DEFAULT_TIMEOUT = 30000; // 30秒超时
-    
+
     this.inputSchema = {
       type: 'object',
       properties: {
@@ -78,7 +71,7 @@ export class SnapDOMScreenshotTool {
         }
         return result;
       }),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => {
           console.log(chalk.red(`❌ TIMEOUT: ${errorMessage} after ${timeoutMs}ms`));
           reject(new Error(`${errorMessage} (${timeoutMs}ms)`));
@@ -161,7 +154,7 @@ export class SnapDOMScreenshotTool {
       // Ensure Vue dev server is running
       const port = 1932;
       console.log(chalk.blue('🚀 Checking Vue dev server...'));
-      await this.ensureDevServerRunning(port, projectPath);
+      await this.ensureDevServerRunning(port);
 
       const screenshotResult = await this.withTimeout(
         this.takeSnapDOMScreenshot({
@@ -173,12 +166,12 @@ export class SnapDOMScreenshotTool {
           outputPath: outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg')) ? outputPath : null,
           selector
         }),
-        this.DEFAULT_TIMEOUT * 5, // 给整个截图流程15秒时间
+        30000, // 给整个截图流程30秒时间
         'Overall screenshot process timed out'
       );
 
       console.log(chalk.green('✅ snapDOM screenshot completed successfully!'));
-      
+
       return {
         success: true,
         componentName,
@@ -193,18 +186,18 @@ export class SnapDOMScreenshotTool {
 
     } catch (error) {
       // 处理不同类型的错误并提供具体解决方案
-      if (error instanceof PuppeteerLaunchError || 
-          error instanceof NetworkError || 
-          error instanceof PermissionError || 
-          error instanceof TimeoutError || 
-          error instanceof MemoryError) {
-        
+      if (error instanceof PuppeteerLaunchError ||
+        error instanceof NetworkError ||
+        error instanceof PermissionError ||
+        error instanceof TimeoutError ||
+        error instanceof MemoryError) {
+
         console.error(chalk.red('❌ Screenshot failed:'), error.message);
         console.log(chalk.yellow('💡 Suggested solutions:'));
         error.solutions.forEach(solution => {
           console.log(chalk.yellow(`   • ${solution}`));
         });
-        
+
         return {
           success: false,
           error: error.message,
@@ -223,7 +216,7 @@ export class SnapDOMScreenshotTool {
     }
   }
 
-  async ensureDevServerRunning(port, projectPath) {
+  async ensureDevServerRunning(port) {
     // Skip server check and assume server is running
     console.log(chalk.green(`✅ Assuming Vue dev server is running on port ${port}`));
     return true;
@@ -233,7 +226,7 @@ export class SnapDOMScreenshotTool {
 
   async takeSnapDOMScreenshot({ componentName, port, viewport, snapDOMOptions, resultsDir, outputPath, selector }) {
     console.log(chalk.gray(`⏱️  Starting screenshot with ${this.DEFAULT_TIMEOUT}ms timeout for each operation`));
-    
+
     // 使用页面池管理获取页面实例
     const page = await this.withTimeout(
       puppeteerManager.getPage(),
@@ -242,24 +235,24 @@ export class SnapDOMScreenshotTool {
     );
 
     try {
-      
-      // Set viewport
+
+      // Set viewport with 3x scale factor for high-resolution screenshots
       await this.withTimeout(
         page.setViewport({
           width: viewport.width,
           height: viewport.height,
-          deviceScaleFactor: 1 // snapDOM handles scaling
+          deviceScaleFactor: 3 // 3x scale for high-resolution screenshots
         }),
         this.DEFAULT_TIMEOUT,
         'Viewport setup timed out'
       );
 
-      // Navigate to component - try different URL patterns
-      let url = `http://localhost:${port}`;
+      // Navigate to component - use the correct component route
+      let url = `http://localhost:${port}/component/${componentName}`;
       console.log(chalk.gray(`📍 Navigating to: ${url}`));
-      
+
       await this.withTimeout(
-        page.goto(url, { 
+        page.goto(url, {
           waitUntil: 'networkidle2',
           timeout: this.DEFAULT_TIMEOUT
         }),
@@ -267,18 +260,23 @@ export class SnapDOMScreenshotTool {
         `Page navigation to ${url} timed out`
       );
 
+      // 等待 Vue 应用加载
+      console.log(chalk.gray('⏳ Waiting for Vue app to load...'));
+      await this.withTimeout(
+        page.waitForTimeout(3000),
+        5000,
+        'Vue app loading wait timed out'
+      );
+
       // Determine selector - try different selector patterns
       let targetSelector = selector;
       if (!targetSelector) {
-        // Try multiple selector patterns
-        const kebabCase = componentName.replace(/([A-Z])/g, (match, letter, index) =>
-          index === 0 ? letter.toLowerCase() : '-' + letter.toLowerCase()
-        );
-        targetSelector = `.${kebabCase}`;
+        // For component pages, target the displayed component container
+        targetSelector = '.displayed-component';
       }
 
       console.log(chalk.gray(`🔍 Looking for selector: ${targetSelector}`));
-      
+
       try {
         await this.withTimeout(
           page.waitForSelector(targetSelector, { timeout: this.DEFAULT_TIMEOUT }),
@@ -303,15 +301,15 @@ export class SnapDOMScreenshotTool {
         'Animation wait timed out'
       );
 
-      // Use Puppeteer screenshot as fallback
-      console.log(chalk.blue('📸 Using Puppeteer screenshot as fallback...'));
+      // Use Puppeteer screenshot with 3x scaling
+      console.log(chalk.blue('📸 Taking 3x scale screenshot with Puppeteer...'));
       let screenshotPath;
       if (outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg'))) {
         screenshotPath = outputPath;
       } else {
         screenshotPath = path.join(resultsDir, 'actual.png');
       }
-      
+
       const element = await this.withTimeout(
         page.$(targetSelector),
         this.DEFAULT_TIMEOUT,
@@ -321,12 +319,13 @@ export class SnapDOMScreenshotTool {
         throw new Error(`Component selector ${targetSelector} not found`);
       }
 
-      // Use Puppeteer's built-in screenshot functionality
-      console.log(chalk.gray(`⏱️  Starting Puppeteer screenshot with ${this.DEFAULT_TIMEOUT}ms timeout...`));
+      // Use Puppeteer's built-in screenshot functionality with 3x scaling
+      console.log(chalk.gray(`⏱️  Starting 3x scale Puppeteer screenshot with ${this.DEFAULT_TIMEOUT}ms timeout...`));
       const screenshotBuffer = await this.withTimeout(
         element.screenshot({
           type: 'png',
-          omitBackground: snapDOMOptions.backgroundColor === 'transparent'
+          omitBackground: snapDOMOptions.backgroundColor === 'transparent',
+          // The 3x scaling is handled by deviceScaleFactor in viewport
         }),
         this.DEFAULT_TIMEOUT,
         'Puppeteer screenshot operation timed out'
@@ -340,17 +339,23 @@ export class SnapDOMScreenshotTool {
         'File save operation timed out'
       );
 
-      console.log(chalk.green(`✅ Puppeteer screenshot saved: ${screenshotPath}`));
-      
+      console.log(chalk.green(`✅ 3x scale Puppeteer screenshot saved: ${screenshotPath}`));
+
       return {
         path: screenshotPath,
         url,
         selector: targetSelector,
-        viewport,
+        viewport: {
+          ...viewport,
+          actualWidth: viewport.width * 3,
+          actualHeight: viewport.height * 3,
+          scale: 3
+        },
         snapDOMOptions,
         method: 'Puppeteer',
         quality: 'high',
-        features: ['element-screenshot', 'transparent-background', 'high-quality']
+        scale: 3,
+        features: ['element-screenshot', 'transparent-background', 'high-quality', '3x-scale']
       };
 
     } finally {

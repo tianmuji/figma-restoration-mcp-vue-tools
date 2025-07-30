@@ -1,36 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import ComponentList from '../pages/ComponentList/ComponentList.vue';
-import ComparisonViewer from '../pages/ComparisonViewer/ComparisonViewer.vue';
+import ComponentShowcase from '@/ui/pages/ComponentShowcase.vue';
+import ComparisonViewer from '@/ui/pages/ComparisonViewer.vue';
+import DynamicComponent from '@/ui/pages/DynamicComponent.vue';
 
 const routes = [
+  // 主页 - 组件展示
   {
     path: '/',
     name: 'Home',
-    component: ComponentList,
+    component: ComponentShowcase,
     meta: {
-      title: '组件列表',
-      description: '查看所有组件的还原度情况'
+      title: '组件展示',
+      description: '查看所有Figma组件的还原情况'
     }
   },
-  {
-    path: '/components',
-    name: 'ComponentList',
-    component: ComponentList,
-    meta: {
-      title: '组件列表',
-      description: '查看所有组件的还原度情况'
-    }
-  },
+  // 组件详情预览
   {
     path: '/component/:name',
     name: 'ComponentDetail',
-    component: ComparisonViewer,
+    component: DynamicComponent,
     props: true,
     meta: {
-      title: '组件详情',
-      description: '查看组件的详细对比分析'
+      title: '组件预览',
+      description: '预览Figma组件'
     }
   },
+  // 组件对比分析
   {
     path: '/comparison/:name',
     name: 'ComparisonDetail',
@@ -41,18 +36,11 @@ const routes = [
       description: '查看组件的详细对比分析'
     }
   },
-  // 重定向旧路径
-  {
-    path: '/components/:name',
-    redirect: to => {
-      return { name: 'ComponentDetail', params: { name: to.params.name } };
-    }
-  },
   // 404 页面
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('../pages/NotFound.vue'),
+    component: () => import('../ui/common/NotFound.vue'),
     meta: {
       title: '页面未找到',
       description: '请检查URL是否正确'
@@ -86,7 +74,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} - Figma 组件还原监控`;
   }
-  
+
   // 验证组件名称参数
   if (to.params.name && typeof to.params.name === 'string') {
     // 验证组件名称格式
@@ -97,7 +85,7 @@ router.beforeEach((to, from, next) => {
       return;
     }
   }
-  
+
   next();
 });
 
@@ -105,13 +93,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   // 记录页面访问
   console.log(`Navigated from ${from.path} to ${to.path}`);
-  
-  // 发送页面浏览事件（如果有分析工具）
-  if (typeof gtag !== 'undefined') {
-    gtag('config', 'GA_MEASUREMENT_ID', {
-      page_path: to.path
-    });
-  }
 });
 
 export default router;

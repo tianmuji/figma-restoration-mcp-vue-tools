@@ -1,39 +1,18 @@
 <template>
   <div id="app" :class="{ 'dark-mode': isDarkMode }">
-    <!-- 导航栏 -->
-    <AppNavigation />
-    
-    <!-- 主要内容区域 -->
-    <main class="main-content">
-      <router-view v-slot="{ Component, route }">
-        <transition :name="getTransitionName(route)" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
-      </router-view>
-    </main>
-    
-    <!-- 全局通知 -->
-    <NotificationContainer />
-    
-    <!-- 全局加载指示器 -->
-    <GlobalLoader v-if="isGlobalLoading" />
-    
-    <!-- 错误边界 -->
-    <ErrorBoundary />
+      <!-- 主要内容区域 -->
+      <main class="main-content">
+        <router-view v-slot="{ Component, route }">
+          <transition :name="getTransitionName(route)" mode="out-in">
+            <component :is="Component" :key="route.path" />
+          </transition>
+        </router-view>
+      </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, provide } from 'vue';
-import { useRoute } from 'vue-router';
-import AppNavigation from './pages/Navigation/AppNavigation.vue';
-import NotificationContainer from './pages/Common/NotificationContainer.vue';
-import GlobalLoader from './pages/Common/GlobalLoader.vue';
-import ErrorBoundary from './pages/Common/ErrorBoundary.vue';
-
-// Route
-const route = useRoute();
-
 // Reactive data
 const isDarkMode = ref(false);
 const isGlobalLoading = ref(false);

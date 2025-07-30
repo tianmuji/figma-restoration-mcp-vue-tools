@@ -1,12 +1,16 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router';
+import router from '@/router';
+import { FigmaComponentsPlugin } from '@/components';
 
 // 创建应用实例
 const app = createApp(App);
 
 // 使用路由
 app.use(router);
+
+// 注册Figma组件插件
+app.use(FigmaComponentsPlugin);
 
 // 全局错误处理
 app.config.errorHandler = (error, instance, info) => {
