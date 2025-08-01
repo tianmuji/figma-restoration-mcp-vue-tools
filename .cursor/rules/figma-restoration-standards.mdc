@@ -1,0 +1,110 @@
+---
+alwaysApply: true
+---
+
+# 🎯 Figma组件还原质量标准
+
+## 📋 工作目录范围
+你始终在 figma-restoration-mcp-vue-tools目录下的文件工作
+
+## 🎯 代码质量标准
+
+### Vue 3 最佳实践
+- 使用 Composition API
+- TypeScript支持
+- **优先使用flex布局，避免绝对定位**
+- 响应式设计支持
+- 无障碍访问性
+- 性能优化
+
+### CSS盒模型规范
+- **任何设置了padding的元素必须设置 `box-sizing: border-box`**
+- 这遵循Figma的实现方式，确保元素尺寸包含padding
+- 推荐在组件根元素设置通用规则：`.component, .component * { box-sizing: border-box; }`
+
+### Figma边框与Web边框差异处理
+- **Figma边框特性**: 边框不占用元素宽度，可以设置内边框、外边框、中边框
+- **Web边框选择策略**:
+  - **border**: 占用宽度，适合需要影响布局的边框
+  - **outline**: 不占用宽度，适合装饰性边框，但样式选项有限
+  - **box-shadow**: 不占用宽度，支持复杂效果，但不支持动画
+- **还原原则**: 根据Figma边框的视觉效果选择合适的Web属性
+  - 装饰性边框 → 优先使用 `outline` 或 `box-shadow`
+  - 影响布局的边框 → 使用 `border` 并调整总尺寸
+  - 复杂边框效果 → 使用 `box-shadow` 模拟多层边框
+
+## 📈 预期提升效果
+
+### 结构优化
+- **提高结构精度**: 基于视觉真实性移除冗余元素，优化JSON结构，专注核心视觉组件
+- **减少迭代次数**: 前期充分的视觉元素识别和结构优化，减少后期调整
+- **提升实现质量**: 视觉元素识别驱动，确保每个JSON元素都对应实际的视觉效果
+- **简化技术复杂度**: 移除原始Figma JSON中不必要的技术层级，获得更简洁的实现结构
+
+### 数据管理
+- **便于数据复用**: 统一存储便于快速查找历史数据，避免重复下载相同组件
+- **经验复用**: 积累的技术经验可以快速解决类似问题，避免重复踩坑
+- **知识传承**: 形成系统化的还原技术知识库，提升团队整体技术水平
+
+## 🛠️ 工作质量标准
+
+### 进度管理
+- 及时更新进度和状态
+- 遇到问题时主动寻求帮助
+- 记录每个步骤的完成情况
+
+### 问题处理
+- 遇到技术难点时及时记录到经验库
+- 验证解决方案的有效性
+- 持续优化和改进流程
+
+### 质量保证
+- 确保98%以上的还原度
+- 验证所有视觉元素的准确性
+- 测试组件的响应式表现
+- 检查无障碍访问性
+
+## 🔧 工具使用规范
+
+### MCP工具调用
+- **Figma数据获取**: `mcp_figma-context_get_figma_data`
+- **图片下载**: `mcp_figma-context_download_figma_images`
+- **组件截图**: `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+- **图片对比**: `mcp_figma_restoration_mcp_vue_tools_figma_compare`
+- **SVG优化**: `mcp_figma_restoration_mcp_vue_tools_optimize_svg`
+
+### 路径配置原则
+- **始终使用绝对路径**: 确保工具能正确找到文件位置
+- **分类存储**: 
+  - Figma数据: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/figma-data/`
+  - 组件素材: `{ComponentPath}/images/`
+  - 截图结果: `{ComponentPath}/results/`
+  - 经验文档: `/Users/yujie_wu/Documents/study/11111/figma-restoration-mcp-vue-tools/src/restoration-tips/`
+
+### 错误处理
+- 如果工具调用失败，检查路径是否正确
+- 确保目标目录存在
+- 验证Figma链接的有效性
+- 检查服务器端口是否正确启动
+
+### 性能优化
+- 使用高分辨率设置 (scale: 3) 确保截图质量
+- 优化SVG文件减少文件大小
+- 合理使用缓存机制
+
+## 📊 质量指标
+
+### 还原度要求
+- **目标还原度**: ≥ 98%
+- **像素差异**: 最小化
+- **视觉一致性**: 完美匹配
+
+### 性能指标
+- **组件加载时间**: < 100ms
+- **文件大小**: 优化到最小
+- **内存使用**: 合理控制
+
+### 兼容性要求
+- **浏览器支持**: 现代浏览器
+- **响应式设计**: 多设备适配
+- **无障碍访问
