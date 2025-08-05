@@ -1,31 +1,42 @@
-# 文本渲染差异：pixelMatch阈值优化策略
+# 文本渲染差异：CSS优化策略
 
 ## 问题描述
 在Figma组件还原中，文本渲染差异是导致还原度下降的主要原因。这些差异包括字体抗锯齿、子像素渲染、字体平滑度等差异。
 
-## 解决方案
-通过调整pixelMatch的threshold参数来减少文本渲染差异的影响：
+## 重要原则
+**阈值必须严格限定为 0.02**，不允许通过提高阈值来掩盖真实的还原问题。
 
-### 优化配置
-```javascript
-{
-  threshold: 0.15,  // 提高阈值，减少文本差异敏感度
-  includeAA: false, // 忽略抗锯齿差异
-  alpha: 0.1        // 保持默认alpha值
+## 解决方案
+通过CSS优化来减少文本渲染差异：
+
+### 文本渲染优化
+```css
+.text-element {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
 }
 ```
 
-### 实际效果
-- **还原度提升**: 98.93% → 99.31% (+0.38%)
-- **差异像素减少**: 5,227 → 3,364 (-35.6%)
-- **文本差异显著减少**: 文本区域差异像素大幅降低
+### 字体匹配优化
+```css
+.text-element {
+  font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4em;
+  letter-spacing: 0;
+}
+```
 
 ## 最佳实践
-- **文本密集型组件**: threshold: 0.1-0.2
-- **图形密集型组件**: threshold: 0.02-0.05
-- **混合组件**: threshold: 0.05-0.15
+- **严格使用 threshold: 0.02**
+- **通过CSS优化而非阈值调整来提升还原度**
+- **精确匹配字体族、大小、行高**
+- **添加字体平滑属性**
 
 ## 注意事项
-- 阈值过高可能掩盖真实问题
-- 建议上限不超过0.3
-- 需要平衡精度和实用性 
+- 绝不允许提高阈值来"优化"还原度
+- 真实的还原问题必须通过代码改进解决
+- 保持98%+还原度的严格标准 
