@@ -100,7 +100,9 @@ export class FigmaCompareTool {
         totalPixels: comparisonResult.totalPixels,
         dimensions: comparisonResult.dimensions,
         timestamp: new Date().toISOString(),
-        componentName: componentName
+        componentName: componentName,
+        // 新增详细差异分析数据
+        analysis: comparisonResult.analysis
       };
       
       const comparisonDataPath = path.join(resultsDir, 'comparison-data.json');
@@ -113,6 +115,7 @@ export class FigmaCompareTool {
         matchPercentage: comparisonResult.matchPercentage,
         diffPixels: comparisonResult.diffPixels,
         totalPixels: comparisonResult.totalPixels,
+        analysis: comparisonResult.analysis,
         diffImagePath: comparisonResult.paths.diff,
         comparisonDataPath: comparisonDataPath
       };
@@ -183,20 +186,288 @@ export class FigmaCompareTool {
     const totalPixels = width * height;
     const matchPercentage = ((totalPixels - diffPixels) / totalPixels) * 100;
 
+    // 执行详细的差异分析
+    console.log(chalk.blue('🔍 Analyzing diff patterns...'));
+    const diffAnalysis = await this.analyzeDiffPatterns(diffPng, expectedPng, actualPng, width, height);
+
     console.log(chalk.green(`✅ Comparison completed`));
     console.log(chalk.yellow(`📊 Match: ${matchPercentage.toFixed(2)}% (${diffPixels}/${totalPixels} pixels differ)`));
+    
+    // 输出差异分析摘要
+    this.printDiffSummary(diffAnalysis);
 
     return {
       matchPercentage,
       diffPixels,
       totalPixels,
       dimensions: { width, height },
+      analysis: diffAnalysis,
       paths: {
         expected: expectedPath,
         actual: actualPath,
         diff: diffPath
       }
     };
+  }
+
+  async analyzeDiffPatterns(diffPng, expectedPng, actualPng, width, height) {
+    const analysis = {
+      colorRegions: {
+        red: { pixels: 0, regions: [], description: 'Significant structural differences' },
+        orange: { pixels: 0, regions: [], description: 'Medium-level layout differences' },
+        yellow: { pixels: 0, regions: [], description: 'Anti-aliasing/rendering differences' }
+      },
+      spatialDistribution: {
+        border: { pixels: 0, percentage: 0 },
+        content: { pixels: 0, percentage: 0 },
+        text: { pixels: 0, percentage: 0 }
+      },
+      diffPatterns: [],
+      recommendations: []
+    };
+
+    // 分析每个像素的差异类型和位置
+    const diffRegions = new Map(); // 用于聚合相邻的差异像素
+    
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = (width * y + x) << 2;
+        const r = diffPng.data[idx];
+        const g = diffPng.data[idx + 1];
+        const b = diffPng.data[idx + 2];
+        
+        if (r > 0 || g > 0 || b > 0) { // 有差异的像素
+          // 识别差异颜色类型
+          const colorType = this.identifyDiffColor(r, g, b);
+          analysis.colorRegions[colorType].pixels++;
+          
+          // 识别空间位置类型
+          const spatialType = this.identifySpatialRegion(x, y, width, height);
+          analysis.spatialDistribution[spatialType].pixels++;
+          
+          // 聚合相邻区域
+          this.aggregateDiffRegion(diffRegions, x, y, colorType, spatialType);
+        }
+      }
+    }
+
+    // 处理聚合的差异区域
+    this.processDiffRegions(diffRegions, analysis);
+    
+    // 计算百分比
+    const totalDiffPixels = analysis.colorRegions.red.pixels + 
+                           analysis.colorRegions.orange.pixels + 
+                           analysis.colorRegions.yellow.pixels;
+    
+    Object.keys(analysis.spatialDistribution).forEach(key => {
+      analysis.spatialDistribution[key].percentage = 
+        (analysis.spatialDistribution[key].pixels / totalDiffPixels * 100).toFixed(1);
+    });
+
+    // 识别差异模式
+    analysis.diffPatterns = this.identifyDiffPatterns(analysis);
+    
+    // 生成优化建议
+    analysis.recommendations = this.generateRecommendations(analysis);
+
+    return analysis;
+  }
+
+  identifyDiffColor(r, g, b) {
+    // 基于 pixelmatch 的颜色配置识别差异类型
+    if (r === 255 && g === 0 && b === 0) {
+      return 'red'; // 显著差异
+    } else if (r === 255 && g === 128 && b === 0) {
+      return 'orange'; // 中等差异
+    } else if (r === 255 && g === 255 && b === 0) {
+      return 'yellow'; // 抗锯齿差异
+    } else {
+      // 其他颜色，根据主导色分类
+      if (r > g && r > b) return 'red';
+      if (g > r && g > b) return 'yellow';
+      return 'orange';
+    }
+  }
+
+  identifySpatialRegion(x, y, width, height) {
+    const borderThickness = Math.min(width, height) * 0.05; // 5% 作为边框区域
+    
+    // 边框区域检测
+    if (x < borderThickness || x > width - borderThickness || 
+        y < borderThickness || y > height - borderThickness) {
+      return 'border';
+    }
+    
+    // 文本区域检测（基于常见的文本位置模式）
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const textRegionWidth = width * 0.6;
+    const textRegionHeight = height * 0.3;
+    
+    if (Math.abs(x - centerX) < textRegionWidth / 2 && 
+        Math.abs(y - centerY) < textRegionHeight / 2) {
+      return 'text';
+    }
+    
+    return 'content';
+  }
+
+  aggregateDiffRegion(diffRegions, x, y, colorType, spatialType) {
+    const regionKey = `${Math.floor(x / 10)}_${Math.floor(y / 10)}`; // 10x10 像素块
+    
+    if (!diffRegions.has(regionKey)) {
+      diffRegions.set(regionKey, {
+        x: Math.floor(x / 10) * 10,
+        y: Math.floor(y / 10) * 10,
+        width: 10,
+        height: 10,
+        colorType,
+        spatialType,
+        pixels: 0
+      });
+    }
+    
+    diffRegions.get(regionKey).pixels++;
+  }
+
+  processDiffRegions(diffRegions, analysis) {
+    for (const region of diffRegions.values()) {
+      if (region.pixels > 5) { // 只记录有意义的区域
+        analysis.colorRegions[region.colorType].regions.push({
+          x: region.x,
+          y: region.y,
+          width: region.width,
+          height: region.height,
+          pixels: region.pixels,
+          spatialType: region.spatialType
+        });
+      }
+    }
+  }
+
+  identifyDiffPatterns(analysis) {
+    const patterns = [];
+    
+    // 边框条带模式
+    if (analysis.spatialDistribution.border.pixels > 0) {
+      const borderPercentage = parseFloat(analysis.spatialDistribution.border.percentage);
+      if (borderPercentage > 50) {
+        patterns.push({
+          type: 'border_stripe',
+          severity: borderPercentage > 80 ? 'high' : 'medium',
+          description: 'Border rendering differences detected',
+          affectedArea: `${borderPercentage}% of diff pixels in border region`
+        });
+      }
+    }
+    
+    // 块状差异模式
+    const redRegions = analysis.colorRegions.red.regions;
+    if (redRegions.length > 0) {
+      const largeBlocks = redRegions.filter(r => r.pixels > 50);
+      if (largeBlocks.length > 0) {
+        patterns.push({
+          type: 'block_difference',
+          severity: 'high',
+          description: 'Large structural differences detected',
+          regions: largeBlocks.length,
+          affectedArea: `${largeBlocks.reduce((sum, r) => sum + r.pixels, 0)} pixels`
+        });
+      }
+    }
+    
+    // 文本渲染差异模式
+    if (analysis.spatialDistribution.text.pixels > 0) {
+      const textPercentage = parseFloat(analysis.spatialDistribution.text.percentage);
+      if (textPercentage > 30) {
+        patterns.push({
+          type: 'text_rendering',
+          severity: 'low',
+          description: 'Text rendering differences detected',
+          affectedArea: `${textPercentage}% of diff pixels in text region`
+        });
+      }
+    }
+    
+    return patterns;
+  }
+
+  generateRecommendations(analysis) {
+    const recommendations = [];
+    
+    // 基于颜色分布的建议
+    const totalDiff = analysis.colorRegions.red.pixels + 
+                     analysis.colorRegions.orange.pixels + 
+                     analysis.colorRegions.yellow.pixels;
+    
+    if (analysis.colorRegions.red.pixels / totalDiff > 0.6) {
+      recommendations.push({
+        priority: 'high',
+        category: 'structural',
+        action: 'Check layout positioning, element sizing, and border implementation',
+        reason: 'High proportion of red pixels indicates structural issues'
+      });
+    }
+    
+    if (analysis.spatialDistribution.border.pixels / totalDiff > 0.5) {
+      recommendations.push({
+        priority: 'high',
+        category: 'border',
+        action: 'Review strokeAlign implementation and border positioning',
+        reason: 'Border region contains majority of differences'
+      });
+    }
+    
+    if (analysis.colorRegions.yellow.pixels / totalDiff > 0.4) {
+      recommendations.push({
+        priority: 'low',
+        category: 'rendering',
+        action: 'Apply font-smoothing and anti-aliasing optimizations',
+        reason: 'High proportion of yellow pixels indicates rendering differences'
+      });
+    }
+    
+    return recommendations;
+  }
+
+  printDiffSummary(analysis) {
+    console.log(chalk.blue('\n📊 Diff Analysis Summary:'));
+    
+    // 颜色分布
+    console.log(chalk.yellow('Color Distribution:'));
+    Object.entries(analysis.colorRegions).forEach(([color, data]) => {
+      if (data.pixels > 0) {
+        console.log(chalk.gray(`  ${color.toUpperCase()}: ${data.pixels} pixels - ${data.description}`));
+      }
+    });
+    
+    // 空间分布
+    console.log(chalk.yellow('\nSpatial Distribution:'));
+    Object.entries(analysis.spatialDistribution).forEach(([region, data]) => {
+      if (data.pixels > 0) {
+        console.log(chalk.gray(`  ${region}: ${data.pixels} pixels (${data.percentage}%)`));
+      }
+    });
+    
+    // 识别的模式
+    if (analysis.diffPatterns.length > 0) {
+      console.log(chalk.yellow('\nIdentified Patterns:'));
+      analysis.diffPatterns.forEach(pattern => {
+        const severityColor = pattern.severity === 'high' ? chalk.red : 
+                             pattern.severity === 'medium' ? chalk.yellow : chalk.green;
+        console.log(severityColor(`  ${pattern.type}: ${pattern.description}`));
+      });
+    }
+    
+    // 优化建议
+    if (analysis.recommendations.length > 0) {
+      console.log(chalk.yellow('\nRecommendations:'));
+      analysis.recommendations.forEach(rec => {
+        const priorityColor = rec.priority === 'high' ? chalk.red : 
+                             rec.priority === 'medium' ? chalk.yellow : chalk.blue;
+        console.log(priorityColor(`  [${rec.priority.toUpperCase()}] ${rec.category}: ${rec.action}`));
+      });
+    }
   }
 
   async normalizeImage(actualPath, expectedPath) {

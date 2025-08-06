@@ -1,0 +1,20 @@
+{
+  "componentName": "DesignV1",
+  "figmaUrl": "https://www.figma.com/design/hdyf6u2eqRkmXY0I7d9S98/Dev-Mode-playground--Community-?node-id=2836-1478",
+  "nodeId": "2836-1478",
+  "description": "Simple layout component with gray squares and text rectangle",
+  "dimensions": {
+    "width": 194,
+    "height": 270
+  },
+  "assets": [],
+  "createdAt": "2025-08-06T02:31:34.759Z",
+  "restorationData": {
+    "matchPercentage": 99.75117729413262,
+    "diffPixels": 1173,
+    "totalPixels": 471420,
+    "dimensions": { "width": 194, "height": 270 },
+    "timestamp": "2025-08-06T02:31:34.759Z",
+    "status": "completed"
+  }
+}

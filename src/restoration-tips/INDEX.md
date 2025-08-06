@@ -32,6 +32,14 @@
 
 ### 🔧 布局与定位问题
 
+#### Layout容器sizing差异 ⭐⭐⭐
+- **文档**: [Layout容器sizing-hug与fixed的关键差异.md](./Layout容器sizing-hug与fixed的关键差异.md)
+- **症状**: 还原度停滞在89%左右，容器布局不自然
+- **原因**: 错误地将Figma的hug sizing实现为CSS固定尺寸
+- **解决**: hug sizing不设置width/height，让容器自适应内容
+- **关键词**: `hug sizing`, `fixed sizing`, `容器自适应`, `布局容器`
+- **影响**: +10.43%还原度提升
+
 #### 边框盒模型差异
 - **文档**: [边框盒模型差异-Figma与Web尺寸计算.md](./边框盒模型差异-Figma与Web尺寸计算.md)
 - **症状**: 布局错位，尺寸计算不准确
@@ -98,8 +106,8 @@
 ### 还原度问题
 | 还原度范围 | 主要原因 | 优先检查 | 相关文档 |
 |------------|----------|----------|----------|
-| <90% | 边框缺失、尺寸错误 | outline→border, 3倍图理解 | [截图边框](./截图边框-outline与border的关键差异.md), [3倍图缩放](./截图对比-3倍图缩放与样式尺寸设置.md) |
-| 90-95% | 布局差异、盒模型 | border-box, 布局分析 | [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md), [布局分析](./布局分析-FolderItem大面积差异问题.md) |
+| <90% | 边框缺失、尺寸错误、sizing错误 | outline→border, 3倍图理解, hug sizing | [截图边框](./截图边框-outline与border的关键差异.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md) |
+| 90-95% | 布局差异、盒模型、容器sizing | border-box, 布局分析, hug/fixed区分 | [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md) |
 | 95-98% | 文本渲染、细节优化 | 字体平滑、像素级调优 | [文本渲染](./文本渲染差异-pixelMatch阈值优化策略.md), [严格标准](./threshold固定0.02-严格还原度要求.md) |
 
 ### 流程问题
@@ -127,6 +135,7 @@
 - **FRAME节点**: [图片下载失败](./Figma图片下载失败-流程停止策略.md)
 
 ### G-O
+- **hug sizing**: [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md)
 - **outline**: [截图边框](./截图边框-outline与border的关键差异.md)
 - **overflow**: [clipsContent属性](./clipsContent属性-高度裁剪优化策略.md)
 
@@ -139,19 +148,15 @@
 
 ### 中文关键词
 - **边框**: [截图边框](./截图边框-outline与border的关键差异.md)
-- **布局**: [布局分析](./布局分析-FolderItem大面积差异问题.md), [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md)
+- **布局**: [布局分析](./布局分析-FolderItem大面积差异问题.md), [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md)
+- **容器**: [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md), [clipsContent](./clipsContent属性-高度裁剪优化策略.md)
 - **复杂元素**: [复杂元素优化](./复杂元素优化-转素材策略提升还原度.md), [复杂3D效果](./复杂3D效果-切图策略优化.md)
 - **截图**: [截图边框](./截图边框-outline与border的关键差异.md), [3倍图缩放](./截图对比-3倍图缩放与样式尺寸设置.md)
 - **素材**: [素材识别](./素材识别-容器节点vs具体素材元素判断策略.md), [复杂元素优化](./复杂元素优化-转素材策略提升还原度.md)
 - **文本**: [文本渲染](./文本渲染差异-pixelMatch阈值优化策略.md)
-- **尺寸**: [3倍图缩放](./截图对比-3倍图缩放与样式尺寸设置.md), [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md)
+- **尺寸**: [3倍图缩放](./截图对比-3倍图缩放与样式尺寸设置.md), [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md)
 
 ## 📚 团队资源文档
-
-### 培训与协作
-- **[新人培训指南.md](./新人培训指南.md)** - 3天快速上手计划
-- **[团队协作指南.md](./团队协作指南.md)** - 协作流程和规范
-- **[团队工具脚本.md](./团队工具脚本.md)** - 自动化工具和脚本
 
 ### 快速参考
 - **[快速参考卡片.md](./快速参考卡片.md)** - 常用命令和解决方案速查
