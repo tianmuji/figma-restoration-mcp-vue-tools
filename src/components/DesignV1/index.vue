@@ -1,11 +1,6 @@
 <template>
   <div class="design-v1">
     <div class="layout">
-      <!-- Top row of squares -->
-      <div class="frame-row">
-        <div class="square"></div>
-        <div class="square"></div>
-      </div>
       
       <!-- Middle rectangle with text -->
       <div class="rectangle-group">
