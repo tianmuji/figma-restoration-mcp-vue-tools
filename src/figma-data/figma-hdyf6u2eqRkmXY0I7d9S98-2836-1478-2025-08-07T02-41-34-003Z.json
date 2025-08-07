@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Dev Mode playground (Community)",
     "lastModified": "2025-08-06T02:31:33Z",
-    "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/a5379641-e200-41a7-9bf7-1a00b4d62a0e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ4GOSFWCS2LHWM5N%2F20250803%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250803T120000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5b69d1a5f960ee2df94a6eb4de0a584b0b4ebdc840fccca9acda4e47416411a9"
+    "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/a5379641-e200-41a7-9bf7-1a00b4d62a0e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ4GOSFWCS2LHWM5N%2F20250807%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250807T000000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=98f08cd2f5a3c85c7c04693524bcaf511135f3eb0665773ef02646834f3202a2"
   },
   "nodes": [
     {
@@ -15,34 +15,34 @@
         "width": 194,
         "height": 270
       },
-      "strokes": "stroke_P1DAUV",
-      "layout": "layout_J27MPD",
+      "strokes": "stroke_RW9APL",
+      "layout": "layout_7H4OL0",
       "children": [
         {
           "id": "2827:8515",
           "name": "Layout",
           "type": "FRAME",
-          "layout": "layout_TL68Z2",
+          "layout": "layout_KZMLUY",
           "children": [
             {
               "id": "2827:8507",
               "name": "Frame 1",
               "type": "FRAME",
-              "layout": "layout_B57Z6Q",
+              "layout": "layout_H1KLPK",
               "children": [
                 {
                   "id": "2827:8496",
                   "name": "Square 1",
                   "type": "RECTANGLE",
-                  "fills": "fill_UZ37BJ",
-                  "layout": "layout_MTEUKZ"
+                  "fills": "fill_M5EXOL",
+                  "layout": "layout_K7B9KR"
                 },
                 {
                   "id": "2827:8497",
                   "name": "Square 2",
                   "type": "RECTANGLE",
-                  "fills": "fill_UZ37BJ",
-                  "layout": "layout_MTEUKZ"
+                  "fills": "fill_M5EXOL",
+                  "layout": "layout_K7B9KR"
                 }
               ]
             },
@@ -50,7 +50,7 @@
               "id": "2836:1466",
               "name": "Rectangle Group",
               "type": "GROUP",
-              "layout": "layout_EFWAXM",
+              "layout": "layout_YBW9SU",
               "children": [
                 {
                   "id": "2827:8493",
@@ -62,8 +62,8 @@
                     "width": 162,
                     "height": 77.25
                   },
-                  "fills": "fill_UZ37BJ",
-                  "layout": "layout_PG686Z"
+                  "fills": "fill_M5EXOL",
+                  "layout": "layout_QJIV9C"
                 },
                 {
                   "id": "2836:1467",
@@ -75,9 +75,9 @@
                     "width": 105,
                     "height": 15
                   },
-                  "textStyle": "style_WMHGHX",
-                  "fills": "fill_3OSNMN",
-                  "layout": "layout_YPR8R7",
+                  "textStyle": "style_D6VKAQ",
+                  "fills": "fill_W50YUH",
+                  "layout": "layout_5UT7JN",
                   "text": "Some Text In Here"
                 }
               ]
@@ -86,21 +86,21 @@
               "id": "2827:8503",
               "name": "Frame 2",
               "type": "FRAME",
-              "layout": "layout_B57Z6Q",
+              "layout": "layout_H1KLPK",
               "children": [
                 {
                   "id": "2827:8504",
                   "name": "Square 1",
                   "type": "RECTANGLE",
-                  "fills": "fill_UZ37BJ",
-                  "layout": "layout_MTEUKZ"
+                  "fills": "fill_M5EXOL",
+                  "layout": "layout_K7B9KR"
                 },
                 {
                   "id": "2827:8505",
                   "name": "Square 2",
                   "type": "RECTANGLE",
-                  "fills": "fill_UZ37BJ",
-                  "layout": "layout_MTEUKZ"
+                  "fills": "fill_M5EXOL",
+                  "layout": "layout_K7B9KR"
                 }
               ]
             }
@@ -111,14 +111,14 @@
   ],
   "globalVars": {
     "styles": {
-      "stroke_P1DAUV": {
+      "stroke_RW9APL": {
         "colors": [
           "#000000"
         ],
         "strokeWeight": "2px",
         "strokeAlign": "INSIDE"
       },
-      "layout_J27MPD": {
+      "layout_7H4OL0": {
         "mode": "none",
         "clipsContent": true,
         "dimensions": {
@@ -126,7 +126,7 @@
           "height": 270
         }
       },
-      "layout_TL68Z2": {
+      "layout_KZMLUY": {
         "mode": "column",
         "gap": "12px",
         "padding": "16px",
@@ -139,7 +139,7 @@
           "y": 0
         }
       },
-      "layout_B57Z6Q": {
+      "layout_H1KLPK": {
         "mode": "row",
         "gap": "12px",
         "sizing": {
@@ -147,10 +147,10 @@
           "vertical": "hug"
         }
       },
-      "fill_UZ37BJ": [
+      "fill_M5EXOL": [
         "#D9D9D9"
       ],
-      "layout_MTEUKZ": {
+      "layout_K7B9KR": {
         "mode": "none",
         "sizing": {
           "horizontal": "fixed",
@@ -161,7 +161,7 @@
           "height": 75
         }
       },
-      "layout_EFWAXM": {
+      "layout_YBW9SU": {
         "mode": "none",
         "sizing": {
           "horizontal": "fixed",
@@ -172,7 +172,7 @@
           "height": 77.25
         }
       },
-      "layout_PG686Z": {
+      "layout_QJIV9C": {
         "mode": "none",
         "locationRelativeToParent": {
           "x": 0,
@@ -183,7 +183,7 @@
           "height": 77.25
         }
       },
-      "style_WMHGHX": {
+      "style_D6VKAQ": {
         "fontFamily": "Inter",
         "fontWeight": 400,
         "fontSize": 12,
@@ -191,10 +191,10 @@
         "textAlignHorizontal": "LEFT",
         "textAlignVertical": "TOP"
       },
-      "fill_3OSNMN": [
+      "fill_W50YUH": [
         "#000000"
       ],
-      "layout_YPR8R7": {
+      "layout_5UT7JN": {
         "mode": "none",
         "locationRelativeToParent": {
           "x": 28,

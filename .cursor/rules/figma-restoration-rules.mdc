@@ -1,0 +1,387 @@
+
+---
+inclusion: always
+---
+
+# Figma Component Restoration Workflow
+
+> **Technical Implementation**: For detailed technical standards, CSS guidelines, and component architecture, see [`technical-framework.md`](.kiro/steering/technical-framework.md)
+
+## Core Principles
+
+### Visual-First Approach
+- **Primary capability**: Use Claude's image recognition to analyze expected.png before processing JSON
+- **Element filtering**: Identify truly visible elements vs redundant/invisible ones in Figma JSON
+- **Structure optimization**: Optimize nested structures based on visual hierarchy
+- **Asset identification**: Detect assets by visual analysis and naming patterns (`ic`, `ic_`, `素材`, `material`, `asset`, `icon`)
+
+### Quality Standards
+- **Target accuracy**: ≥98% pixel match (threshold: 0.02)
+- **Technical framework**: See `technical-framework.md` for detailed implementation standards
+- **Visual validation**: Use expected.png as ground truth for all decisions
+
+### 强制分析流程 (还原度 < 98% 时)
+**必须按顺序执行，不可跳过任何步骤：**
+1. **差异图识别**: 读取 diff.png，应用 `diff-image-analysis.md` 规则
+2. **JSON 重新分析**: 对比原始 Figma JSON 与当前实现差异
+3. **知识库查询**: 基于分析结果搜索相关解决方案
+4. **针对性修复**: 应用基于分析的修复方案
+
+**禁止行为**: 直接修复而不进行前三步分析
+
+## Two-Phase Workflow
+
+### Phase 1: Resource Preparation & Analysis
+**Objective**: Gather and validate all resources before implementation
+1. **Get Figma Data**: `mcp_figma-context_get_figma_data`
+2. **Download Expected Image**: `mcp_figma-context_download_figma_images` (filename: "expected.png")
+3. **综合视觉与结构分析** (Critical Step):
+   - **Visual Analysis**: Use Claude's image recognition to analyze expected.png
+   - **JSON Structure Analysis**: Cross-reference Figma JSON with visual elements
+   - **Element Mapping**: Map visible elements in image to JSON nodes
+   - **Structure Optimization**: Identify optimal page structure based on visual hierarchy
+   - **Asset Identification**: Detect assets through visual patterns and JSON naming
+4. **Download Assets**: `mcp_figma-context_download_figma_images` for identified assets
+5. **Optimize SVG Assets**: Use `mcp_figma_restoration_mcp_vue_tools_optimize_svg` for all downloaded SVG files
+6. **Generate Preparation Summary**: Output comprehensive resource summary directly to user
+7. **User Confirmation**: Wait for user approval before Phase 2
+
+### Phase 2: Restoration Execution
+**Prerequisite**: Phase 1 completed and user confirmed
+8. **Generate Component**: Create Vue component with validated resources
+9. **Screenshot**: `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+10. **Compare**: `mcp_figma_restoration_mcp_vue_tools_figma_compare`
+
+**如果还原度 < 98%，必须执行标准化分析流程：**
+
+11. **差异图分析** (强制步骤):
+    - 读取并分析 diff.png
+    - 应用 `diff-image-analysis.md` 规则识别差异模式
+    - 记录差异特征: 颜色、分布、面积
+    
+12. **原始 JSON 重新分析** (强制步骤):
+    - 对比 Figma JSON 与当前 CSS 实现
+    - 识别 sizing、layout、positioning 差异
+    - 定位结构性 vs 样式性问题
+    
+13. **知识库查询** (强制步骤):
+    - 基于差异分析结果搜索相关解决方案
+    - 验证方案适用性
+    
+14. **针对性优化**: 基于前三步分析结果应用修复
+15. **迭代验证**: 重复步骤 9-14，最多 3 次
+16. **文档记录**: 记录成功的差异模式和解决方案
+
+## Tool Configuration
+
+### Essential MCP Tools
+- **Figma data extraction**: `mcp_figma-context_get_figma_data`
+- **Asset downloads**: `mcp_figma-context_download_figma_images`
+- **Component screenshots**: `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+- **Pixel comparison**: `mcp_figma_restoration_mcp_vue_tools_figma_compare`
+- **SVG optimization**: `mcp_figma_restoration_mcp_vue_tools_optimize_svg`
+- **Image analysis**: `mcp_figma_restoration_mcp_vue_tools_image_to_base64`
+
+### Path Requirements (Always Use Absolute Paths)
+- **Figma data**: Save to `{current_directory}/figma-restoration-mcp-vue-tools/src/figma-data/`
+- **Phase 1 reports**: Output summary directly to user for confirmation (no file saving)
+- **Expected images**: Save to `{current_directory}/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/results/expected.png`
+- **Assets**: Save to `{current_directory}/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/images/`
+- **Screenshots**: Save to `{current_directory}/figma-restoration-mcp-vue-tools/src/components/{ComponentName}/results/actual.png`
+- **Knowledge base**: Store in `{current_directory}/figma-restoration-mcp-vue-tools/src/restoration-tips/`
+
+### Key Tool Parameters
+- **Screenshot scale**: Always use 3x for high resolution
+- **Comparison threshold**: 0.02 (98% accuracy requirement)
+- **Dev server port**: 1932 (default)
+- **Padding for shadowless components**: 0 (precise cropping)
+- **Background**: "transparent"
+- **SVG optimization**: Use default SVGO configuration for optimal file size and performance
+- **Image analysis**: Use `mcp_figma_restoration_mcp_vue_tools_image_to_base64` for programmatic image content analysis
+
+### 差异分析工具与流程 (强制执行)
+- **Diff image location**: `{ComponentName}/results/diff.png` - 必须读取分析
+- **Analysis reference**: 严格按照 `diff-image-analysis.md` 规则执行模式识别
+- **Figma JSON comparison**: 必须重新分析原始 JSON 与实现的差异
+- **Knowledge base search**: 基于分析结果在 `/src/restoration-tips/INDEX.md` 中查询解决方案
+- **Image content analysis**: Use `mcp_figma_restoration_mcp_vue_tools_image_to_base64` to convert images to base64 for programmatic analysis when needed
+
+**执行顺序 (不可跳过)**:
+1. 差异图识别 → 2. JSON 重新分析 → 3. 知识库查询 → 4. 针对性修复
+
+### Image Analysis Tools
+- **Base64 conversion**: `mcp_figma_restoration_mcp_vue_tools_image_to_base64` for converting images to base64 format
+- **Supported formats**: JPG, PNG, GIF, WebP, SVG, BMP, ICO, TIFF
+- **Path support**: Both absolute and relative paths supported
+- **Data URL options**: Optional data URL prefix inclusion (`data:image/...;base64,`)
+- **Usage scenarios**: 
+  - Converting diff images for programmatic analysis
+  - Processing expected images for content verification
+  - Asset analysis and validation
+  - Image metadata extraction (size, MIME type, dimensions)
+
+**Usage Examples**:
+```javascript
+// Convert diff image for analysis
+mcp_figma_restoration_mcp_vue_tools_image_to_base64({
+  imagePath: "figma-restoration-mcp-vue-tools/src/components/ComponentName/results/diff.png",
+  includeDataUrl: true
+})
+
+// Analyze expected image metadata
+mcp_figma_restoration_mcp_vue_tools_image_to_base64({
+  imagePath: "figma-restoration-mcp-vue-tools/src/components/ComponentName/results/expected.png",
+  includeDataUrl: false
+})
+
+// Validate asset integrity
+mcp_figma_restoration_mcp_vue_tools_image_to_base64({
+  imagePath: "figma-restoration-mcp-vue-tools/src/components/ComponentName/images/icon.svg"
+})
+```
+
+### Asset Identification Rules
+- **Name patterns**: `ic`, `ic_`, `素材`, `material`, `asset`, `icon`, `img`, `image`
+- **Node type priority**: RECTANGLE/VECTOR/PATH > INSTANCE/COMPONENT > GROUP/FRAME
+- **SVG sizing**: Original size must equal CSS size (no scaling)
+- **SVG optimization**: Always use `mcp_figma_restoration_mcp_vue_tools_optimize_svg` after downloading SVG assets
+- **Complex element strategy**: Download complete UI sections (status bars, nav bars) as single assets
+
+## Visual Analysis Process
+
+### 综合分析方法 (Visual + JSON Analysis)
+**核心理念**: 结合视觉分析和JSON结构分析，得出最合理的页面结构
+
+#### Step 1: Visual Content Analysis
+1. **Use Claude's image recognition** to analyze expected.png
+2. **Identify visual elements**: buttons, text, icons, containers, backgrounds
+3. **Analyze visual hierarchy**: layout flow, spacing, alignment, grouping
+4. **Detect visual patterns**: repeated elements, consistent spacing, color schemes
+
+#### Step 2: JSON Structure Analysis  
+1. **Parse Figma JSON** to understand design structure
+2. **Analyze layout properties**: mode (column/row), sizing (fixed/hug/fill), gap, padding
+3. **Map positioning data**: locationRelativeToParent, absolute coordinates
+4. **Identify node relationships**: parent-child hierarchy, nesting levels
+
+#### Step 3: Cross-Reference & Optimization
+1. **Map visual elements to JSON nodes**: Connect what you see with JSON data
+2. **Identify discrepancies**: JSON nodes without visual representation
+3. **Optimize structure**: Combine visual hierarchy with JSON layout logic
+4. **Design implementation strategy**: Modern CSS approach based on analysis
+
+### Element Filtering Strategy
+1. **Visual inventory**: List all truly visible elements in expected.png
+   - Use Claude's visual analysis capabilities to identify actual visible elements
+   - Optional: Use `mcp_figma_restoration_mcp_vue_tools_image_to_base64` for programmatic analysis
+   - Verify image integrity and extract metadata (dimensions, file size, format)
+2. **JSON-Visual Cross-Reference**: 
+   - Map each visible element in expected.png to corresponding Figma JSON nodes
+   - Identify JSON nodes that don't correspond to visible elements
+   - Analyze layout hierarchy: containers, positioning, sizing relationships
+3. **Redundancy removal**: Filter out invisible/redundant elements
+   - Elements with opacity: 0 or size: 0
+   - Nested containers that don't affect visual layout
+   - Duplicate or overlapping elements
+4. **Structure optimization**: Design optimal page structure
+   - Based on visual hierarchy observed in expected.png
+   - Informed by Figma JSON layout properties (mode, sizing, gap, padding)
+   - Prioritize modern CSS layout patterns (flexbox, grid)
+5. **合理页面结构分析**: Determine most reasonable page structure
+   - Combine visual analysis insights with JSON structural data
+   - Optimize for both visual accuracy and code maintainability
+   - Document structure decisions for implementation phase
+
+### Layout Conversion
+- Convert Figma absolute positioning to modern responsive layouts
+- Maintain visual accuracy while improving code structure
+- Follow technical framework guidelines for implementation details
+
+### Implementation Standards
+- **Technical details**: Refer to `technical-framework.md` for CSS, layout, and component standards
+- **Asset handling**: Follow SVG optimization and sizing guidelines
+- **SVG optimization**: Mandatory step in Phase 1 to reduce file size and improve performance
+- **Responsive design**: Apply mobile-first responsive principles
+
+## File Structure
+
+### Directory Organization
+```
+{current_directory}/figma-restoration-mcp-vue-tools/src/
+├── figma-data/                     # Centralized Figma JSON storage
+├── restoration-tips/               # Knowledge base for optimization strategies
+└── components/{ComponentName}/
+    ├── index.vue                   # Main component
+    ├── metadata.json               # Component metadata with restorationData
+    ├── layout-analysis.json       # Visual analysis results
+    ├── images/                     # Assets (SVG, PNG)
+    └── results/                    # Screenshots & comparisons
+        ├── expected.png            # Figma reference (Phase 1)
+        ├── actual.png              # Component screenshot (Phase 2)
+        └── diff.png                # Comparison result (Phase 2)
+```
+
+## Data Management
+
+### Restoration Data Storage
+Store accuracy results in `metadata.json` under `restorationData` field:
+```json
+{
+  "restorationData": {
+    "matchPercentage": 98.5,
+    "diffPixels": 1250,
+    "totalPixels": 85000,
+    "dimensions": { "width": 300, "height": 200 },
+    "timestamp": "2025-01-01T12:00:00.000Z",
+    "status": "completed"
+  }
+}
+```
+
+### Knowledge Base Usage
+- **Location**: `{current_directory}/figma-restoration-mcp-vue-tools/src/restoration-tips/`
+- **When to use**: If accuracy < 98%, search for similar issues
+- **Common patterns**: asset identification, layout differences
+- **Update**: Document new solutions for future reference if confirmed
+
+## Optimization Strategy
+
+### Complex Element to Asset Conversion
+**When to Apply**: Strategic optimization for specific complex elements only
+
+**Primary Candidates** (Apply when accuracy < 90% AND element meets criteria):
+- **Mobile status bars with 5+ detailed icons and precise layouts**
+- **Navigation bars with complex multi-layer controls and gradients**
+- **3D effect cards with multiple shadows and complex gradients**
+
+**Secondary Candidates** (Apply when accuracy < 85% AND CSS recreation is impractical):
+- Elements with imageRef fills or complex boolean operations
+- Multi-layer icon combinations with precise positioning
+- Complex gradient and shadow effects that require 10+ CSS properties
+
+**Strategic Implementation Pattern**:
+```vue
+<!-- Only when CSS recreation requires 10+ properties and accuracy < 90% -->
+<div class="complex-element">
+  <img src="./images/complex-element.svg" alt="Element" class="element-img" />
+</div>
+
+<!-- Prefer CSS implementation for simple elements -->
+<div class="simple-button">
+  <div class="icon-wrapper">
+    <svg>...</svg> <!-- Inline SVG for simple icons -->
+  </div>
+  <span class="text">Button Text</span>
+</div>
+```
+
+**Decision Criteria**:
+- **CSS complexity**: 10+ properties needed for accurate recreation
+- **Accuracy threshold**: Current accuracy < 90%
+- **Maintenance cost**: Asset updates vs CSS maintenance
+- **Performance impact**: File size vs rendering performance
+
+**Expected Results**: +5-10% accuracy improvement when strategically applied
+
+### 标准化还原度优化流程
+
+**当还原度 < 98% 时，必须按以下顺序执行：**
+
+#### 第一步: 差异图识别与分析 (必须)
+1. **读取 diff.png**: 获取差异图进行视觉分析
+   - **Use Claude's visual analysis** to identify difference patterns
+   - 可选择使用 `mcp_figma_restoration_mcp_vue_tools_image_to_base64` 进行程序化分析
+   - 支持直接视觉分析或base64转换后的数据分析
+2. **应用 diff-image-analysis.md 规则**:
+   - 识别颜色模式: 红色(显著差异) vs 橙色(中等差异) vs 黄色(渲染差异)
+   - 分析差异分布: 块状/条带状(结构问题) vs 细线状(渲染问题)
+   - 评估问题严重程度和影响范围
+3. **差异区域定位**: 
+   - 精确定位差异区域在页面中的位置
+   - 分析差异区域对应的页面元素类型
+   - 评估差异对整体视觉效果的影响程度
+4. **优化措施推导**: 基于差异分析得出具体优化措施
+   - 结构性差异 → 布局调整策略
+   - 渲染差异 → 样式精调方案
+   - 元素缺失 → 实现补充建议
+
+#### 第二步: 原始 JSON 重新分析 (必须)
+1. **对比 Figma JSON 与当前实现**:
+   - 检查 layout 属性: `mode`, `sizing`, `gap`, `padding`
+   - 验证 dimensions: `width`, `height`, `fixed` vs `hug` vs `fill`
+   - 确认 positioning: `locationRelativeToParent` 坐标
+2. **识别结构性差异**:
+   - sizing 实现错误 (hug → fit-content, fixed → 固定值)
+   - 布局模式差异 (column/row → flex-direction)
+   - 定位方式差异 (绝对坐标 → CSS positioning)
+3. **定位根本问题**: 确定是结构性问题还是样式问题
+
+#### 第三步: 知识库查询 (必须)
+1. **使用 Memory MCP 搜索知识库**:
+   - 使用 `mcp_memory_search_nodes` 工具搜索相关知识
+   - 基于差异分析结果构建搜索关键词: "块状差异", "条带差异", "结构性问题"
+   - 按还原度范围查询: "<90%", "90-95%", "95-98%"
+   - 搜索相关技术关键词: "sizing", "layout", "positioning"
+2. **Memory MCP 查询验证流程**:
+   - 使用 `mcp_memory_search_nodes` 在知识库中搜索相关解决方案
+   - 使用 `mcp_memory_open_nodes` 获取详细的解决方案内容
+   - 验证方案适用性和实施步骤
+
+#### 第四步: 针对性修复
+1. **结构性问题修复** (块状/条带状差异):
+   - 修正 layout sizing 实现
+   - 调整 positioning 和 spacing
+   - 重新实现布局结构
+2. **渲染问题修复** (细线状差异):
+   - 优化颜色精度和字体渲染
+   - 调整边缘处理和抗锯齿
+3. **单一变量修复**: 一次只修改一个主要问题
+
+#### 第五步: 验证与迭代
+1. 重新截图和对比
+2. 分析新的差异图变化
+3. 记录有效修复方案
+4. 最多迭代 3 次
+
+**重要**: 绝不允许跳过前三步直接修复。必须先分析差异图，再分析原始JSON，然后查询知识库。
+
+### Knowledge Base Consultation (Using Memory MCP)
+**Primary Method**: Use Memory MCP for knowledge base queries
+**Backup Location**: `{current_directory}/figma-restoration-mcp-vue-tools/src/restoration-tips/` directory (kept in sync with Memory MCP)
+**Usage**: Consult before optimization iterations when accuracy < 98%
+**Memory MCP Search Strategy**:
+- **By symptoms**: Use `mcp_memory_search_nodes` with accuracy range keywords ("<90%", "90-95%", "95-98%")
+- **By keywords**: Use `mcp_memory_search_nodes` with technical terms ("sizing", "layout", "positioning")
+- **By problem type**: Use `mcp_memory_search_nodes` with problem categories ("块状差异", "条带差异", "结构性问题")
+- **Detailed reading**: Use `mcp_memory_open_nodes` to get complete solution details
+**Available Strategies**:
+- Complex element optimization techniques
+- Mobile UI specific solutions
+- Font rendering improvements
+- Gradient and shadow optimizations
+
+### Common Issues & Solutions (with Diff Analysis)
+
+#### Structural Issues (Block/Stripe Patterns in Diff)
+- **Layout sizing mismatch**: Check Figma `hug` vs `fixed` sizing, apply `fit-content` vs fixed dimensions
+- **Positioning differences**: Compare Figma absolute coordinates with CSS flex/relative positioning
+- **Container behavior**: Verify Figma `mode: column/row` matches CSS flex-direction
+- **Spacing inconsistencies**: Check Figma `gap` and `padding` values against CSS implementation
+
+#### Rendering Issues (Thin Line Patterns in Diff)
+- **Asset misidentification**: Verify node names and types, prioritize RECTANGLE/VECTOR/PATH
+- **Typography rendering**: Fine-tune font-size, line-height, letter-spacing, and font-weight
+- **Color precision**: Use RGB values instead of hex, verify opacity settings
+- **Edge rendering**: Apply font-smoothing and text-rendering optimizations
+
+#### Analysis-Driven Solutions
+- **Red block patterns**: Structural layout problems - check Figma JSON vs CSS implementation
+- **Red stripe patterns**: Boundary/spacing issues - verify margins, padding, gaps
+- **Yellow thin lines**: Text/edge rendering - apply anti-aliasing optimizations
+- **Orange scattered**: Medium-level style differences - check colors, fonts, sizes
+
+#### Strategic Optimizations
+- **Complex UI elements**: **Strategic conversion** - Only when CSS requires 10+ properties and accuracy < 90%
+- **Mobile status bars**: Prefer CSS recreation unless 5+ detailed icons with precise positioning
+- **Navigation bars**: Prefer CSS recreation unless complex multi-layer gradients and controls
+- **3D effects**: Use CSS box-shadow and gradients first, asset conversion as last resort

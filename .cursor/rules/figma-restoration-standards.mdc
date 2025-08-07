@@ -92,13 +92,14 @@ inclusion: always
 - **Convert complex UI elements to SVG assets when CSS implementation is insufficient**
 - Follow technical framework guidelines for specific implementation details
 
-### Knowledge Base Integration
-- **Location**: `/src/restoration-tips/` directory
-- **Quick Access**: Use [INDEX.md](../figma-restoration-mcp-vue-tools/src/restoration-tips/INDEX.md) for instant problem lookup
-- **Purpose**: Store optimization strategies and successful patterns
+### Knowledge Base Integration (Using Memory MCP)
+- **Primary Method**: Memory MCP knowledge graph for structured knowledge storage and retrieval
+- **Backup Location**: `/src/restoration-tips/` directory (kept in sync with Memory MCP)
+- **Purpose**: Store optimization strategies and successful patterns in structured format
 - **Usage**: Consult before optimization iterations when accuracy < 98%
-- **Search Methods**:
-  - **By restoration accuracy**: Find solutions for specific accuracy ranges (<90%, 90-95%, 95-98%)
-  - **By symptoms**: Quick symptom-to-solution mapping
-  - **By keywords**: Technical term index for precise problem identification
-- **Update**: Document new techniques and solutions for future reference
+- **Memory MCP Search Methods**:
+  - **By restoration accuracy**: Use `mcp_memory_search_nodes` to find solutions for specific accuracy ranges (<90%, 90-95%, 95-98%)
+  - **By symptoms**: Use `mcp_memory_search_nodes` for quick symptom-to-solution mapping
+  - **By keywords**: Use `mcp_memory_search_nodes` with technical terms for precise problem identification
+  - **Detailed retrieval**: Use `mcp_memory_open_nodes` to get complete solution details
+- **Sync Strategy**: Keep Memory MCP and markdown files synchronized for redundancy
