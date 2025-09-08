@@ -19,12 +19,19 @@
     "clean": "node test-clean-tools.mjs",
     "install-kit": "chmod +x scripts/setup/install.sh && ./scripts/setup/install.sh",
     "setup": "chmod +x scripts/setup/setup.sh && ./scripts/setup/setup.sh",
+    "mcp:configure": "./scripts/setup/configure-mcp.sh",
+    "mcp:verify": "./verify-mcp-config.sh",
+    "mcp:start": "./start-mcp.sh",
+    "mcp:test-think": "node scripts/test/test-think-mcp.js",
     "prepublishOnly": "echo 'Skipping pre-publish checks for release'",
     "postinstall": "node scripts/build/postinstall.js",
     "publish:npm": "./scripts/deploy/publish.sh",
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
-    "version:major": "npm version major"
+    "version:major": "npm version major",
+    "benchmark": "node scripts/benchmark/benchmark.js",
+    "benchmark:report": "node scripts/benchmark/benchmark.js --report-only",
+    "benchmark:update-readme": "node scripts/benchmark/benchmark.js --update-readme"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",

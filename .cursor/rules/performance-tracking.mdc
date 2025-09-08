@@ -1,0 +1,271 @@
+---
+inclusion: always
+---
+
+# Performance Tracking
+
+## Purpose
+Track and record precise timing metrics for Figma component restoration workflow, including detailed time breakdown and performance analysis for continuous improvement.
+
+## Core Concepts
+- **Precise Timing**: Record exact timestamps for each workflow step
+- **Performance Metrics**: Track duration, efficiency, and optimization opportunities
+- **Metadata Integration**: Store timing data in component metadata.json
+- **Continuous Improvement**: Use timing data to optimize workflow efficiency
+- **Quality Assurance**: Ensure consistent performance across restoration tasks
+
+## Timing Requirements
+
+### Mandatory Time Tracking
+**Every component restoration MUST include precise timing records:**
+
+1. **Start Time**: Record exact start timestamp when restoration begins
+2. **Step Timing**: Track duration of each major workflow step
+3. **End Time**: Record exact completion timestamp
+4. **Total Duration**: Calculate total restoration time
+5. **Efficiency Metrics**: Calculate time per step and overall efficiency
+
+### Required Timing Steps
+**Track these specific workflow steps:**
+
+1. **Figma Data Extraction**: Time to extract and parse Figma JSON
+2. **Asset Download**: Time to download expected images and assets
+3. **Visual Analysis**: Time for image analysis and structure identification
+4. **Component Creation**: Time to create Vue component code
+5. **Screenshot Capture**: Time to capture component screenshot
+6. **Pixel Comparison**: Time to perform pixel-level comparison
+7. **Optimization Iterations**: Time for any accuracy improvements
+8. **Final Validation**: Time for final quality checks
+
+## Timing Implementation
+
+### Time Recording Format
+```json
+{
+  "timing": {
+    "startTime": "2025-09-07T16:45:00.000Z",
+    "endTime": "2025-09-07T16:46:15.000Z",
+    "totalDuration": "1m 15s",
+    "totalDurationMs": 75000,
+    "steps": [
+      {
+        "step": "figma_data_extraction",
+        "startTime": "2025-09-07T16:45:00.000Z",
+        "endTime": "2025-09-07T16:45:10.000Z",
+        "duration": "10s",
+        "durationMs": 10000
+      },
+      {
+        "step": "asset_download",
+        "startTime": "2025-09-07T16:45:10.000Z",
+        "endTime": "2025-09-07T16:45:20.000Z",
+        "duration": "10s",
+        "durationMs": 10000
+      }
+    ],
+    "efficiency": {
+      "averageStepTime": "12.5s",
+      "fastestStep": "pixel_comparison",
+      "slowestStep": "component_creation",
+      "optimizationRounds": 0
+    }
+  }
+}
+```
+
+### Metadata Integration
+**Store timing data in component metadata.json:**
+
+```json
+{
+  "restorationData": {
+    "matchPercentage": 89.45,
+    "diffPixels": 80591,
+    "totalPixels": 763560,
+    "dimensions": { "width": 360, "height": "auto" },
+    "timestamp": "2025-09-07T16:46:15.000Z",
+    "status": "completed"
+  },
+  "performanceMetrics": {
+    "timing": {
+      "startTime": "2025-09-07T16:45:00.000Z",
+      "endTime": "2025-09-07T16:46:15.000Z",
+      "totalDuration": "1m 15s",
+      "totalDurationMs": 75000,
+      "steps": [...],
+      "efficiency": {...}
+    }
+  }
+}
+```
+
+## Performance Standards
+
+### Target Performance Metrics
+- **Total Restoration Time**: < 5 minutes for simple components
+- **Component Creation**: < 2 minutes for standard components
+- **Screenshot & Comparison**: < 1 minute for standard components
+- **Optimization Iterations**: < 3 rounds maximum
+
+### Efficiency Benchmarks
+- **Simple Components** (text + basic layout): < 3 minutes
+- **Medium Components** (icons + complex layout): < 5 minutes
+- **Complex Components** (multiple assets + interactions): < 8 minutes
+
+### Performance Categories
+- **Excellent**: < 2 minutes total
+- **Good**: 2-5 minutes total
+- **Acceptable**: 5-8 minutes total
+- **Needs Improvement**: > 8 minutes total
+
+## Timing Workflow
+
+### Step 1: Initialize Timing
+```javascript
+const timing = {
+  startTime: new Date().toISOString(),
+  steps: [],
+  currentStep: null
+}
+```
+
+### Step 2: Record Step Start
+```javascript
+function startStep(stepName) {
+  timing.currentStep = {
+    step: stepName,
+    startTime: new Date().toISOString()
+  }
+}
+```
+
+### Step 3: Record Step End
+```javascript
+function endStep() {
+  if (timing.currentStep) {
+    const endTime = new Date().toISOString()
+    const duration = new Date(endTime) - new Date(timing.currentStep.startTime)
+    
+    timing.steps.push({
+      ...timing.currentStep,
+      endTime,
+      duration: formatDuration(duration),
+      durationMs: duration
+    })
+    
+    timing.currentStep = null
+  }
+}
+```
+
+### Step 4: Finalize Timing
+```javascript
+function finalizeTiming() {
+  timing.endTime = new Date().toISOString()
+  timing.totalDurationMs = new Date(timing.endTime) - new Date(timing.startTime)
+  timing.totalDuration = formatDuration(timing.totalDurationMs)
+  
+  // Calculate efficiency metrics
+  timing.efficiency = calculateEfficiency(timing.steps)
+  
+  return timing
+}
+```
+
+## Performance Analysis
+
+### Efficiency Calculations
+```javascript
+function calculateEfficiency(steps) {
+  const totalTime = steps.reduce((sum, step) => sum + step.durationMs, 0)
+  const averageStepTime = totalTime / steps.length
+  
+  const stepTimes = steps.map(step => ({
+    step: step.step,
+    duration: step.durationMs
+  }))
+  
+  const fastestStep = stepTimes.reduce((min, current) => 
+    current.duration < min.duration ? current : min
+  )
+  
+  const slowestStep = stepTimes.reduce((max, current) => 
+    current.duration > max.duration ? current : max
+  )
+  
+  return {
+    averageStepTime: formatDuration(averageStepTime),
+    fastestStep: fastestStep.step,
+    slowestStep: slowestStep.step,
+    optimizationRounds: steps.filter(s => s.step.includes('optimization')).length
+  }
+}
+```
+
+### Performance Reporting
+**After each restoration, output performance summary:**
+
+```
+## ⏱️ Performance Summary
+
+**Total Duration**: 1m 15s
+**Efficiency Rating**: Good (2-5 minutes)
+**Component Type**: Simple Dialog
+
+**Step Breakdown**:
+- Figma Data Extraction: 10s
+- Asset Download: 10s  
+- Component Creation: 30s
+- Screenshot & Comparison: 20s
+- Final Validation: 5s
+
+**Optimization**: 0 rounds
+**Final Accuracy**: 89.45%
+```
+
+## Quality Integration
+
+### Timing + Accuracy Correlation
+- **High Accuracy + Fast Time**: Excellent restoration
+- **High Accuracy + Slow Time**: Good restoration, room for optimization
+- **Low Accuracy + Fast Time**: Needs quality improvement
+- **Low Accuracy + Slow Time**: Needs both quality and efficiency improvement
+
+### Performance Trends
+- Track timing trends across multiple restorations
+- Identify consistently slow steps for optimization
+- Monitor accuracy vs. time trade-offs
+- Establish performance baselines for different component types
+
+## Implementation Requirements
+
+### Mandatory Actions
+1. **Start timing** at the beginning of each restoration
+2. **Record each step** with precise start/end times
+3. **Calculate efficiency metrics** after completion
+4. **Store timing data** in metadata.json
+5. **Output performance summary** to user
+6. **Track trends** across multiple restorations
+
+### Optional Enhancements
+- Performance comparison with previous restorations
+- Efficiency recommendations based on timing data
+- Automated performance alerts for slow restorations
+- Performance dashboard for tracking trends
+
+## Reference
+
+### Quick Timing Checklist
+- [ ] Record start time
+- [ ] Track each workflow step
+- [ ] Calculate total duration
+- [ ] Store in metadata.json
+- [ ] Output performance summary
+- [ ] Monitor efficiency trends
+
+### Performance Targets
+- [ ] Simple components: < 3 minutes
+- [ ] Medium components: < 5 minutes  
+- [ ] Complex components: < 8 minutes
+- [ ] Accuracy: ≥ 98%
+- [ ] Optimization rounds: ≤ 3

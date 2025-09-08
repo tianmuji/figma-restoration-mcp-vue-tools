@@ -21,11 +21,13 @@
     <main class="component-display">
       <div class="display-container">
         <div class="component-wrapper">
-          <component 
-            :is="componentName" 
-            v-if="componentExists"
-            class="displayed-component"
-          />
+          <!-- 截图目标容器 - 固定类名供截图工具使用 -->
+          <div class="screenshot-target" v-if="componentExists">
+            <component 
+              :is="componentName" 
+              class="displayed-component"
+            />
+          </div>
           <div v-else class="component-error">
             <div class="error-icon">⚠️</div>
             <h3>组件未找到</h3>
@@ -368,9 +370,16 @@ onMounted(() => {
   height: 100%;
 }
 
+/* 截图目标容器 - 固定类名，让元素自然贴合 */
+.screenshot-target {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .displayed-component {
-  max-width: 100%;
-  max-height: 100%;
+  /* 移除宽高限制，让元素自然大小 */
 }
 
 .component-error {

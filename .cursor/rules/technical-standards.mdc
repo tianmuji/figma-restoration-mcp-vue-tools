@@ -1,0 +1,214 @@
+---
+alwaysApply: true
+---
+# Technical Standards
+
+## Purpose
+Pure technical implementation standards for Vue 3 + TypeScript development, CSS architecture, component structure, and code quality requirements.
+
+## Core Concepts
+- **Vue 3 Composition API**: Modern Vue.js development patterns with TypeScript
+- **CSS Architecture**: Layout strategies, spacing systems, and responsive design
+- **Component Structure**: File organization and TypeScript integration patterns
+- **Performance Standards**: Optimization guidelines for CSS and asset performance
+- **Quality Assurance**: Code quality, accessibility, and browser compatibility standards
+
+## Core Technology Stack
+
+### Frontend Framework
+- **Vue 3 Composition API** with TypeScript
+- **Component Architecture**: Single File Components (.vue)
+- **State Management**: Reactive refs and computed properties
+
+### CSS Architecture
+
+#### Layout Strategy
+- **Primary**: CSS Flexbox for responsive layouts
+- **Avoid**: Absolute positioning unless specifically required for overlays
+- **Box Model**: `box-sizing: border-box` applied globally
+
+#### Spacing System
+- **Use**: `padding` and `gap` for spacing
+- **Avoid**: `margin` properties (can cause layout inconsistencies)
+- **Units**: Prefer `px` for precise Figma matching, `rem`/`em` for scalable text
+
+#### Border Implementation
+- **Decorative borders**: Use `outline` or `box-shadow` (no layout impact)
+- **Layout-affecting borders**: Use `border` and adjust total dimensions
+- **Complex borders**: Use `box-shadow` for multi-layer effects
+- **Figma compatibility**: Account for inner/outer/center border positioning
+
+### Asset Management
+
+#### SVG Assets
+- **Preferred format**: SVG for icons, simple graphics, and complex UI elements
+- **Sizing rule**: Original SVG size must equal CSS size (no scaling)
+- **Optimization**: Optimize SVG files for minimal size and performance
+- **Integration**: Direct `<img>` tags or inline SVG based on complexity
+
+#### Image Assets
+- **Format**: PNG for raster images with transparency
+- **Scale**: 3x resolution for high-DPI displays
+- **Compression**: Optimize for web without quality loss
+- **Fallbacks**: Provide appropriate alt text for accessibility
+
+## Component Structure
+
+### File Organization
+```vue
+<template>
+  <!-- Semantic HTML structure -->
+  <div class="component-name">
+    <!-- Component content -->
+  </div>
+</template>
+
+<script setup lang="ts">
+// TypeScript interfaces and logic
+interface ComponentProps {
+  // Define props with proper types
+}
+
+// Component logic using Composition API
+</script>
+
+<style scoped>
+/* Component-specific styles */
+.component-name,
+.component-name * {
+  box-sizing: border-box;
+}
+</style>
+```
+
+### TypeScript Integration
+- **Props**: Define with proper TypeScript interfaces
+- **Events**: Type-safe event emissions
+- **Refs**: Properly typed reactive references
+- **Computed**: Type-safe computed properties
+
+## Responsive Design Principles
+
+### Mobile-First Approach
+- **Base styles**: Design for mobile screens first
+- **Progressive enhancement**: Add desktop styles with media queries
+- **Breakpoints**: Standard responsive breakpoints
+  - Mobile: < 768px
+  - Tablet: 768px - 1024px
+  - Desktop: > 1024px
+
+### Flexible Layouts
+- **Container queries**: Use when supported for component-based responsiveness
+- **Fluid typography**: Scale text appropriately across devices
+- **Flexible images**: Ensure images scale properly with containers
+
+## Performance Optimization
+
+### CSS Performance
+- **Efficient selectors**: Avoid deep nesting and complex selectors
+- **Critical CSS**: Inline critical styles for above-the-fold content
+- **CSS custom properties**: Use for theming and consistent values
+- **Minimize reflows**: Avoid layout-triggering property changes
+
+### Asset Performance
+- **Lazy loading**: Implement for non-critical images
+- **SVG optimization**: Remove unnecessary metadata and optimize paths
+- **Bundle splitting**: Separate component assets when beneficial
+- **Caching strategies**: Leverage browser caching for static assets
+
+## Accessibility Standards
+
+### Semantic HTML
+- **Proper elements**: Use semantic HTML elements (header, nav, main, etc.)
+- **ARIA labels**: Add appropriate ARIA attributes for complex interactions
+- **Focus management**: Ensure proper keyboard navigation
+- **Screen readers**: Test with screen reader compatibility
+
+### Implementation Requirements
+- **Color contrast**: Ensure sufficient contrast ratios for text and backgrounds
+- **Keyboard navigation**: All interactive elements must be keyboard accessible
+- **Screen reader support**: Provide meaningful alt text and ARIA labels
+- **Focus indicators**: Clear visual focus indicators for all interactive elements
+
+## Browser Compatibility
+
+### Target Browsers
+- **Modern browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Mobile browsers**: iOS Safari 14+, Chrome Mobile 90+
+- **Fallbacks**: Graceful degradation for older browsers when necessary
+
+### Feature Detection
+- **CSS features**: Use `@supports` for progressive enhancement
+- **JavaScript features**: Polyfills for missing functionality when needed
+- **Responsive images**: Use `srcset` and `sizes` for optimal image delivery
+
+## Quality Assurance
+
+### Code Quality Standards
+- **ESLint**: Vue 3 and TypeScript rules
+- **Prettier**: Consistent code formatting
+- **Type checking**: Strict TypeScript configuration
+- **Component testing**: Unit tests for component logic
+
+### Visual Quality Requirements
+- **Pixel accuracy**: Target ≥98% match with Figma designs
+- **Cross-browser testing**: Verify consistency across target browsers
+- **Responsive testing**: Test across different screen sizes
+- **Performance testing**: Monitor rendering performance
+
+## Scalability Considerations
+
+### Component Library
+- **Reusable components**: Extract common patterns into shared components
+- **Design system**: Establish consistent design tokens and patterns
+- **Documentation**: Document component APIs and usage examples
+- **Versioning**: Semantic versioning for component library releases
+
+### Maintenance Standards
+- **Code organization**: Clear file structure and naming conventions
+- **Dependency management**: Keep dependencies up to date
+- **Technical debt**: Regular refactoring and optimization
+- **Knowledge sharing**: Document architectural decisions and patterns
+
+## Framework Extensions
+
+### Future Technology Considerations
+- **Vue 4**: Prepare for future Vue.js versions
+- **Web Components**: Consider web component compatibility
+- **CSS Container Queries**: Adopt when browser support improves
+- **CSS Cascade Layers**: Implement for better style organization
+
+### Integration Possibilities
+- **Design tokens**: Integrate with design token systems
+- **Component testing**: Visual regression testing tools
+- **Performance monitoring**: Real user monitoring integration
+- **Accessibility testing**: Automated accessibility testing tools
+
+## Implementation Guidelines
+
+### Development Workflow
+1. **Setup**: Use Vue 3 + TypeScript + Vite for optimal development experience
+2. **Structure**: Follow single file component architecture with scoped styles
+3. **Testing**: Implement unit tests for component logic and visual regression tests
+4. **Optimization**: Apply performance optimizations during development, not as afterthought
+
+### Code Standards
+- **Naming**: Use PascalCase for components, camelCase for variables and functions
+- **Comments**: Document complex logic and architectural decisions
+- **Error handling**: Implement proper error boundaries and user feedback
+- **State management**: Use reactive refs and computed properties appropriately
+
+## Reference
+
+### Quick Reference Checklist
+- [ ] Vue 3 Composition API with TypeScript
+- [ ] CSS Flexbox for layouts, avoid absolute positioning
+- [ ] `padding` and `gap` for spacing, avoid `margin`
+- [ ] `box-sizing: border-box` applied globally
+- [ ] SVG assets with original size = CSS size
+- [ ] 3x resolution for raster images
+- [ ] Mobile-first responsive design
+- [ ] Semantic HTML with proper ARIA labels
+- [ ] ESLint + Prettier + TypeScript strict mode
+- [ ] ≥98% pixel accuracy target
+- [ ] Cross-browser compatibility testing

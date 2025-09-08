@@ -14,7 +14,7 @@ import {
 export class SnapDOMScreenshotTool {
   constructor() {
     this.description = 'Take high-quality 3x scale screenshots using snapDOM technology for precise DOM-to-image capture';
-    this.DEFAULT_TIMEOUT = 30000; // 30秒超时
+    this.DEFAULT_TIMEOUT = 3000; // 增加超时时间到15秒
 
     this.inputSchema = {
       type: 'object',
@@ -166,7 +166,7 @@ export class SnapDOMScreenshotTool {
           outputPath: outputPath && (outputPath.endsWith('.png') || outputPath.endsWith('.jpg') || outputPath.endsWith('.jpeg')) ? outputPath : null,
           selector
         }),
-        30000, // 给整个截图流程30秒时间
+        8000, // 静态页面8秒完成截图
         'Overall screenshot process timed out'
       );
 
@@ -253,29 +253,65 @@ export class SnapDOMScreenshotTool {
 
       await this.withTimeout(
         page.goto(url, {
-          waitUntil: 'networkidle2',
+          waitUntil: 'domcontentloaded', // 静态页面DOM加载完成即可
           timeout: this.DEFAULT_TIMEOUT
         }),
         this.DEFAULT_TIMEOUT,
         `Page navigation to ${url} timed out`
       );
 
-      // 等待 Vue 应用加载
+      // 等待 Vue 应用加载 (静态页面快速加载)
       console.log(chalk.gray('⏳ Waiting for Vue app to load...'));
       await this.withTimeout(
-        page.waitForTimeout(3000),
-        5000,
+        page.waitForTimeout(300),
+        1000,
         'Vue app loading wait timed out'
       );
 
       // Determine selector - try different selector patterns
-      let targetSelector = selector;
+            let targetSelector = selector;
       if (!targetSelector) {
-        // For component pages, target the displayed component container
-        targetSelector = '.displayed-component';
+        // 使用固定的截图目标容器
+        targetSelector = '.screenshot-target';
       }
 
       console.log(chalk.gray(`🔍 Looking for selector: ${targetSelector}`));
+      
+      // 智能选择器：检测是否有子元素包含box-shadow，用于精确clip计算
+      if (targetSelector === '.screenshot-target') {
+        const hasBoxShadowElement = await page.evaluate(() => {
+          const container = document.querySelector('.screenshot-target');
+          if (!container) return null;
+          
+          // 查找所有子元素，寻找有box-shadow的
+          const allElements = container.querySelectorAll('*');
+          for (let element of allElements) {
+            const style = window.getComputedStyle(element);
+            if (style.boxShadow && style.boxShadow !== 'none') {
+              // 找到有box-shadow的元素，返回其选择器信息
+              return {
+                tagName: element.tagName.toLowerCase(),
+                className: element.className,
+                boxShadow: style.boxShadow
+              };
+            }
+          }
+          return null;
+        });
+        
+        if (hasBoxShadowElement) {
+          // 如果找到有box-shadow的元素，更新选择器用于精确截图
+          if (hasBoxShadowElement.className) {
+            const firstClass = hasBoxShadowElement.className.split(' ')[0];
+            targetSelector = `.screenshot-target .${firstClass}`;
+            console.log(chalk.green(`🎯 Found element with box-shadow: .${firstClass}`));
+            console.log(chalk.green(`   Updated selector: ${targetSelector}`));
+            console.log(chalk.green(`   Box-shadow preview: ${hasBoxShadowElement.boxShadow.substring(0, 100)}...`));
+          }
+        } else {
+          console.log(chalk.yellow(`⚠️  No box-shadow detected, using container: ${targetSelector}`));
+        }
+      }
 
       try {
         await this.withTimeout(
@@ -294,10 +330,10 @@ export class SnapDOMScreenshotTool {
         );
       }
 
-      // Additional wait for animations/images
+      // Additional wait for animations/images (静态组件快速)
       await this.withTimeout(
-        page.waitForTimeout(500),
-        this.DEFAULT_TIMEOUT,
+        page.waitForTimeout(100),
+        500,
         'Animation wait timed out'
       );
 
@@ -319,13 +355,226 @@ export class SnapDOMScreenshotTool {
         throw new Error(`Component selector ${targetSelector} not found`);
       }
 
-      // Use Puppeteer's built-in screenshot functionality with 3x scaling
-      console.log(chalk.gray(`⏱️  Starting 3x scale Puppeteer screenshot with ${this.DEFAULT_TIMEOUT}ms timeout...`));
+      // Calculate element bounds including box-shadow with enhanced parsing
+      console.log(chalk.gray('📐 Calculating element bounds with enhanced box-shadow detection...'));
+      const elementBounds = await this.withTimeout(
+        page.evaluate((selector) => {
+          // Wait for element to be properly rendered
+          return new Promise((resolve) => {
+            const checkElement = () => {
+              const element = document.querySelector(selector);
+              if (!element) {
+                console.log(`❌ Element not found: ${selector}`);
+                return null;
+              }
+              
+              const rect = element.getBoundingClientRect();
+              
+              // Validate that rect has valid dimensions
+              if (!rect || rect.width === 0 || rect.height === 0 || 
+                  isNaN(rect.x) || isNaN(rect.y) || isNaN(rect.width) || isNaN(rect.height)) {
+                console.log(`⚠️ Element found but invalid bounds:`, {
+                  x: rect.x, y: rect.y, width: rect.width, height: rect.height
+                });
+                return null;
+              }
+              
+              const computedStyle = window.getComputedStyle(element);
+              const boxShadow = computedStyle.boxShadow;
+              
+              console.log(`✅ Element validated: ${selector}`, {
+                x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+                boxShadow: boxShadow
+              });
+              
+              return { rect, boxShadow, computedStyle };
+            };
+            
+            // Try immediate check first
+            const result = checkElement();
+            if (result) {
+              const { rect, boxShadow, computedStyle } = result;
+              resolve(processElementBounds(rect, boxShadow));
+              return;
+            }
+            
+            // If immediate check failed, retry with timeout (快速重试)
+            let attempts = 0;
+            const maxAttempts = 5;
+            const retryInterval = 50;
+            
+            const retryCheck = () => {
+              attempts++;
+              const result = checkElement();
+              if (result) {
+                const { rect, boxShadow, computedStyle } = result;
+                resolve(processElementBounds(rect, boxShadow));
+              } else if (attempts < maxAttempts) {
+                setTimeout(retryCheck, retryInterval);
+              } else {
+                console.log(`❌ Failed to validate element after ${maxAttempts} attempts`);
+                resolve(null);
+              }
+            };
+            
+            setTimeout(retryCheck, retryInterval);
+          });
+          
+          function processElementBounds(rect, boxShadow) {
+            console.log('=' .repeat(60));
+            console.log('🔍 RAW BOX-SHADOW VALUE:');
+            console.log(`   "${boxShadow}"`);
+            console.log('📏 RAW ELEMENT RECT:');
+            console.log(`   x: ${rect.x}, y: ${rect.y}, width: ${rect.width}, height: ${rect.height}`);
+            console.log('🧮 RECT VALIDATION:');
+            console.log(`   x isNaN: ${isNaN(rect.x)}, y isNaN: ${isNaN(rect.y)}`);
+            console.log(`   width isNaN: ${isNaN(rect.width)}, height isNaN: ${isNaN(rect.height)}`);
+            console.log('=' .repeat(60));
+          
+          // 按照用户要求：根据上下左右的box-shadow取最大值来调整clip
+          let maxShadowExtent = 0;
+          let shadowDetails = [];
+          
+          if (boxShadow && boxShadow !== 'none') {
+            console.log('🎨 开始解析复合阴影...');
+            
+            // 分割多个阴影，保持括号内容完整
+            const shadows = boxShadow.split(/,\s*(?![^()]*\))/);
+            console.log(`📋 发现 ${shadows.length} 个阴影:`, shadows);
+            
+            shadows.forEach((shadow, index) => {
+              const trimmedShadow = shadow.trim();
+              console.log(`🔍 解析阴影 ${index + 1}: "${trimmedShadow}"`);
+              
+              // 匹配两种格式：
+              // 1. color offsetX offsetY blurRadius [spreadRadius]
+              // 2. offsetX offsetY blurRadius [spreadRadius] color
+              let match = trimmedShadow.match(/rgba?\([^)]+\)\s+(-?\d+(?:\.\d+)?)px\s+(-?\d+(?:\.\d+)?)px\s+(-?\d+(?:\.\d+)?)px(?:\s+(-?\d+(?:\.\d+)?)px)?/);
+              if (!match) {
+                // 如果没匹配到颜色在前的格式，尝试颜色在后的格式
+                match = trimmedShadow.match(/^(?:inset\s+)?(-?\d+(?:\.\d+)?)px\s+(-?\d+(?:\.\d+)?)px\s+(-?\d+(?:\.\d+)?)px(?:\s+(-?\d+(?:\.\d+)?)px)?/);
+              }
+              
+              if (match) {
+                const x = parseFloat(match[1]) || 0;
+                const y = parseFloat(match[2]) || 0;
+                const blur = parseFloat(match[3]) || 0;
+                const spread = parseFloat(match[4]) || 0;
+                
+                console.log(`   📊 解析结果: offset(${x}, ${y}) blur(${blur}) spread(${spread})`);
+                
+                // 只处理外阴影
+                if (!trimmedShadow.includes('inset')) {
+                  // 计算阴影的最大扩散范围：取blur和offset的最大值，再加上spread
+                  const shadowExtent = Math.max(blur, Math.max(Math.abs(x), Math.abs(y))) + Math.abs(spread);
+                  maxShadowExtent = Math.max(maxShadowExtent, shadowExtent);
+                  
+                  shadowDetails.push({
+                    index: index + 1,
+                    x, y, blur, spread,
+                    extent: shadowExtent
+                  });
+                  
+                  console.log(`   ✅ 阴影 ${index + 1} 扩散范围: ${shadowExtent}px`);
+                } else {
+                  console.log(`   ⏭️  跳过内阴影: ${index + 1}`);
+                }
+              } else {
+                console.log(`   ❌ 无法解析阴影 ${index + 1}: "${trimmedShadow}"`);
+              }
+            });
+          } else {
+            console.log('ℹ️  未检测到box-shadow');
+          }
+          
+          console.log(`🎯 最大阴影扩散范围: ${maxShadowExtent}px`);
+          
+          // 使用最大扩散范围调整clip（四个方向都用同一个最大值）
+          const clipPadding = maxShadowExtent;
+          
+          const finalClipX = Math.max(0, rect.x - clipPadding);
+          const finalClipY = Math.max(0, rect.y - clipPadding);
+          const finalClipWidth = rect.width + (clipPadding * 2);
+          const finalClipHeight = rect.height + (clipPadding * 2);
+          
+          console.log(`📐 Clip调整: padding=${clipPadding}px (最大扩散=${maxShadowExtent}px + 安全边距=10px)`);
+          console.log(`📍 最终Clip区域: x=${finalClipX}, y=${finalClipY}, w=${finalClipWidth}, h=${finalClipHeight}`);
+          
+            return {
+              x: finalClipX,
+              y: finalClipY,
+              width: finalClipWidth,
+              height: finalClipHeight,
+              elementRect: rect,
+              maxShadowExtent: maxShadowExtent,
+              clipPadding: clipPadding,
+              shadowDetails: shadowDetails,
+              originalBoxShadow: boxShadow,
+              // 添加调试信息
+              debugInfo: {
+                rawBoxShadow: boxShadow,
+                rectIsValid: !isNaN(rect.x) && !isNaN(rect.y) && !isNaN(rect.width) && !isNaN(rect.height),
+                rectValues: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+                shadowDetected: boxShadow && boxShadow !== 'none',
+                shadowCount: shadowDetails.length
+              }
+            };
+          }
+        }, targetSelector),
+        this.DEFAULT_TIMEOUT,
+        'Element bounds calculation timed out'
+      );
+
+      if (!elementBounds) {
+        throw new Error(`Could not calculate bounds for element ${targetSelector}`);
+      }
+
+      console.log(chalk.gray(`📏 Element bounds: ${Math.round(elementBounds.width)}x${Math.round(elementBounds.height)}, max shadow extent: ${elementBounds.maxShadowExtent}px`));
+
+      // 输出详细调试信息
+      if (elementBounds.debugInfo) {
+        console.log(chalk.cyan('🔍 DETAILED DEBUG INFO:'));
+        console.log(chalk.cyan(`   Raw Box-Shadow: "${elementBounds.debugInfo.rawBoxShadow}"`));
+        console.log(chalk.cyan(`   Rect Valid: ${elementBounds.debugInfo.rectIsValid}`));
+        console.log(chalk.cyan(`   Rect Values: x=${elementBounds.debugInfo.rectValues.x}, y=${elementBounds.debugInfo.rectValues.y}, w=${elementBounds.debugInfo.rectValues.width}, h=${elementBounds.debugInfo.rectValues.height}`));
+        console.log(chalk.cyan(`   Shadow Detected: ${elementBounds.debugInfo.shadowDetected}`));
+        console.log(chalk.cyan(`   Shadow Count: ${elementBounds.debugInfo.shadowCount}`));
+      }
+
+      // Enhanced detailed clip debug info
+      const clipArea = {
+        x: elementBounds.x,
+        y: elementBounds.y,
+        width: elementBounds.width,
+        height: elementBounds.height
+      };
+      
+      console.log(chalk.blue('🎯 ENHANCED CLIP AREA DEBUG INFO:'));
+      console.log(chalk.blue(`   📍 Final Position: x=${Math.round(clipArea.x)}, y=${Math.round(clipArea.y)}`));
+      console.log(chalk.blue(`   📐 Final Size: width=${Math.round(clipArea.width)}, height=${Math.round(clipArea.height)}`));
+      console.log(chalk.blue(`   🔍 Element Rect: x=${Math.round(elementBounds.elementRect.x)}, y=${Math.round(elementBounds.elementRect.y)}, w=${Math.round(elementBounds.elementRect.width)}, h=${Math.round(elementBounds.elementRect.height)}`));
+      console.log(chalk.blue(`   🎯 Max Shadow Extent: ${elementBounds.maxShadowExtent}px`));
+      console.log(chalk.blue(`   📏 Clip Padding: ${elementBounds.clipPadding}px`));
+      
+      if (elementBounds.originalBoxShadow && elementBounds.originalBoxShadow !== 'none') {
+        console.log(chalk.magenta('🌟 BOX-SHADOW ANALYSIS:'));
+        console.log(chalk.magenta(`   🎨 Original: ${elementBounds.originalBoxShadow}`));
+        if (elementBounds.shadowDetails && elementBounds.shadowDetails.length > 0) {
+          elementBounds.shadowDetails.forEach(shadow => {
+            console.log(chalk.magenta(`   🔸 Shadow ${shadow.index}: offset(${shadow.x},${shadow.y}) blur(${shadow.blur}) spread(${shadow.spread}) → extent(${shadow.extent}px)`));
+          });
+        }
+      } else {
+        console.log(chalk.gray('   ℹ️  No box-shadow detected, using element bounds only'));
+      }
+
+      // Use page screenshot with calculated clip area to include shadows
+      console.log(chalk.gray(`⏱️  Starting 3x scale screenshot with shadow inclusion...`));
       const screenshotBuffer = await this.withTimeout(
-        element.screenshot({
+        page.screenshot({
           type: 'png',
           omitBackground: snapDOMOptions.backgroundColor === 'transparent',
-          // The 3x scaling is handled by deviceScaleFactor in viewport
+          clip: clipArea
         }),
         this.DEFAULT_TIMEOUT,
         'Puppeteer screenshot operation timed out'
@@ -372,4 +621,36 @@ export class SnapDOMScreenshotTool {
       }
     }
   }
+}
+
+// Command line execution
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const componentName = process.argv[2];
+  
+  if (!componentName) {
+    console.error('Usage: node snapdom-screenshot.js <componentName>');
+    process.exit(1);
+  }
+
+  const tool = new SnapDOMScreenshotTool();
+  const projectPath = process.cwd();
+  const outputPath = path.join(projectPath, 'src', 'components', componentName, 'results', 'actual.png');
+  
+  tool.execute({
+    componentName,
+    projectPath,
+    outputPath,
+    viewport: { width: 1440, height: 800 },
+    snapDOMOptions: {
+      backgroundColor: 'transparent',
+      compress: true,
+      deviceScaleFactor: 3,
+      embedFonts: true
+    }
+  }).then(result => {
+    console.log('Screenshot completed:', result.path);
+  }).catch(error => {
+    console.error('Screenshot failed:', error.message);
+    process.exit(1);
+  });
 }

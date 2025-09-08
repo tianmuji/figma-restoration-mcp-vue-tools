@@ -1,0 +1,100 @@
+---
+alwaysApply: true
+---
+# Memory Management
+
+## Purpose
+Centralized guidance for Memory MCP usage, knowledge management, and user interaction patterns within the Figma restoration system.
+
+## Core Concepts
+- **Memory MCP**: Model Context Protocol for persistent knowledge storage and retrieval
+- **Knowledge Graph**: Structured storage of entities, relations, and observations
+- **User Identification**: Process of identifying and tracking user interactions
+- **Entity Management**: Creating and managing knowledge entities and their relationships
+
+## User Interaction Procedures
+
+### User Identification
+- You should assume that you are interacting with default_user
+- If you have not identified default_user, proactively try to do so
+
+### Memory Retrieval
+- Always begin your chat by saying only "Remembering..." and retrieve all relevant information from your knowledge graph
+- Always refer to your knowledge graph as your "memory"
+
+### Information Categories
+While conversing with the user, be attentive to any new information that falls into these categories:
+- **Basic Identity**: age, gender, location, job title, education level, etc.
+- **Behaviors**: interests, habits, etc.
+- **Preferences**: communication style, preferred language, etc.
+- **Goals**: goals, targets, aspirations, etc.
+- **Relationships**: personal and professional relationships up to 3 degrees of separation
+
+### Memory Update Procedures
+If any new information was gathered during the interaction, update your memory as follows:
+- Create entities for recurring organizations, people, and significant events
+- Connect them to the current entities using relations
+- Store facts about them as observations
+
+## Knowledge Base Integration
+
+### Primary Method: Memory MCP
+Use Memory MCP knowledge graph for structured knowledge storage and retrieval of optimization strategies and successful patterns.
+
+### Memory MCP Search Methods
+- **By restoration accuracy**: Use `mcp_memory_search_nodes` to find solutions for specific accuracy ranges (<90%, 90-95%, 95-98%)
+- **By symptoms**: Use `mcp_memory_search_nodes` for quick symptom-to-solution mapping
+- **By keywords**: Use `mcp_memory_search_nodes` with technical terms for precise problem identification
+- **Detailed retrieval**: Use `mcp_memory_open_nodes` to get complete solution details
+
+### Knowledge Base Query Strategy
+
+#### 1. Symptom-Based Queries
+Use `mcp_memory_search_nodes` to search for specific problem characteristics:
+- **Red block differences**: Query "颜色差异", "背景色", "色值不匹配"
+- **Red stripe differences**: Query "边框", "outline", "border", "尺寸偏移"
+- **Red dot differences**: Query "像素精度", "定位偏移", "margin", "padding"
+- **Orange areas**: Query "布局偏移", "flex布局", "对齐问题"
+- **Yellow areas**: Query "文本渲染", "字体平滑", "抗锯齿"
+
+#### 2. Accuracy Range Queries
+- **<90%**: Query "严重布局问题", "结构性错误"
+- **90-95%**: Query "布局偏移", "尺寸差异", "盒模型"
+- **95-98%**: Query "文本渲染", "像素精度", "细节优化"
+
+#### 3. Component Type Queries
+- **Simple layout components**: Query "基础布局", "flex布局", "间距问题"
+- **Text-heavy components**: Query "文本渲染", "字体优化"
+- **Complex visual components**: Query "复杂元素", "素材化", "切图策略"
+
+#### 4. Memory MCP Query Validation Process
+1. **Search with mcp_memory_search_nodes**: Search knowledge graph with relevant keywords
+2. **Read details with mcp_memory_open_nodes**: Get complete content and solutions from found nodes
+3. **Extract detailed solutions**: Get specific implementation steps from node observations
+4. **Validate applicability**: Confirm solutions apply to current difference characteristics
+
+### Sync Strategy
+Keep Memory MCP and markdown files synchronized for redundancy:
+- **Primary storage**: Memory MCP knowledge graph
+- **Backup location**: `/src/restoration-tips/` directory
+- **Usage**: Consult before optimization iterations when accuracy < 98%
+- **Update strategy**: Document new techniques and solutions for future reference
+
+## Memory MCP Tools Reference
+
+### Core Tools
+- `mcp_memory_create_entities`: Create new entities in knowledge graph
+- `mcp_memory_create_relations`: Create relations between entities
+- `mcp_memory_add_observations`: Add observations to existing entities
+- `mcp_memory_search_nodes`: Search for nodes based on query
+- `mcp_memory_open_nodes`: Retrieve specific nodes by name
+- `mcp_memory_delete_entities`: Delete entities and relations
+- `mcp_memory_delete_observations`: Delete specific observations
+- `mcp_memory_delete_relations`: Delete specific relations
+- `mcp_memory_read_graph`: Read entire knowledge graph
+
+### Usage Patterns
+- **Before optimization**: Search for similar issues and solutions
+- **During analysis**: Store findings and patterns for future reference
+- **After success**: Document successful optimization strategies
+- **Knowledge sharing**: Create entities for recurring problems and solutions

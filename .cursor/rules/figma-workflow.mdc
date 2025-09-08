@@ -1,0 +1,419 @@
+---
+alwaysApply: true
+---
+# Figma Workflow
+
+## Purpose
+Complete Figma component restoration workflow from initial analysis through final optimization, including visual-driven development and quality assurance procedures.
+
+## Core Concepts
+- **Two-Phase Workflow**: Resource preparation followed by restoration execution
+- **Visual-Driven Development**: Image analysis-first approach to component restoration
+- **Asset Processing**: Strategic conversion of complex elements to optimized assets
+- **Quality Assurance**: Accuracy measurement and optimization procedures
+- **File Structure**: Organized directory structure for components and resources
+
+## Core Principles
+
+### Visual-First Approach
+- **Primary capability**: Use Claude's image recognition to analyze expected.png before processing JSON
+- **Element filtering**: Identify truly visible elements vs redundant/invisible ones in Figma JSON
+- **Structure optimization**: Optimize nested structures based on visual hierarchy
+- **Asset identification**: Detect assets by visual analysis and naming patterns
+
+### Quality Standards
+- **Target accuracy**: ≥98% pixel match (threshold: 0.02)
+- **Visual validation**: Use expected.png as ground truth for all decisions
+- **Data storage**: Store results in `metadata.json.restorationData`
+- **Complex Element Strategy**: Convert complex UI elements to SVG assets instead of CSS recreation
+
+## Two-Phase Workflow Architecture
+
+### Phase 1: Analysis & Planning (分析阶段)
+**Objective**: Analyze design structure, identify required resources, and create implementation plan for user confirmation
+
+#### Steps:
+1. **Get Figma Data**: Extract design data using `mcp_figma-context_get_figma_data`
+2. **Download Expected Image**: Download reference image using `mcp_figma-context_download_figma_images` (filename: "expected.png")
+3. **综合视觉与结构分析** (Critical Step):
+   - **Visual Analysis**: Use Claude's image recognition to analyze expected.png
+   - **JSON Structure Analysis**: Cross-reference Figma JSON with visual elements
+   - **Element Mapping**: Map visible elements in image to JSON nodes
+   - **Structure Optimization**: Identify optimal page structure based on visual hierarchy
+   - **Asset vs Text Classification**: Categorize elements into assets and text elements
+4. **Element Classification & Asset Planning**:
+   - **Text Elements**: Identify all text content that can be implemented with CSS
+   - **Asset Elements**: Identify elements requiring asset download (icons, complex graphics, images)
+   - **Special Cases**: Mobile status bars → treat as complete asset download
+   - **Layout Structure**: Plan modern CSS layout approach (flexbox/grid)
+5. **Generate Analysis Report**: Output comprehensive analysis with element classification
+6. **User Confirmation**: Wait for user approval of analysis and asset download plan
+
+**Output**: Analysis report with element classification + User confirmation interface
+**Key Strategy**: Analyze first, download only after user confirmation
+**No Downloads**: Phase 1 only analyzes, no actual asset downloads
+
+### Phase 1 Analysis Report Format
+The analysis report should include:
+
+#### 📱 界面结构分析
+- **Container dimensions**: Width x Height
+- **Layout hierarchy**: Top-down structural breakdown
+- **Visual grouping**: Related elements and containers
+
+#### 📝 元素分类
+**文本元素 (CSS实现):**
+- List all text content with styling requirements
+- Font families, sizes, weights, colors
+- Text positioning and alignment
+
+**资源元素 (需要下载):**
+- Asset names and node IDs for download
+- Asset type (icon, image, complex UI element)
+- Rationale for asset vs CSS approach
+
+**特殊情况:**
+- Mobile status bars → 整体资源化
+- Complex navigation elements → 资源优先策略
+- Multi-layer graphics → 素材转换建议
+
+#### 🎯 实现策略
+- **Layout approach**: Flexbox/Grid planning
+- **Color scheme**: Primary colors and theme
+- **Responsive considerations**: Mobile-first approach
+- **Asset integration**: How assets will be incorporated
+
+**User Confirmation Required**: Clear list of assets to download in Phase 2
+
+### Phase 2: Implementation & Restoration (实现阶段)
+**Objective**: Download assets and execute component restoration based on user-confirmed analysis
+**Prerequisite**: Phase 1 analysis completed and user confirmed
+
+#### Steps:
+7. **Download Confirmed Assets**: Download user-approved assets using `mcp_figma-context_download_figma_images`
+8. **Optimize SVG Assets**: Use `mcp_figma_restoration_mcp_vue_tools_optimize_svg` for all downloaded SVG files
+9. **Generate Component**: Create Vue component with downloaded assets and planned structure
+10. **Screenshot**: Take component screenshot using `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+11. **Compare**: Generate comparison using `mcp_figma_restoration_mcp_vue_tools_figma_compare`
+
+**如果还原度 < 98%，必须执行标准化分析流程：**
+
+12. **差异图分析** (强制步骤):
+    - 读取并分析 diff.png
+    - 应用差异图分析规则识别差异模式
+    - 记录差异特征: 颜色、分布、面积
+    
+13. **原始 JSON 重新分析** (强制步骤):
+    - 对比 Figma JSON 与当前 CSS 实现
+    - 识别 sizing、layout、positioning 差异
+    - 定位结构性 vs 样式性问题
+    
+14. **知识库查询** (强制步骤):
+    - 基于差异分析结果搜索相关解决方案
+    - 验证方案适用性
+    
+15. **针对性优化**: 基于前三步分析结果应用修复
+16. **迭代验证**: 重复步骤 10-15，最多 3 次
+17. **文档记录**: 记录成功的差异模式和解决方案
+
+**Output**: Completed Vue component + Restoration accuracy report
+
+## Visual Analysis Process
+
+### 综合分析方法 (Visual + JSON Analysis)
+**核心理念**: 结合视觉分析和JSON结构分析，得出最合理的页面结构
+
+#### Step 1: Visual Content Analysis
+1. **Use Claude's image recognition** to analyze expected.png
+2. **Identify visual elements**: buttons, text, icons, containers, backgrounds
+3. **Analyze visual hierarchy**: layout flow, spacing, alignment, grouping
+4. **Detect visual patterns**: repeated elements, consistent spacing, color schemes
+
+#### Step 2: JSON Structure Analysis  
+1. **Parse Figma JSON** to understand design structure
+2. **Analyze layout properties**: mode (column/row), sizing (fixed/hug/fill), gap, padding
+3. **Map positioning data**: locationRelativeToParent, absolute coordinates
+4. **Identify node relationships**: parent-child hierarchy, nesting levels
+
+#### Step 3: Cross-Reference & Optimization
+1. **Map visual elements to JSON nodes**: Connect what you see with JSON data
+2. **Identify discrepancies**: JSON nodes without visual representation
+3. **Optimize structure**: Combine visual hierarchy with JSON layout logic
+4. **Design implementation strategy**: Modern CSS approach based on analysis
+
+### Element Filtering Strategy
+1. **Visual inventory**: List all truly visible elements in expected.png
+   - **Primary Method**: Use Claude's visual analysis capabilities to identify actual visible elements
+   - **Direct Analysis**: Read expected.png using readFile tool and analyze visually with Claude
+   - **Critical Step**: Visual inspection of expected.png for detailed structure identification
+   - **Verification**: Direct visual analysis to understand layout hierarchy and element relationships
+   - **Analysis Output**: Document visual elements, layout hierarchy, and structural patterns through direct observation
+2. **JSON-Visual Cross-Reference**: 
+   - Map each visible element in expected.png to corresponding Figma JSON nodes
+   - Identify JSON nodes that don't correspond to visible elements
+   - Analyze layout hierarchy: containers, positioning, sizing relationships
+3. **Redundancy removal**: Filter out invisible/redundant elements
+   - Elements with opacity: 0 or size: 0
+   - Nested containers that don't affect visual layout
+   - Duplicate or overlapping elements
+4. **Structure optimization**: Design optimal page structure
+   - Based on visual hierarchy observed in expected.png
+   - Informed by Figma JSON layout properties (mode, sizing, gap, padding)
+   - Prioritize modern CSS layout patterns (flexbox, grid)
+5. **合理页面结构分析**: Determine most reasonable page structure
+   - Combine visual analysis insights with JSON structural data
+   - Optimize for both visual accuracy and code maintainability
+   - Document structure decisions for implementation phase
+
+### Layout Conversion Strategy
+- **Figma to Modern CSS**: Convert Figma absolute positioning to modern responsive layouts
+- **Relationship Analysis**: Analyze relative positioning and spacing relationships
+- **Visual Accuracy**: Maintain visual accuracy while improving code structure
+- **Complex Element Handling**: Convert complex UI elements to SVG assets when CSS implementation is insufficient
+
+## File Structure & Organization
+
+### Project Directory Structure
+```
+/src/figma-data/                    # Centralized Figma JSON storage
+/src/restoration-tips/              # Knowledge base for optimization strategies
+
+/src/components/{ComponentName}/
+├── index.vue                       # Main component
+├── metadata.json                   # Includes restorationData
+├── layout-analysis.json           # Visual analysis results
+├── images/                         # Assets (SVG, PNG)
+└── results/                        # Screenshots & comparisons
+    ├── expected.png                # Figma reference (Phase 1)
+    ├── actual.png                  # Component screenshot (Phase 2)
+    └── diff.png                    # Comparison result (Phase 2)
+```
+
+### Path Requirements
+- **Always use absolute paths** for MCP tool calls
+- **Figma data**: Save to `/src/figma-data/`
+- **Assets**: Save to component's `images/` directory
+- **Screenshots**: Save to component's `results/` directory
+- **Knowledge base**: Store in `/src/restoration-tips/`
+
+## Asset Processing Architecture
+
+### Asset Identification Rules
+- **Name patterns**: `ic`, `ic_`, `素材`, `material`, `asset`, `icon`, `img`, `image`
+- **Node type priority**: RECTANGLE/VECTOR/PATH > INSTANCE/COMPONENT > GROUP/FRAME
+- **SVG sizing**: Original size must equal CSS size (no scaling)
+- **Complex element strategy**: Download complete UI sections (status bars, nav bars) as single assets
+
+### Special Cases for Mobile UI Elements
+- **Mobile Status Bar**: 识别为"状态栏"或包含时间、电池、信号等元素的顶部区域
+  - **Strategy**: 直接整个当成素材下载，不拆分为单独组件
+  - **Rationale**: 状态栏是设计稿的占位元素，整体下载确保精确还原
+  - **Implementation**: 使用单个SVG资源替代复杂的CSS布局
+- **Navigation Bars**: 识别复杂导航栏元素时优先考虑整体资源化
+- **Complex Controls**: 多层控件组合优先使用资源而非CSS重建
+
+### Complex Element Optimization Strategy
+**When to Convert to Assets:**
+- Mobile status bars with detailed icons and precise layouts
+- Multi-layer navigation bars with complex controls
+- 3D effect cards and complex shadows/gradients
+- Complex icon combinations and nested groups
+- Gradient and shadow effects that are hard to replicate in CSS
+- Elements with imageRef fills or complex boolean operations
+
+**Implementation Pattern:**
+```vue
+<!-- Instead of complex CSS recreation -->
+<div class="complex-status-bar">
+  <div class="status-left">...</div>
+  <div class="status-right">...</div>
+</div>
+
+<!-- Use SVG asset for better accuracy -->
+<div class="status-bar">
+  <img src="./images/status-bar-complete.svg" alt="状态栏" class="status-bar-img" />
+</div>
+```
+
+**Expected Results:**
+- **Accuracy Improvement**: 5-10% restoration accuracy boost
+- **Reduced Complexity**: Simpler CSS and DOM structure
+- **Better Fidelity**: Pixel-perfect visual matching
+- **Easier Maintenance**: Single asset file vs complex CSS
+
+**Asset Download Strategy:**
+1. Identify complex elements during Phase 1 visual analysis
+2. Download complete element groups as SVG using asset download tools
+3. Replace CSS implementations with `<img>` tags
+4. Ensure proper sizing: `width: 100%; height: 100%; object-fit: cover;`
+
+## Data Management
+
+### Restoration Data Storage
+Store accuracy results in `metadata.json` under `restorationData` field:
+```json
+{
+  "restorationData": {
+    "matchPercentage": 98.5,
+    "diffPixels": 1250,
+    "totalPixels": 85000,
+    "dimensions": { "width": 300, "height": 200 },
+    "timestamp": "2025-01-01T12:00:00.000Z",
+    "status": "completed"
+  }
+}
+```
+
+### Knowledge Base Usage
+- **Location**: `/src/restoration-tips/` directory
+- **When to use**: If accuracy < 98%, search for similar issues
+- **Common patterns**: asset identification, layout differences
+- **Update**: Document new solutions for future reference if confirmed
+
+## Optimization Strategy
+
+### Complex Element to Asset Conversion
+**When to Apply**: Strategic optimization for specific complex elements only
+
+**Primary Candidates** (Apply when accuracy < 90% AND element meets criteria):
+- **Mobile status bars with 5+ detailed icons and precise layouts**
+- **Navigation bars with complex multi-layer controls and gradients**
+- **3D effect cards with multiple shadows and complex gradients**
+
+**Secondary Candidates** (Apply when accuracy < 85% AND CSS recreation is impractical):
+- Elements with imageRef fills or complex boolean operations
+- Multi-layer icon combinations with precise positioning
+- Complex gradient and shadow effects that require 10+ CSS properties
+
+**Strategic Implementation Pattern**:
+```vue
+<!-- Only when CSS recreation requires 10+ properties and accuracy < 90% -->
+<div class="complex-element">
+  <img src="./images/complex-element.svg" alt="Element" class="element-img" />
+</div>
+
+<!-- Prefer CSS implementation for simple elements -->
+<div class="simple-button">
+  <div class="icon-wrapper">
+    <svg>...</svg> <!-- Inline SVG for simple icons -->
+  </div>
+  <span class="text">Button Text</span>
+</div>
+```
+
+**Decision Criteria**:
+- **CSS complexity**: 10+ properties needed for accurate recreation
+- **Accuracy threshold**: Current accuracy < 90%
+- **Maintenance cost**: Asset updates vs CSS maintenance
+- **Performance impact**: File size vs rendering performance
+
+**Expected Results**: +5-10% accuracy improvement when strategically applied
+
+### 标准化还原度优化流程
+
+**当还原度 < 98% 时，必须按以下顺序执行：**
+
+#### 第一步: 差异图识别与分析 (必须)
+1. **读取 diff.png**: 获取差异图进行视觉分析
+   - **Use Claude's visual analysis** to identify difference patterns
+   - 直接使用Claude的图像识别能力分析差异图
+   - 通过readFile工具读取图像文件，让Claude进行视觉分析
+2. **应用差异图分析规则**:
+   - 识别颜色模式: 红色(显著差异) vs 橙色(中等差异) vs 黄色(渲染差异)
+   - 分析差异分布: 块状/条带状(结构问题) vs 细线状(渲染问题)
+   - 评估问题严重程度和影响范围
+3. **差异区域定位**: 
+   - 精确定位差异区域在页面中的位置
+   - 分析差异区域对应的页面元素类型
+   - 评估差异对整体视觉效果的影响程度
+4. **优化措施推导**: 基于差异分析得出具体优化措施
+   - 结构性差异 → 布局调整策略
+   - 渲染差异 → 样式精调方案
+   - 元素缺失 → 实现补充建议
+
+#### 第二步: 原始 JSON 重新分析 (必须)
+1. **对比 Figma JSON 与当前实现**:
+   - 检查 layout 属性: `mode`, `sizing`, `gap`, `padding`
+   - 验证 dimensions: `width`, `height`, `fixed` vs `hug` vs `fill`
+   - 确认 positioning: `locationRelativeToParent` 坐标
+2. **识别结构性差异**:
+   - sizing 实现错误 (hug → fit-content, fixed → 固定值)
+   - 布局模式差异 (column/row → flex-direction)
+   - 定位方式差异 (绝对坐标 → CSS positioning)
+3. **定位根本问题**: 确定是结构性问题还是样式问题
+
+#### 第三步: 知识库查询 (必须)
+1. **使用知识库搜索相关解决方案**:
+   - 基于差异分析结果构建搜索关键词: "块状差异", "条带差异", "结构性问题"
+   - 按还原度范围查询: "<90%", "90-95%", "95-98%"
+   - 搜索相关技术关键词: "sizing", "layout", "positioning"
+2. **验证方案适用性和实施步骤**
+
+#### 第四步: 针对性修复
+1. **结构性问题修复** (块状/条带状差异):
+   - 修正 layout sizing 实现
+   - 调整 positioning 和 spacing
+   - 重新实现布局结构
+2. **渲染问题修复** (细线状差异):
+   - 优化颜色精度和字体渲染
+   - 调整边缘处理和抗锯齿
+3. **单一变量修复**: 一次只修改一个主要问题
+
+#### 第五步: 验证与迭代
+1. 重新截图和对比
+2. 分析新的差异图变化
+3. 记录有效修复方案
+4. 最多迭代 3 次
+
+**重要**: 绝不允许跳过前三步直接修复。必须先分析差异图，再分析原始JSON，然后查询知识库。
+
+## Quality Assurance Architecture
+
+### Restoration Accuracy Standards
+- **Target**: ≥98% pixel match (threshold: 0.02)
+- **Data storage**: Store results in `metadata.json.restorationData`
+- **Visual validation**: Use expected.png as ground truth for element filtering
+- **Complex Element Strategy**: Convert complex UI elements to SVG assets instead of CSS recreation
+
+### Performance Requirements
+- **SVG Optimization**: Optimize SVG files for minimal size
+- **CSS Efficiency**: Use efficient CSS selectors
+- **DOM Complexity**: Minimize DOM complexity through visual-driven element filtering
+
+### Error Handling
+- **Path Validation**: Verify absolute paths before tool calls
+- **Directory Management**: Ensure target directories exist
+- **URL Validation**: Validate Figma URLs and node IDs
+- **Server Availability**: Check dev server port availability
+
+## Reference
+
+### Workflow Quick Reference
+**Phase 1 Checklist (分析阶段):**
+- [ ] Extract Figma data
+- [ ] Download expected image
+- [ ] Perform visual + JSON analysis
+- [ ] Classify elements (text vs assets)
+- [ ] Identify special cases (mobile status bar)
+- [ ] Plan layout structure
+- [ ] Generate analysis report
+- [ ] Get user confirmation for asset download plan
+
+**Phase 2 Checklist (实现阶段):**
+- [ ] Download user-confirmed assets
+- [ ] Optimize SVG assets
+- [ ] Generate Vue component with planned structure
+- [ ] Take component screenshot
+- [ ] Compare with expected image
+- [ ] If accuracy < 98%: analyze diff image
+- [ ] Re-analyze original JSON
+- [ ] Query knowledge base
+- [ ] Apply targeted fixes
+- [ ] Iterate until 98% accuracy
+
+### Quality Targets
+- **Accuracy**: ≥98% pixel match
+- **Threshold**: 0.02 for comparisons
+- **Asset optimization**: All SVG files optimized
+- **Path validation**: All paths absolute and verified
+- **Documentation**: All successful patterns recorded
