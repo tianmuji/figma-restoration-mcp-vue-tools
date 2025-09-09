@@ -22,6 +22,14 @@
 - **关键词**: `3倍图`, `尺寸`, `缩放`, `放大`
 - **影响**: 避免严重的尺寸错误
 
+#### useAbsoluteBounds参数缺失 ⭐⭐⭐
+- **文档**: [useAbsoluteBounds-关键参数优化.md](./useAbsoluteBounds-关键参数优化.md)
+- **症状**: 还原度只有70-80%，图片尺寸不准确
+- **原因**: 下载Figma图片时缺少useAbsoluteBounds参数
+- **解决**: 始终使用useAbsoluteBounds: true
+- **关键词**: `useAbsoluteBounds`, `图片下载`, `尺寸精确`, `边界框`
+- **影响**: +21.57%还原度提升
+
 #### 图片下载失败流程中断 ⭐⭐
 - **文档**: [Figma图片下载失败-流程停止策略.md](./Figma图片下载失败-流程停止策略.md)
 - **症状**: 纯CSS组件图片下载失败，流程停止
@@ -114,7 +122,7 @@
 ### 还原度问题
 | 还原度范围 | 主要原因 | 优先检查 | 相关文档 |
 |------------|----------|----------|----------|
-| <90% | 边框缺失、尺寸错误、sizing错误 | outline→border, 3倍图理解, hug sizing | [截图边框](./截图边框-outline与border的关键差异.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md) |
+| <90% | 边框缺失、尺寸错误、sizing错误、useAbsoluteBounds缺失 | outline→border, 3倍图理解, hug sizing, useAbsoluteBounds | [截图边框](./截图边框-outline与border的关键差异.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md), [useAbsoluteBounds](./useAbsoluteBounds-关键参数优化.md) |
 | 90-95% | 布局差异、盒模型、容器sizing | border-box, 布局分析, hug/fixed区分 | [边框盒模型](./边框盒模型差异-Figma与Web尺寸计算.md), [Layout sizing](./Layout容器sizing-hug与fixed的关键差异.md) |
 | 95-98% | 文本渲染、细节优化 | 字体平滑、像素级调优 | [文本渲染](./文本渲染差异-pixelMatch阈值优化策略.md), [严格标准](./threshold固定0.02-严格还原度要求.md) |
 
@@ -150,6 +158,7 @@
 ### P-Z
 - **RECTANGLE**: [素材识别](./素材识别-容器节点vs具体素材元素判断策略.md)
 - **threshold**: [严格还原度要求](./threshold固定0.02-严格还原度要求.md)
+- **useAbsoluteBounds**: [useAbsoluteBounds关键参数优化](./useAbsoluteBounds-关键参数优化.md)
 - **VECTOR**: [素材识别](./素材识别-容器节点vs具体素材元素判断策略.md)
 - **3倍图**: [3倍图缩放](./截图对比-3倍图缩放与样式尺寸设置.md)
 - **98%还原度**: [严格还原度要求](./threshold固定0.02-严格还原度要求.md)

@@ -1,0 +1,398 @@
+{
+  "metadata": {
+    "name": "🍕  PC-3",
+    "lastModified": "2025-09-09T07:48:52Z",
+    "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/5d7b326d-d38a-425b-8d03-1017e8450dbc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ4GOSFWC7HSFKW4W%2F20250907%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250907T120000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c4506e203bbbce527519635c5932d3c33962a4276b9027119801ca365276cd39",
+    "components": {
+      "7005:5443": {
+        "id": "7005:5443",
+        "key": "49f68f5683905b9fa720b0f32a7079c90ef6b61a",
+        "name": "icon/close"
+      },
+      "7005:5447": {
+        "id": "7005:5447",
+        "key": "b1a23869da16fb59f80900810e1413cbea5dcd0f",
+        "name": "Rectangle 686"
+      },
+      "18116:74448": {
+        "id": "18116:74448",
+        "key": "1e29ec8667112abc26cf82e855d3f0f0203e53cf",
+        "name": "Property 1=ic_checkbox_n",
+        "componentSetId": "18116:74447"
+      },
+      "18116:74458": {
+        "id": "18116:74458",
+        "key": "f5de1d92eae861ded0b35a8638a47cd3a338d69a",
+        "name": "按钮类型=文字, 点击状态=default, 按钮大小=中",
+        "componentSetId": "18116:74457"
+      },
+      "7092:4552": {
+        "id": "7092:4552",
+        "key": "dc00b053d02215e9452b7fd360b565487697ad93",
+        "name": "cs_ic_common_add_page_添加页"
+      }
+    },
+    "componentSets": {
+      "18116:74447": {
+        "id": "18116:74447",
+        "key": "78a1d97c809a515efc40e5da81964d5564783de9",
+        "name": "勾选框",
+        "description": ""
+      },
+      "18116:74457": {
+        "id": "18116:74457",
+        "key": "9eb7c8dc0f3bfcef0113fce00da9515996be4690",
+        "name": "按钮",
+        "description": ""
+      }
+    }
+  },
+  "nodes": [
+    {
+      "id": "17606:50778",
+      "name": "二次确认",
+      "type": "FRAME",
+      "fills": "fill_D1S622",
+      "effects": "effect_RKY42X",
+      "layout": "layout_RI1JXO",
+      "borderRadius": "8px",
+      "children": [
+        {
+          "id": "17606:50779",
+          "name": "icon+text",
+          "type": "FRAME",
+          "layout": "layout_ARZ84T",
+          "children": [
+            {
+              "id": "17606:50780",
+              "name": "title",
+              "type": "TEXT",
+              "textStyle": "style_FFL3BC",
+              "fills": "fill_V305DI",
+              "layout": "layout_44EYWQ",
+              "text": "此操作会清除批注，是否继续？"
+            }
+          ]
+        },
+        {
+          "id": "17606:50783",
+          "name": "Frame 427319686",
+          "type": "FRAME",
+          "layout": "layout_3ATUUP",
+          "children": [
+            {
+              "id": "17606:50784",
+              "name": "勾选框",
+              "type": "FRAME",
+              "layout": "layout_SW6EKB",
+              "children": [
+                {
+                  "id": "17606:50785",
+                  "name": "勾选框",
+                  "type": "INSTANCE",
+                  "componentId": "18116:74448",
+                  "componentProperties": [
+                    {
+                      "name": "Property 1",
+                      "value": "ic_checkbox_n",
+                      "type": "VARIANT"
+                    }
+                  ],
+                  "fills": "fill_D1S622",
+                  "strokes": "stroke_RN86T6",
+                  "layout": "layout_ZAMVRF",
+                  "borderRadius": "2px"
+                },
+                {
+                  "id": "17606:50786",
+                  "name": "不再提醒",
+                  "type": "TEXT",
+                  "textStyle": "style_QAN3PQ",
+                  "fills": "fill_L9MREZ",
+                  "layout": "layout_44EYWQ",
+                  "text": "不再提醒"
+                }
+              ]
+            },
+            {
+              "id": "17606:50787",
+              "name": "button",
+              "type": "FRAME",
+              "layout": "layout_0AZ83S",
+              "children": [
+                {
+                  "id": "17606:50788",
+                  "name": "操作按钮",
+                  "type": "FRAME",
+                  "layout": "layout_YS4EUP",
+                  "children": [
+                    {
+                      "id": "17606:50789",
+                      "name": "按钮",
+                      "type": "INSTANCE",
+                      "componentId": "18116:74458",
+                      "componentProperties": [
+                        {
+                          "name": "前置图标#7415:4",
+                          "value": "false",
+                          "type": "BOOLEAN"
+                        },
+                        {
+                          "name": "下拉箭头#7449:0",
+                          "value": "false",
+                          "type": "BOOLEAN"
+                        },
+                        {
+                          "name": "按钮类型",
+                          "value": "文字",
+                          "type": "VARIANT"
+                        },
+                        {
+                          "name": "点击状态",
+                          "value": "default",
+                          "type": "VARIANT"
+                        },
+                        {
+                          "name": "按钮大小",
+                          "value": "中",
+                          "type": "VARIANT"
+                        }
+                      ],
+                      "strokes": "stroke_TQQA0R",
+                      "layout": "layout_8O6BBV",
+                      "borderRadius": "4px",
+                      "children": [
+                        {
+                          "id": "I17606:50789;275:399",
+                          "name": "插入",
+                          "type": "TEXT",
+                          "textStyle": "style_H8V8LX",
+                          "fills": "fill_V305DI",
+                          "layout": "layout_LGRCCL",
+                          "text": "取消"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "17606:50790",
+                      "name": "按钮",
+                      "type": "INSTANCE",
+                      "componentId": "18116:74458",
+                      "componentProperties": [
+                        {
+                          "name": "前置图标#7415:4",
+                          "value": "false",
+                          "type": "BOOLEAN"
+                        },
+                        {
+                          "name": "下拉箭头#7449:0",
+                          "value": "false",
+                          "type": "BOOLEAN"
+                        },
+                        {
+                          "name": "按钮类型",
+                          "value": "文字",
+                          "type": "VARIANT"
+                        },
+                        {
+                          "name": "点击状态",
+                          "value": "default",
+                          "type": "VARIANT"
+                        },
+                        {
+                          "name": "按钮大小",
+                          "value": "中",
+                          "type": "VARIANT"
+                        }
+                      ],
+                      "fills": "fill_JJ9YXT",
+                      "layout": "layout_8O6BBV",
+                      "borderRadius": "4px",
+                      "children": [
+                        {
+                          "id": "I17606:50790;275:399",
+                          "name": "插入",
+                          "type": "TEXT",
+                          "textStyle": "style_2AE93L",
+                          "fills": "fill_D1S622",
+                          "layout": "layout_LGRCCL",
+                          "text": "继续"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalVars": {
+    "styles": {
+      "fill_D1S622": [
+        "#FFFFFF"
+      ],
+      "effect_RKY42X": {
+        "boxShadow": "0px 5px 30px 0px rgba(48, 61, 60, 0.15), 0px 2px 8px 0px rgba(48, 61, 60, 0.1)"
+      },
+      "layout_RI1JXO": {
+        "mode": "column",
+        "justifyContent": "center",
+        "gap": "12px",
+        "padding": "20px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "hug"
+        },
+        "dimensions": {
+          "width": 360
+        }
+      },
+      "layout_ARZ84T": {
+        "mode": "row",
+        "alignSelf": "stretch",
+        "gap": "16px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "style_FFL3BC": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 500,
+        "fontSize": 18,
+        "lineHeight": "1.4444444444444444em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "CENTER"
+      },
+      "fill_V305DI": [
+        "#212121"
+      ],
+      "layout_44EYWQ": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_3ATUUP": {
+        "mode": "column",
+        "alignSelf": "stretch",
+        "gap": "12px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_SW6EKB": {
+        "mode": "row",
+        "alignSelf": "stretch",
+        "gap": "4px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "stroke_RN86T6": {
+        "colors": [
+          "#CCCCCC"
+        ],
+        "strokeWeight": "1px",
+        "strokeAlign": "INSIDE"
+      },
+      "layout_ZAMVRF": {
+        "mode": "none",
+        "clipsContent": true,
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 16,
+          "height": 16
+        }
+      },
+      "style_QAN3PQ": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 400,
+        "fontSize": 12,
+        "lineHeight": "1em",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "fill_L9MREZ": [
+        "#9C9C9C"
+      ],
+      "layout_0AZ83S": {
+        "mode": "row",
+        "justifyContent": "stretch",
+        "alignItems": "stretch",
+        "alignSelf": "stretch",
+        "gap": "36px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "layout_YS4EUP": {
+        "mode": "row",
+        "justifyContent": "stretch",
+        "alignItems": "stretch",
+        "gap": "12px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "stroke_TQQA0R": {
+        "colors": [
+          "#DCDCDC"
+        ],
+        "strokeWeight": "1px",
+        "strokeAlign": "INSIDE"
+      },
+      "layout_8O6BBV": {
+        "mode": "row",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "gap": "4px",
+        "padding": "0px 8px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 36
+        }
+      },
+      "style_H8V8LX": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 400,
+        "fontSize": 14,
+        "lineHeight": "1.4285714285714286em",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "CENTER"
+      },
+      "layout_LGRCCL": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "fill_JJ9YXT": [
+        "#00B796"
+      ],
+      "style_2AE93L": {
+        "fontFamily": "PingFang SC",
+        "fontWeight": 500,
+        "fontSize": 14,
+        "lineHeight": "1.4285714285714286em",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "CENTER"
+      }
+    }
+  }
+}
