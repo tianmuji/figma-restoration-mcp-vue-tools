@@ -1,0 +1,4 @@
+[submodule "submodules/figma-context-mcp"]
+	path = submodules/figma-context-mcp
+	url = https://github.com/tianmuji/Figma-Context-MCP.git
+	branch = clean-main
