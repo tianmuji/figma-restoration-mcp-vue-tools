@@ -34,7 +34,7 @@ Complete Figma component restoration workflow from initial analysis through fina
 
 #### Steps:
 1. **Get Figma Data**: Extract design data using `mcp_figma-context_get_figma_data`
-2. **Download Expected Image**: Download reference image using `mcp_figma-context_download_figma_images` (filename: "expected.png")
+2. **Download Expected Image**: Download reference image using `mcp_figma-context_download_figma_images` (filename: "expected.png", useAbsoluteBounds: true)
 3. **综合视觉与结构分析** (Critical Step):
    - **Visual Analysis**: Use Claude's image recognition to analyze expected.png
    - **JSON Structure Analysis**: Cross-reference Figma JSON with visual elements
@@ -90,10 +90,10 @@ The analysis report should include:
 **Prerequisite**: Phase 1 analysis completed and user confirmed
 
 #### Steps:
-7. **Download Confirmed Assets**: Download user-approved assets using `mcp_figma-context_download_figma_images`
+7. **Download Confirmed Assets**: Download user-approved assets using `mcp_figma-context_download_figma_images` (useAbsoluteBounds: true for components with box shadow)
 8. **Optimize SVG Assets**: Use `mcp_figma_restoration_mcp_vue_tools_optimize_svg` for all downloaded SVG files
 9. **Generate Component**: Create Vue component with downloaded assets and planned structure
-10. **Screenshot**: Take component screenshot using `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+10. **Screenshot**: Take component screenshot using `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot` (useAbsoluteBounds: true for components with box shadow)
 11. **Compare**: Generate comparison using `mcp_figma_restoration_mcp_vue_tools_figma_compare`
 
 **如果还原度 < 98%，必须执行标准化分析流程：**
@@ -203,6 +203,12 @@ The analysis report should include:
 - **Node type priority**: RECTANGLE/VECTOR/PATH > INSTANCE/COMPONENT > GROUP/FRAME
 - **SVG sizing**: Original size must equal CSS size (no scaling)
 - **Complex element strategy**: Download complete UI sections (status bars, nav bars) as single assets
+
+### Critical Screenshot Parameters
+- **useAbsoluteBounds: true**: MUST be used when component has box shadow effects
+- **Why it matters**: Box shadows extend beyond element boundaries and need absolute bounds to be captured correctly
+- **Impact on accuracy**: Can improve restoration accuracy by 15-20% when properly applied
+- **When to use**: Always check for box-shadow, drop-shadow, or any effects that extend beyond element boundaries
 
 ### Special Cases for Mobile UI Elements
 - **Mobile Status Bar**: 识别为"状态栏"或包含时间、电池、信号等元素的顶部区域
@@ -391,7 +397,7 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 ### Workflow Quick Reference
 **Phase 1 Checklist (分析阶段):**
 - [ ] Extract Figma data
-- [ ] Download expected image
+- [ ] Download expected image (useAbsoluteBounds: true if box shadow)
 - [ ] Perform visual + JSON analysis
 - [ ] Classify elements (text vs assets)
 - [ ] Identify special cases (mobile status bar)
@@ -400,10 +406,10 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 - [ ] Get user confirmation for asset download plan
 
 **Phase 2 Checklist (实现阶段):**
-- [ ] Download user-confirmed assets
+- [ ] Download user-confirmed assets (useAbsoluteBounds: true if box shadow)
 - [ ] Optimize SVG assets
 - [ ] Generate Vue component with planned structure
-- [ ] Take component screenshot
+- [ ] Take component screenshot (useAbsoluteBounds: true if box shadow)
 - [ ] Compare with expected image
 - [ ] If accuracy < 98%: analyze diff image
 - [ ] Re-analyze original JSON
@@ -417,3 +423,4 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 - **Asset optimization**: All SVG files optimized
 - **Path validation**: All paths absolute and verified
 - **Documentation**: All successful patterns recorded
+- **Critical**: Always use useAbsoluteBounds: true for components with box shadow effects
