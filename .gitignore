@@ -18,7 +18,7 @@ yarn-error.log*
 
 # Generated files
 dist/
-build/
+/build/
 
 # MCP generated content
 output/*/
