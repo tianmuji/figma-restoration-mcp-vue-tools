@@ -62,6 +62,19 @@ Centralized MCP tool setup, configuration, and usage guidance for all Figma rest
   - `outputPath`: Path to output SVG file (optional)
   - `svgoConfig`: Custom SVGO configuration (optional)
 
+### Image Optimization (PNG/JPEG/WebP)
+- **Tool**: `mcp_figma_restoration_mcp_vue_tools_optimize_image`
+- **Purpose**: Optimize PNG, JPEG, and WebP image files using Sharp
+- **Parameters**:
+  - `inputPath`: Path to input image file (required)
+  - `outputPath`: Path to output image file (optional, overwrites original if not specified)
+  - `quality`: Image quality 0-100 (default: 85 for JPEG/WebP)
+  - `compressionLevel`: PNG compression level 0-9 (default: 9)
+  - `format`: Output format "png", "jpeg", "webp", or "auto" (default: "auto")
+  - `progressive`: Enable progressive encoding for JPEG (default: true)
+  - `mozjpeg`: Use MozJPEG encoder (default: true)
+  - `resize`: Optional resize settings with width, height, fit
+
 ### Visual Image Analysis (Critical for Visual-Driven Development)
 - **Primary Method**: Use Claude's built-in image recognition capabilities
 - **Purpose**: Direct visual analysis of images for structure identification and debugging
@@ -108,6 +121,12 @@ Centralized MCP tool setup, configuration, and usage guidance for all Figma rest
 - **Configuration**: Use default SVGO configuration for optimal file size and performance
 - **Processing**: Always optimize SVG assets after download
 - **Sizing**: Original SVG size must equal CSS size (no scaling)
+
+#### Image Optimization
+- **Format Preservation**: Keep original format by default (format: "auto" or don't specify)
+- **Quality Settings**: Use quality=85 for JPEG/WebP, compressionLevel=9 for PNG
+- **Target Reduction**: Aim for 60-70% file size reduction while maintaining web-quality visuals
+- **Processing**: Always optimize all downloaded PNG/JPEG assets after download
 
 ## Asset Identification Rules
 
@@ -163,6 +182,13 @@ mcp_figma-context_download_figma_images({
 mcp_figma_restoration_mcp_vue_tools_optimize_svg({
   inputPath: "/absolute/path/to/component/images/icon.svg"
 })
+
+// Optimize PNG/JPEG assets (保持原格式)
+mcp_figma_restoration_mcp_vue_tools_optimize_image({
+  inputPath: "/absolute/path/to/component/images/background.png",
+  quality: 85,
+  compressionLevel: 9
+})
 ```
 
 ### Component Screenshot and Comparison
@@ -208,7 +234,12 @@ readFile({
 
 ### Workflow Integration
 1. **Phase 1**: Use `mcp_figma-context_get_figma_data` and `mcp_figma-context_download_figma_images`
-2. **Phase 2**: Use `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot` and `mcp_figma_restoration_mcp_vue_tools_figma_compare`
+2. **Phase 2**: 
+   - Download assets with `mcp_figma-context_download_figma_images`
+   - Optimize SVG assets with `mcp_figma_restoration_mcp_vue_tools_optimize_svg`
+   - Optimize PNG/JPEG assets with `mcp_figma_restoration_mcp_vue_tools_optimize_image` (保持原格式)
+   - Take screenshots with `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot`
+   - Compare with `mcp_figma_restoration_mcp_vue_tools_figma_compare`
 3. **Optimization**: Use Claude's visual analysis capabilities for image analysis if accuracy < 98%
 
 ### Error Handling
@@ -227,6 +258,7 @@ readFile({
 | `snapdom_screenshot` | Take screenshots | componentName, projectPath, outputPath |
 | `figma_compare` | Compare images | componentName, projectPath, threshold |
 | `optimize_svg` | Optimize SVG | inputPath, outputPath |
+| `optimize_image` | Optimize PNG/JPEG/WebP | inputPath, quality, compressionLevel |
 | `readFile` | Visual image analysis | path, explanation |
 
 ### Configuration Checklist
@@ -234,6 +266,7 @@ readFile({
 - [ ] Set screenshot scale to 3x
 - [ ] Use 0.02 threshold for comparisons
 - [ ] Optimize SVG assets after download
+- [ ] Optimize PNG/JPEG assets after download (保持原格式)
 - [ ] Validate paths before tool calls
 - [ ] Check dev server on port 1932
 - [ ] Use transparent background for screenshots

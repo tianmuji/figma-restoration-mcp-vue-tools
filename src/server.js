@@ -12,6 +12,7 @@ import {
 import { FigmaCompareTool } from './tools/figma-compare.js';
 import { SnapDOMScreenshotTool } from './tools/snapdom-screenshot.js';
 import { OptimizeSVGTool } from './tools/optimize-svg.js';
+import { OptimizeImageTool } from './tools/optimize-image.js';
 
 
 class VueFigmaToolsServer {
@@ -31,7 +32,8 @@ class VueFigmaToolsServer {
     this.tools = {
       'figma_compare': new FigmaCompareTool(),
       'snapdom_screenshot': new SnapDOMScreenshotTool(),
-      'optimize_svg': new OptimizeSVGTool()
+      'optimize_svg': new OptimizeSVGTool(),
+      'optimize_image': new OptimizeImageTool()
     };
 
     this.setupHandlers();

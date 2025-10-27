@@ -92,6 +92,11 @@ The analysis report should include:
 #### Steps:
 7. **Download Confirmed Assets**: Download user-approved assets using `mcp_figma-context_download_figma_images` (useAbsoluteBounds: true for components with box shadow)
 8. **Optimize SVG Assets**: Use `mcp_figma_restoration_mcp_vue_tools_optimize_svg` for all downloaded SVG files
+8a. **Optimize Image Assets** (PNG/JPEG): Use `mcp_figma_restoration_mcp_vue_tools_optimize_image` for all downloaded PNG/JPEG files
+   - Keep original format (use `format: "auto"` or don't specify format)
+   - Apply intelligent compression with quality=85 for JPEG/WebP, compressionLevel=9 for PNG
+   - Target 60-70% file size reduction while maintaining web-quality visual appearance
+   - Automatically optimize all downloaded image assets in the component's `images/` directory
 9. **Generate Component**: Create Vue component with downloaded assets and planned structure
 10. **Screenshot**: Take component screenshot using `mcp_figma_restoration_mcp_vue_tools_snapdom_screenshot` (useAbsoluteBounds: true for components with box shadow)
 11. **Compare**: Generate comparison using `mcp_figma_restoration_mcp_vue_tools_figma_compare`
@@ -383,6 +388,7 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 
 ### Performance Requirements
 - **SVG Optimization**: Optimize SVG files for minimal size
+- **Image Optimization**: Optimize PNG/JPEG files for minimal size while maintaining visual quality (60-70% reduction target)
 - **CSS Efficiency**: Use efficient CSS selectors
 - **DOM Complexity**: Minimize DOM complexity through visual-driven element filtering
 
@@ -408,6 +414,7 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 **Phase 2 Checklist (实现阶段):**
 - [ ] Download user-confirmed assets (useAbsoluteBounds: true if box shadow)
 - [ ] Optimize SVG assets
+- [ ] Optimize PNG/JPEG assets (保持原格式)
 - [ ] Generate Vue component with planned structure
 - [ ] Take component screenshot (useAbsoluteBounds: true if box shadow)
 - [ ] Compare with expected image
@@ -420,7 +427,7 @@ Store accuracy results in `metadata.json` under `restorationData` field:
 ### Quality Targets
 - **Accuracy**: ≥98% pixel match
 - **Threshold**: 0.02 for comparisons
-- **Asset optimization**: All SVG files optimized
+- **Asset optimization**: All SVG and PNG/JPEG assets optimized
 - **Path validation**: All paths absolute and verified
 - **Documentation**: All successful patterns recorded
 - **Critical**: Always use useAbsoluteBounds: true for components with box shadow effects
